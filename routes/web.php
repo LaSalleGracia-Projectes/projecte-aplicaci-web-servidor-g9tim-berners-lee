@@ -1,31 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdministradoresController;
-use App\Http\Controllers\ComentariosController;
-use App\Http\Controllers\ContenidoListasController;
-use App\Http\Controllers\LikesComentariosController;
-use App\Http\Controllers\ListasController;
-use App\Http\Controllers\NotificacionesController;
-use App\Http\Controllers\PeliculasSeriesController;
-use App\Http\Controllers\RecomendacionesController;
-use App\Http\Controllers\SeguimientoController;
-use App\Http\Controllers\UsuariosController;
-use App\Http\Controllers\ValoracionesController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CriticosController;
+use App\Http\Controllers\PeliculasController;
+use App\Http\Controllers\SeriesController;
+use App\Http\Controllers\TendenciasController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RandomController;
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 
-Route::resource('administradores', AdministradoresController::class);
-Route::resource('comentarios', ComentariosController::class);
-Route::resource('contenidolistas', ContenidoListasController::class);
-Route::resource('likescomentarios', LikesComentariosController::class);
-Route::resource('listas', ListasController::class);
-Route::resource('notificaciones', NotificacionesController::class);
-Route::resource('peliculasseries', PeliculasSeriesController::class);
-Route::resource('recomendaciones', RecomendacionesController::class);
-Route::resource('seguimiento', SeguimientoController::class);
-Route::resource('notificaciones', UsuariosController::class);
-Route::resource('notificaciones', ValoracionesController::class);
+Route::get('/peliculas', [PeliculasController::class, 'index'])->name('peliculas');
+
+Route::get('/series', [SeriesController::class, 'index'])->name('series');
+
+Route::get('/tendencias', [TendenciasController::class, 'index'])->name('tendencias');
+
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+Route::get('/random/generate', [RandomController::class, 'generate'])->name('random.generate');

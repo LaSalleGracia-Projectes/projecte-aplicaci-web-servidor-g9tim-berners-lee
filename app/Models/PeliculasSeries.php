@@ -27,7 +27,6 @@ class PeliculasSeries extends Model
         'año_estreno',
         'duracion',
         'api_id',
-        'fecha_creacion',
     ];
 
     public $timestamps = false;
