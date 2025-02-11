@@ -15,7 +15,7 @@ use App\Http\Controllers\ValoracionesController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::resource('administradores', AdministradoresController::class);
