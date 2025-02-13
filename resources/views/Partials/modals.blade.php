@@ -44,8 +44,10 @@
     <div id="movieDetailContent">
       {{-- Aquí se mostrará el detalle de la película/serie seleccionada --}}
     </div>
+    <button id="moreDetailsBtn" class="action-btn hidden">Ver más detalles</button>
   </div>
 </div>
+
 
 <!-- Loading Spinner -->
 <div id="loadingSpinner" class="spinner hidden">

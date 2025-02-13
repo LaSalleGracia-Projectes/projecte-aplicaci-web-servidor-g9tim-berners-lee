@@ -197,26 +197,29 @@ async function renderFavorites() {
 }
 // DETALLE DE PELÍCULA (MODAL)
 async function openMovieDetail(movieId) {
-  showSpinner();
-  try {
-    const res = await fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=es`);
-    const movie = await res.json();
-    const detailContainer = document.getElementById('movieDetailContent');
-    detailContainer.innerHTML = `
-      <h2>${movie.title}</h2>
-      <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}" style="width:200px; float:left; margin-right:20px;">
-      <p><strong>Fecha de lanzamiento:</strong> ${movie.release_date}</p>
-      <p><strong>Rating:</strong> ${movie.vote_average} (${renderStars(movie.vote_average)})</p>
-      <p>${movie.overview}</p>
-      <button class="action-btn" onclick="toggleFavorite(event, ${movie.id})">Favorito</button>
-    `;
-    document.getElementById('movieDetailModal').style.display = 'block';
-  } catch (error) {
-    console.error('Error abriendo detalle:', error);
-  } finally {
-    hideSpinner();
+    showSpinner();
+    try {
+      const res = await fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=es`);
+      const movie = await res.json();
+      const detailContainer = document.getElementById('movieDetailContent');
+      detailContainer.innerHTML = `
+        <h2>${movie.title}</h2>
+        <img src="${IMG_URL}${movie.poster_path}" alt="${movie.title}" style="width:200px; float:left; margin-right:20px;">
+        <p><strong>Fecha de lanzamiento:</strong> ${movie.release_date}</p>
+        <p><strong>Rating:</strong> ${movie.vote_average} (${renderStars(movie.vote_average)})</p>
+        <p>${movie.overview}</p>
+        <button class="action-btn" onclick="toggleFavorite(event, ${movie.id})">Favorito</button>
+        <a href="/infoPelicula/${movie.id}" class="action-btn">Ver más detalles</a>
+      `;
+      document.getElementById('movieDetailModal').style.display = 'block';
+    } catch (error) {
+      console.error('Error abriendo detalle:', error);
+    } finally {
+      hideSpinner();
+    }
   }
-}
+
+
 
 document.getElementById('closeMovieDetail').addEventListener('click', () => {
   document.getElementById('movieDetailModal').style.display = 'none';
@@ -257,6 +260,20 @@ document.getElementById('search').addEventListener('keydown', function(e) {
   }
 });
 
+document.getElementById('search').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      const query = this.value.trim();
+      if (query.length > 2) {
+        buscarSugerencias(query).then((results) => {
+          if (results.length > 0) {
+            window.location.href = `/infoPelicula/${results[0].id}`;
+          }
+        });
+      }
+    }
+  });
+
+
 function updateSuggestionActive(suggestions) {
   suggestions.forEach((item, idx) => {
     if (idx === currentSuggestionIndex) {
@@ -268,29 +285,32 @@ function updateSuggestionActive(suggestions) {
 }
 
 async function buscarSugerencias(query) {
-  try {
-    const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&language=es`);
-    const data = await res.json();
-    renderSuggestions(data.results);
-  } catch (error) {
-    console.error('Error buscando sugerencias:', error);
+    try {
+      const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&language=es`);
+      const data = await res.json();
+      renderSuggestions(data.results);
+      return data.results; // Devolvemos los resultados para usarlos en el Enter
+    } catch (error) {
+      console.error('Error buscando sugerencias:', error);
+      return [];
+    }
   }
-}
+
 
 function renderSuggestions(results) {
-  const suggestionsDiv = document.getElementById('suggestions');
-  suggestionsDiv.innerHTML = '';
-  results.slice(0, 5).forEach((movie, idx) => {
-    const item = document.createElement('div');
-    item.classList.add('suggestion-item');
-    item.textContent = movie.title;
-    item.addEventListener('click', () => {
-      document.getElementById('search').value = movie.title;
-      suggestionsDiv.innerHTML = '';
+    const suggestionsDiv = document.getElementById('suggestions');
+    suggestionsDiv.innerHTML = '';
+    results.slice(0, 5).forEach((movie) => {
+      const item = document.createElement('div');
+      item.classList.add('suggestion-item');
+      item.textContent = movie.title;
+      item.addEventListener('click', () => {
+        window.location.href = `/infoPelicula/${movie.id}`;
+      });
+      suggestionsDiv.appendChild(item);
     });
-    suggestionsDiv.appendChild(item);
-  });
-}
+  }
+
 // CINE RANDOMIZER
 async function generarRecomendacion() {
   const tipo = document.getElementById('tipoContenido').value;

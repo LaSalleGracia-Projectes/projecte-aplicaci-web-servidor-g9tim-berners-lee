@@ -4,25 +4,26 @@
 
 @section('content')
 <main>
-  <!-- BANNER/SLIDER -->
-  <section class="banner">
-    <div class="slider">
-      <div class="slides" id="bannerSlides">
-        @foreach($banners as $banner)
-          <div class="slide">
-            <img src="{{ $banner->image }}" alt="{{ $banner->titulo }}">
-          </div>
-        @endforeach
-      </div>
-      <button class="prev" id="prevSlide">&#10094;</button>
-      <button class="next" id="nextSlide">&#10095;</button>
-      <div class="indicators" id="sliderIndicators">
-        @foreach($banners as $index => $banner)
-          <span data-slide="{{ $index }}"></span>
-        @endforeach
-      </div>
+<!-- BANNER/SLIDER -->
+<section class="banner">
+  <div class="slider">
+    <div class="slides" id="bannerSlides">
+      @foreach($banners as $banner)
+        <div class="slide">
+          <img src="{{ $banner->image }}" alt="{{ $banner->titulo }}">
+        </div>
+      @endforeach
     </div>
-  </section>
+    <button class="prev" id="prevSlide">&#10094;</button>
+    <button class="next" id="nextSlide">&#10095;</button>
+    <div class="indicators" id="sliderIndicators">
+      @foreach($banners as $index => $banner)
+        <span class="dot" data-slide="{{ $index }}"></span>
+      @endforeach
+    </div>
+  </div>
+</section>
+
 
   <!-- TENDENCIAS -->
   <section class="trending">
