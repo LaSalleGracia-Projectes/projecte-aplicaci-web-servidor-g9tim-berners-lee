@@ -6,7 +6,13 @@
   <title>@yield('title', 'CritFlix')</title>
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('styles.css') }}">
-  <script defer src="{{ asset('script.js') }}"></script>
+  <script>
+    const API_KEY = "{{ config('tmdb.api_key') }}";
+    const BASE_URL = "{{ config('tmdb.base_url') }}";
+    const IMG_URL = "{{ config('tmdb.img_url') }}";
+</script>
+<script type="module" src="{{ asset('script.js') }}"></script>
+
 </head>
 <body>
   @include('partials.header')
