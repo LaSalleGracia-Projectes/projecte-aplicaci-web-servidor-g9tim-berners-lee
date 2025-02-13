@@ -6,6 +6,7 @@
   <title>@yield('title', 'CritFlix')</title>
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('styles.css') }}">
+  @stack('styles')
   <script>
     const API_KEY = "{{ config('tmdb.api_key') }}";
     const BASE_URL = "{{ config('tmdb.base_url') }}";
@@ -22,5 +23,7 @@
 
   @include('partials.back-to-top')
   @include('partials.footer')
+  @stack('scripts')
 </body>
-</html>
+
+  
