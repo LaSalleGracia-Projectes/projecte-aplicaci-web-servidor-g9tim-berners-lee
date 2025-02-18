@@ -24,9 +24,10 @@
     <h2>Registrarse</h2>
     <form id="registerForm" method="POST" action="{{ route('register') }}">
       @csrf
-      <input type="email" name="correo" placeholder="Correo" required>
-      <input type="password" name="contrasena" placeholder="Contraseña" required>
-      <input type="password" name="contrasena_confirmation" placeholder="Repetir Contraseña" required>
+      <input type="text" name="name" placeholder="Nombre" required>
+      <input type="email" name="email" placeholder="Correo" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <input type="password" name="password_confirmation" placeholder="Repetir Contraseña" required>
       <button type="submit" class="action-btn">Registrarse</button>
     </form>
     <div class="social-login">

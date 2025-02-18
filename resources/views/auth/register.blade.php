@@ -6,11 +6,12 @@
 <main>
   <section class="register-page">
     <h2>Registrarse</h2>
-    <form method="POST" action="{{ route('register') }}">
+    <form id="registerForm">
       @csrf
-      <input type="email" name="correo" placeholder="Correo" required>
-      <input type="password" name="contrasena" placeholder="Contraseña" required>
-      <input type="password" name="contrasena_confirmation" placeholder="Repetir Contraseña" required>
+      <input type="text" id="name" placeholder="Nombre" required>
+      <input type="email" id="email" placeholder="Correo" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <input type="password" id="password_confirmation" placeholder="Repetir Contraseña" required>
       <button type="submit" class="action-btn">Registrarse</button>
     </form>
     <div class="social-login">
@@ -20,4 +21,5 @@
     </div>
   </section>
 </main>
+
 @endsection
