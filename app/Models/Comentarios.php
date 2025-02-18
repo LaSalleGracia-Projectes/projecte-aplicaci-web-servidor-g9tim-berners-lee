@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Usuarios;
+use App\Models\User;
 use App\Models\PeliculasSeries;
 use App\Models\LikesComentarios;
 
@@ -16,7 +16,7 @@ class Comentarios extends Model
     protected $table = 'Comentarios';
 
     protected $fillable = [
-        'id_usuario',
+        'user_id',
         'id_pelicula',
         'comentario',
         'es_spoiler',
@@ -28,7 +28,7 @@ class Comentarios extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'id_usuario');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function peliculaSerie()

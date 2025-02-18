@@ -2,47 +2,72 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
+    use HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'foto_perfil',
+        'biografia',
+        'rol',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // ✅ Relación con Valoraciones
+    public function valoraciones()
+    {
+        return $this->hasMany(Valoraciones::class, 'user_id');
+    }
+
+    // ✅ Relación con Comentarios
+    public function comentarios()
+    {
+        return $this->hasMany(Comentarios::class, 'user_id');
+    }
+
+    // ✅ Relación con Listas
+    public function listas()
+    {
+        return $this->hasMany(Listas::class, 'user_id');
+    }
+
+    // ✅ Relación con Notificaciones
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificaciones::class, 'user_id');
+    }
+
+    // ✅ Relación con Recomendaciones
+    public function recomendaciones()
+    {
+        return $this->hasMany(Recomendaciones::class, 'user_id');
+    }
+
+    // ✅ Relación con Seguimientos
+    public function seguimientos()
+    {
+        return $this->hasMany(Seguimiento::class, 'user_id');
     }
 }

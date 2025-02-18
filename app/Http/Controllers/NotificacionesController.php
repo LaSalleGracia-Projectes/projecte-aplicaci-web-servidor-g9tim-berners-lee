@@ -32,13 +32,13 @@ class NotificacionesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:usuarios,id',
             'mensaje' => 'required|string',
             'tipo' => 'required|in:nueva_temporada,nuevo_comentario,estreno',
         ]);
 
         $notificacion = Notificaciones::create([
-            'id_usuario' => $request->id_usuario,
+            'user_id' => $request->user_id,
             'mensaje' => $request->mensaje,
             'tipo' => $request->tipo,
         ]);

@@ -2,13 +2,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class CriticosController extends Controller
 {
     public function index()
     {
-        $criticos = Usuarios::where('rol', 'critico')->get();
+        $criticos = User::where('rol', 'critico')->get();
         return view('criticos', compact('criticos'));
     }
 }

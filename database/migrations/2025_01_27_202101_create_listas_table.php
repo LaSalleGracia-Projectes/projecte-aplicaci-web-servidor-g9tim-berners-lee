@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('listas', function (Blueprint $table) {
             $table->id('id');
-            $table->unsignedBigInteger('id_usuario');
             $table->string('nombre_lista', 100);
-            $table->foreign('id_usuario')->references('id')->on('usuarios');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
