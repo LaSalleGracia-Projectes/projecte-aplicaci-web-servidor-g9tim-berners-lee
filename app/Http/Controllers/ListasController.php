@@ -15,14 +15,14 @@ class ListasController extends Controller
     public function index()
     {
         $listas = Listas::with('usuario')->get();
-    
+
         return response()->json([
             'message' => 'Listas obtenidas correctamente',
             'data' => $listas
         ], 200);
     }
-    
-    
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -38,12 +38,12 @@ class ListasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:usuarios,id',
             'nombre_lista' => 'required|string|max:100',
         ]);
 
         $lista = Listas::create([
-            'id_usuario' => $request->id_usuario,
+            'user_id' => $request->user_id,
             'nombre_lista' => $request->nombre_lista,
         ]);
 

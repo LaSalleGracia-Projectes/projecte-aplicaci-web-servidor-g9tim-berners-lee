@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PeliculasSeries;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class Valoraciones extends Model
 {
@@ -15,7 +15,7 @@ class Valoraciones extends Model
     protected $table = 'Valoraciones';
 
     protected $fillable = [
-        'id_usuario',
+        'user_id',
         'id_pelicula',
         'valoracion',
         'fecha_creacion',
@@ -25,7 +25,7 @@ class Valoraciones extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'id_usuario');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function peliculaSerie()

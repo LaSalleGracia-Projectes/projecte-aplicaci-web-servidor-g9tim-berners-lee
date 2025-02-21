@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuarios;
-use App\Http\Requests\StoreUsuariosRequest;
-use App\Http\Requests\UpdateUsuariosRequest;
+use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
 
-class UsuariosController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $usuarios = Usuarios::all();
-        return response()->json($usuarios);
+        $user = User::all();
+        return response()->json($user);
     }
 
     /**
@@ -32,15 +32,15 @@ class UsuariosController extends Controller
     public function store(Request $request)
     {
     $request->validate([
-        'nombre_usuario' => 'required|string|max:50',
-        'correo' => 'required|email|unique:usuarios',
-        'contrasena' => 'required|string|min:6',
+        'name' => 'required|string|max:50',
+        'email' => 'required|email|unique:user',
+        'password' => 'required|string|min:6',
     ]);
 
-    $usuario = Usuarios::create([
-        'nombre_usuario' => $request->nombre_usuario,
-        'correo' => $request->correo,
-        'contrasena' => bcrypt($request->contrasena),
+    $usuario = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
         'foto_perfil' => $request->foto_perfil,
         'biografia' => $request->biografia,
         'rol' => $request->rol ?? 'usuario',
@@ -55,14 +55,14 @@ class UsuariosController extends Controller
      */
     public function show($id)
     {
-        $usuario = Usuarios::findOrFail($id);
+        $usuario = User::findOrFail($id);
         return response()->json($usuario);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Usuarios $usuarios)
+    public function edit(User $user)
     {
         //
     }
@@ -72,12 +72,12 @@ class UsuariosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $usuario = Usuarios::findOrFail($id);
+        $usuario = User::findOrFail($id);
 
         $request->validate([
-            'nombre_usuario' => 'sometimes|string|max:50',
-            'correo' => 'sometimes|email|unique:usuarios,correo,' . $id,
-            'contrasena' => 'sometimes|string|min:6',
+            'name' => 'sometimes|string|max:50',
+            'email' => 'sometimes|email|unique:User,email,' . $id,
+            'password' => 'sometimes|string|min:6',
         ]);
 
         $usuario->update($request->all());
@@ -90,7 +90,7 @@ class UsuariosController extends Controller
      */
     public function destroy($id)
     {
-        $usuario = Usuarios::findOrFail($id);
+        $usuario = User::findOrFail($id);
         $usuario->delete();
 
         return response()->json(['message' => 'Usuario eliminado']);

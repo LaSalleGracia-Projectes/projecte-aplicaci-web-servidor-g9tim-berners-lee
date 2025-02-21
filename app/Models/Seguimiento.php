@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PeliculasSeries;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class Seguimiento extends Model
 {
@@ -15,7 +15,7 @@ class Seguimiento extends Model
     protected $table = 'Seguimientos';
 
     protected $fillable = [
-        'id_usuario',
+        'user_id',
         'id_pelicula',
         'fecha_seguimiento',
     ];
@@ -24,7 +24,7 @@ class Seguimiento extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'id_usuario');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function peliculaSerie()
