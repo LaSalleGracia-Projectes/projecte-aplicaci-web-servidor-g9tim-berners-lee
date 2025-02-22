@@ -5,6 +5,7 @@
     --azul-claro: #81D4FA;
     --blanco: #FFFFFF;
     --negro-suave: #212121;
+    --negro: #000000;
     /* Colores de estados */
     --verde-pastel: #66BB6A;
     --amarillo-dorado: #FFC107;
@@ -20,15 +21,15 @@
 
   body {
     font-family: 'Montserrat', sans-serif;
-    background: var(--blanco);
-    color: var(--negro-suave);
+    background: var(--negro);
+    color: var(--verde-pastel);
     line-height: 1.6;
   }
 
   /* HEADER */
   header {
-    background: var(--blanco);
-    border-bottom: 1px solid var(--azul-claro);
+    background: var(--negro-suave);
+    border-bottom: 1px solid var(--negro-suave);
     display: flex;
     align-items: center;
     padding: 10px 20px;
@@ -38,7 +39,7 @@
   .logo a {
     font-size: 1.8em;
     font-weight: bold;
-    color: var(--naranja-vivo);
+    color: var(--verde-pastel);
     text-decoration: none;
     margin-right: 30px;
   }
@@ -56,14 +57,14 @@
   }
 
   nav ul li a {
-    color: var(--azul-claro);
+    color: var(--blanco);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
   }
 
   nav ul li a:hover {
-    color: var(--naranja-vivo);
+    color: var(--verde-pastel);
   }
 
   /* Buscador */
@@ -73,7 +74,7 @@
 
   .search input {
     padding: 5px 10px;
-    border: 1px solid var(--azul-claro);
+    border: 1px solid var(--verde-pastel);
     border-radius: 3px;
   }
 
@@ -83,7 +84,7 @@
     left: 0;
     background: var(--blanco);
     width: 100%;
-    border: 1px solid var(--azul-claro);
+    border: 1px solid var(--verde-pastel);
     z-index: 10;
   }
 
@@ -94,7 +95,7 @@
 
   .suggestion-item.active,
   .suggestion-item:hover {
-    background: var(--naranja-vivo);
+    background: var(--verde-pastel);
     color: var(--blanco);
   }
 
@@ -112,7 +113,7 @@
   }
 
   .modal-content {
-    background: var(--blanco);
+    background: var(--negro-suave);
     margin: 10% auto;
     padding: 20px;
     width: 90%;
@@ -141,14 +142,14 @@
     width: 100%;
     padding: 10px;
     margin: 8px 0;
-    border: 1px solid var(--azul-claro);
+    border: 1px solid var(--verde-pastel);
     border-radius: 3px;
   }
 
   .modal-content form button {
     width: 100%;
     padding: 10px;
-    background: var(--naranja-vivo);
+    background: var(--verde-pastel);
     color: var(--blanco);
     border: none;
     border-radius: 3px;
@@ -157,7 +158,7 @@
   }
 
   .modal-content form button:hover {
-    background: #FF8C33;
+    background: darkgreen;
   }
 
   /* Botones secundarios */
@@ -260,14 +261,14 @@
   /* TENDENCIAS */
   .trending {
     padding: 20px;
-    background: var(--blanco);
+    background: var(--negro-suave);
   }
 
   .trending h2 {
     margin-bottom: 10px;
     padding-left: 10px;
     font-size: 1.8em;
-    color: var(--naranja-vivo);
+    color: var(--verde-pastel);
   }
 
   .trending-container {
@@ -284,7 +285,7 @@
     overflow: hidden;
     width: 150px;
     flex-shrink: 0;
-    border: 1px solid var(--naranja-vivo);
+    border: 1px solid var(--verde-pastel);
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
   }
