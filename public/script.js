@@ -380,6 +380,7 @@ function setupModals() {
     const registerModal = document.getElementById("registerModal");
     const closeLogin = document.getElementById("closeLogin");
     const closeRegister = document.getElementById("closeRegister");
+    const logoutButton = document.getElementById("logoutButton");
 
     loginLink.addEventListener("click", (e) => {
         e.preventDefault();
@@ -413,6 +414,20 @@ function setupModals() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    const loginLink = document.getElementById("loginLink");
+    const registerLink = document.getElementById("registerLink");
+    const logoutButton = document.getElementById("logoutButton");
+
+    if (localStorage.getItem("token")) {
+        loginLink.style.display = "none";
+        registerLink.style.display = "none";
+    }
+
+    logoutButton.addEventListener("click", function () {
+        localStorage.removeItem("token");
+        window.location.reload(); // Recargar la página
+    });
+
     // Capturar el formulario de registro dentro del modal
     document.getElementById("registerForm").addEventListener("submit", function (event) {
         event.preventDefault();
