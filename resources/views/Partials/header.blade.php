@@ -13,8 +13,10 @@
         <input type="text" id="search" placeholder="Buscar...">
         <div id="suggestions"></div>
       </li>
-      <li><a href="#" id="loginLink">Iniciar Sesión</a></li>
-      <li><a href="#" id="registerLink">Registrarse</a></li>
+        <li><a href="#" id="loginLink">Iniciar Sesión</a></li>
+        <li><a href="#" id="registerLink">Registrarse</a></li>
+        <li><button id="logoutButton">Cerrar Sesión</button></li>
+
     </ul>
   </nav>
 </header>
