@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('notificaciones', function (Blueprint $table) {
             $table->id('id');
-            $table->unsignedBigInteger('id_usuario');
             $table->text('mensaje');
             $table->enum('tipo', ['nueva_temporada', 'nuevo_comentario', 'estreno']);
             $table->boolean('leido')->default(false);
-            $table->foreign('id_usuario')->references('id')->on('usuarios');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

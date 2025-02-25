@@ -16,6 +16,8 @@ Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 Route::get('/peliculas', [PeliculasController::class, 'index'])->name('peliculas');
 Route::get('/peliculas/{id}', [PeliculasController::class, 'show'])->name('pelicula.detail');
 
+Route::get('/infoPelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.show');
+
 Route::get('/series', [SeriesController::class, 'index'])->name('series');
 
 Route::get('/tendencias', [TendenciasController::class, 'index'])->name('tendencias');

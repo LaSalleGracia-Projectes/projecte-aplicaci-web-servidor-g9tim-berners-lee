@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ContenidoListas;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class Listas extends Model
 {
@@ -15,7 +15,7 @@ class Listas extends Model
     protected $table = 'listas';
 
     protected $fillable = [
-        'id_usuario',
+        'user_id',
         'nombre_lista',
         'fecha_creacion',
     ];
@@ -24,7 +24,7 @@ class Listas extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'id_usuario');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function contenidosListas()

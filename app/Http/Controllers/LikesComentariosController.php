@@ -32,13 +32,13 @@ class LikesComentariosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:usuarios,id',
             'id_comentario' => 'required|exists:comentarios,id',
             'tipo' => 'required|in:like,dislike',
         ]);
 
         $likeComentario = LikesComentarios::create([
-            'id_usuario' => $request->id_usuario,
+            'user_id' => $request->user_id,
             'id_comentario' => $request->id_comentario,
             'tipo' => $request->tipo,
         ]);
@@ -73,12 +73,12 @@ class LikesComentariosController extends Controller
         $request->validate([
             'tipo' => ['required', 'in:like,dislike'],
         ]);
-    
+
         $likeComentario->update($request->all());
-    
+
         return response()->json($likeComentario);
     }
-    
+
 
     /**
      * Remove the specified resource from storage.

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PeliculasSeries;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -17,7 +17,7 @@ class HomeController extends Controller
         $trendingMovies = PeliculasSeries::where('tipo', 'pelicula')->orderBy('año_estreno', 'desc')->take(5)->get();
 
         // Obtener críticos destacados
-        $criticos = Usuarios::where('rol', 'critico')->get();
+        $criticos = User::where('rol', 'critico')->get();
 
         // Opcional: Obtener favoritos del usuario autenticado
         $favoritos = []; // Lógica para obtener favoritos según la sesión del usuario

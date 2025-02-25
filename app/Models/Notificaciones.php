@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Usuarios;
+use App\Models\User;
 
 class Notificaciones extends Model
 {
@@ -14,7 +14,7 @@ class Notificaciones extends Model
     protected $table = 'Notificaciones';
 
     protected $fillable = [
-        'id_usuario',
+        'user_id',
         'mensaje',
         'tipo',
         'leido',
@@ -25,6 +25,6 @@ class Notificaciones extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'id_usuario');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

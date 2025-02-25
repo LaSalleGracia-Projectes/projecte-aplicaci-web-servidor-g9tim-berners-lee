@@ -32,13 +32,13 @@ class ComentariosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:usuarios,id',
             'id_pelicula' => 'required|exists:peliculas_series,id',
             'comentario' => 'required|string',
         ]);
 
         $comentario = Comentarios::create([
-            'id_usuario' => $request->id_usuario,
+            'user_id' => $request->user_id,
             'id_pelicula' => $request->id_pelicula,
             'comentario' => $request->comentario,
             'es_spoiler' => $request->es_spoiler ?? false,

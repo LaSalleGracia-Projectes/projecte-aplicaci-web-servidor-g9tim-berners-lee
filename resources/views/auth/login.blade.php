@@ -6,11 +6,11 @@
 <main>
   <section class="login-page">
     <h2>Iniciar Sesión</h2>
-    <form method="POST" action="{{ route('login') }}">
+    <form id="loginForm">
       @csrf
-      <input type="text" name="correo" placeholder="Correo o Usuario" required>
-      <input type="password" name="contrasena" placeholder="Contraseña" required>
-      <label><input type="checkbox" name="remember"> Recuérdame</label>
+      <input type="email" id="email" placeholder="Correo o Usuario" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <label><input type="checkbox" id="remember"> Recuérdame</label>
       <button type="submit" class="action-btn">Login</button>
       <p><a href="#">¿Has olvidado tu contraseña?</a></p>
     </form>
@@ -19,4 +19,5 @@
     </div>
   </section>
 </main>
+
 @endsection
