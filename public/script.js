@@ -513,6 +513,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//PERFIL USUARIO
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("profileButton");
+    if (localStorage.getItem("token")) {
+        profileButton.classList.remove("hidden");
+        profileButton.addEventListener("click", function () {
+            window.location.href = "/perfil";
+        });
+    }
+});
+
 
 // NAVEGACIÓN EN TENDENCIAS
 document.getElementById("trendingPrev").addEventListener("click", () => {
