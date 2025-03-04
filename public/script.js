@@ -421,11 +421,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (localStorage.getItem("token")) {
         loginLink.style.display = "none";
         registerLink.style.display = "none";
+        logoutButton.style.display = "block";
+    } else {
+        logoutButton.style.display = "none";
     }
 
     logoutButton.addEventListener("click", function () {
         localStorage.removeItem("token");
-        window.location.reload(); // Recargar la página
+        window.location.reload();
     });
 
     // Capturar el formulario de registro dentro del modal
@@ -508,6 +511,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error:", error);
             });
     });
+});
+
+//PERFIL USUARIO
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("profileButton");
+    if (localStorage.getItem("token")) {
+        profileButton.classList.remove("hidden");
+        profileButton.addEventListener("click", function () {
+            window.location.href = "/perfil";
+        });
+    }
 });
 
 
