@@ -35,6 +35,10 @@
                     <i class="fas fa-user-plus"></i>
                     <span>Registrarse</span>
                 </button>
+                <button id="logoutButton" class="auth-btn logout-btn hidden">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
             </div>
         </div>
     </div>

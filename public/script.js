@@ -421,11 +421,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (localStorage.getItem("token")) {
         loginLink.style.display = "none";
         registerLink.style.display = "none";
+        logoutButton.style.display = "block";
+    } else {
+        logoutButton.style.display = "none";
     }
 
     logoutButton.addEventListener("click", function () {
         localStorage.removeItem("token");
-        window.location.reload(); // Recargar la página
+        window.location.reload();
     });
 
     // Capturar el formulario de registro dentro del modal
