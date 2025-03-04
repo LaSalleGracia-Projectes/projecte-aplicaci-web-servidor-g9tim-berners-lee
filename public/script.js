@@ -518,11 +518,42 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileButton = document.getElementById("profileButton");
     if (localStorage.getItem("token")) {
         profileButton.classList.remove("hidden");
-        profileButton.addEventListener("click", function () {
-            window.location.href = "/perfil";
-        });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("profileButton");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    profileButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        if (profileDropdown.style.display === "block") {
+            profileDropdown.style.opacity = "0";
+            profileDropdown.style.transform = "translateY(-10px)";
+            setTimeout(() => {
+                profileDropdown.style.display = "none";
+            }, 300);
+        } else {
+            profileDropdown.style.display = "block";
+            setTimeout(() => {
+                profileDropdown.style.opacity = "1";
+                profileDropdown.style.transform = "translateY(0)";
+            }, 10);
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.style.opacity = "0";
+            profileDropdown.style.transform = "translateY(-10px)";
+            setTimeout(() => {
+                profileDropdown.style.display = "none";
+            }, 300);
+        }
+    });
+});
+
 
 
 // NAVEGACIÓN EN TENDENCIAS
