@@ -12,7 +12,7 @@
   <section class="random-movies">
     <h2>Películas Destacadas</h2>
     <div class="movies-container" id="randomMoviesContainer">
-      @if(count($randomMovies) > 0)
+    @if(!empty($randomMovies) && $randomMovies->count() > 0)
         @foreach($randomMovies as $movie)
           <div class="movie-card" data-title="{{ strtolower($movie->title) }}">
             <img src="{{ $movie->poster_url }}" alt="{{ $movie->title }}">
