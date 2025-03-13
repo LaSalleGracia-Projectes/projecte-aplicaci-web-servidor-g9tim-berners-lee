@@ -44,13 +44,6 @@
                 <button id="profileButton" class="auth-btn profile-btn hidden">
                     <i class="fas fa-user"></i>
                 </button>
-                <div id="profileDropdown" class="dropdown hidden">
-                    <ul>
-                        <li><a href="/perfil">Perfil</a></li>
-                        <li><a href="/listas">Listas</a></li>
-                        <li><a href="/favoritos">Favoritos</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
