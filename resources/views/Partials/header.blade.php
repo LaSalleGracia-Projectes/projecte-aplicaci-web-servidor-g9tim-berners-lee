@@ -18,13 +18,14 @@
         </nav>
 
         <div class="header-actions">
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search" placeholder="Buscar películas, series...">
-                    <div id="suggestions" class="search-suggestions"></div>
-                </div>
-            </div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search" placeholder="Buscar películas, series...">
+            <div id="suggestions" class="search-suggestions"></div>
+        </div>
+    </div>
+</div>
 
             <div class="auth-buttons">
                 <button id="loginLink" class="auth-btn login-btn">
@@ -48,3 +49,5 @@
         </div>
     </div>
 </header>
+
+

@@ -1,0 +1,438 @@
+/* Estilos para la página de perfil - CineNeon */
+
+/* Container principal */
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 20px 40px; /* Espacio extra para el header fijo */
+}
+
+/* Cabecera del perfil */
+.profile-header {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, var(--negro-suave) 0%, var(--negro) 100%);
+    border-radius: 15px;
+    padding: 30px;
+    border: 1px solid var(--verde-neon);
+    box-shadow: 0 0 20px rgba(20, 255, 20, 0.2);
+    margin-bottom: 30px;
+}
+
+/* Avatar del perfil */
+.profile-avatar {
+    flex: 0 0 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--verde-neon);
+    box-shadow: 0 0 15px var(--verde-neon);
+    background: var(--negro-suave);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 30px;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar-placeholder i {
+    font-size: 60px;
+    color: var(--verde-neon);
+}
+
+/* Información del perfil */
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h1 {
+    font-size: 2.5em;
+    color: var(--verde-principal);
+    text-shadow: 0 0 10px rgba(20, 255, 20, 0.3);
+    margin-bottom: 15px;
+}
+
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-meta span {
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+}
+
+.profile-meta i {
+    color: var(--verde-neon);
+    margin-right: 8px;
+}
+
+/* Botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-neon {
+    background: none;
+    border: 2px solid var(--verde-neon);
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-neon:hover {
+    background: var(--verde-neon);
+    color: var(--negro);
+    box-shadow: 0 0 15px var(--verde-neon);
+}
+
+.btn-neon i {
+    margin-right: 8px;
+}
+
+.btn-cancel {
+    background: none;
+    border: 2px solid var(--rojo-suave);
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-cancel:hover {
+    background: var(--rojo-suave);
+    color: var(--blanco);
+}
+
+.btn-cancel i {
+    margin-right: 8px;
+}
+
+/* Pestañas de navegación */
+.profile-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--verde-neon);
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    color: var(--blanco);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 10px 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: var(--verde-neon);
+}
+
+.tab-button::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--verde-neon);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.tab-button.active::after {
+    width: 100%;
+}
+
+.tab-button:hover {
+    color: var(--verde-principal);
+}
+
+/* Contenido de las pestañas */
+.tab-panel {
+    display: none;
+    background: rgba(18, 18, 18, 0.8);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid var(--verde-neon);
+    box-shadow: 0 0 10px rgba(20, 255, 20, 0.1);
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Biografía */
+.bio-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.bio-container h2 {
+    color: var(--verde-principal);
+    border-left: 4px solid var(--verde-neon);
+    padding-left: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.bio-container p {
+    line-height: 1.8;
+    font-size: 1.1em;
+}
+
+/* Grid de películas */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    font-style: italic;
+    color: rgba(255,255,255,0.7);
+}
+
+/* Formulario de perfil */
+.profile-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(18, 18, 18, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--verde-neon);
+    box-shadow: 0 0 20px rgba(20, 255, 20, 0.1);
+}
+
+.profile-form-container h1 {
+    color: var(--verde-principal);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2em;
+    text-shadow: 0 0 10px rgba(20, 255, 20, 0.3);
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 1.1em;
+    color: var(--verde-claro);
+}
+
+.form-input, .form-textarea {
+    background: var(--negro);
+    border: 2px solid var(--verde-neon);
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--blanco);
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--verde-neon);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-error {
+    color: var(--rojo-suave);
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Alerta */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.alert-danger {
+    background: rgba(229, 57, 53, 0.2);
+    border: 1px solid var(--rojo-suave);
+    color: var(--rojo-suave);
+}
+
+.alert-success {
+    background: rgba(0, 255, 60, 0.2);
+    border: 1px solid var(--verde-principal);
+    color: var(--verde-principal);
+}
+
+/* Carga de foto de perfil */
+.profile-photo-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.current-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--verde-neon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--negro-suave);
+    margin: 0 auto;
+}
+
+.current-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-placeholder i {
+    font-size: 40px;
+    color: var(--verde-neon);
+}
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-upload-label {
+    background: var(--verde-neon);
+    color: var(--negro);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-upload-label:hover {
+    background: var(--verde-claro);
+}
+
+.file-input {
+    display: none;
+}
+
+.selected-file-name {
+    font-size: 0.9em;
+    color: var(--verde-claro);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .profile-meta {
+        justify-content: center;
+    }
+
+    .action-buttons {
+        justify-content: center;
+    }
+
+    .profile-tabs {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-neon, .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
