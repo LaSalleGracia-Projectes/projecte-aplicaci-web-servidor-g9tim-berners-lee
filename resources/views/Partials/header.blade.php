@@ -18,13 +18,14 @@
         </nav>
 
         <div class="header-actions">
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search" placeholder="Buscar películas, series...">
-                    <div id="suggestions" class="search-suggestions"></div>
-                </div>
-            </div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search" placeholder="Buscar películas, series...">
+            <div id="suggestions" class="search-suggestions"></div>
+        </div>
+    </div>
+</div>
 
             <div class="auth-buttons">
                 <button id="loginLink" class="auth-btn login-btn">
@@ -35,16 +36,13 @@
                     <i class="fas fa-user-plus"></i>
                     <span>Registrarse</span>
                 </button>
-                <button id="logoutButton" class="auth-btn logout-btn hidden">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                </button>
-            </div>
-            <div class="profile-buttons">
-                <button id="profileButton" class="auth-btn profile-btn hidden">
+                <button id="profileLink" class="auth-btn profile-btn">
                     <i class="fas fa-user"></i>
+                    <span>Perfil</span>
                 </button>
             </div>
         </div>
     </div>
 </header>
+
+
