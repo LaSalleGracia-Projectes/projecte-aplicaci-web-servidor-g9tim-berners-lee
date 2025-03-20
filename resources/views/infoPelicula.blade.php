@@ -190,11 +190,8 @@
     </div>
 </main>
 @endsection
-@stack('styles')
-  <script>
-    const API_KEY = "{{ config('tmdb.api_key') }}";
-    const BASE_URL = "{{ config('tmdb.base_url') }}";
-    const IMG_URL = "{{ config('tmdb.img_url') }}";
-</script>
-<script type="module" src="{{ asset('movie-details.js') }}"></script>
+
+@section('scripts')
+    <script type="module" src="{{ asset('js/main.js') }}"></script>
+@endsection
 
