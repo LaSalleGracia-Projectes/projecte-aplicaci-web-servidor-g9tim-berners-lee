@@ -188,6 +188,7 @@
                     </div>
                     @endif
                 </div>
+            </section>
             </div>
 
             <!-- Reparto principal -->

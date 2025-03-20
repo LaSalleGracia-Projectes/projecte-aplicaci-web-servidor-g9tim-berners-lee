@@ -35,7 +35,3 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/random/generate', [RandomController::class, 'generate'])->name('random.generate');
-
-Route::get('/perfil', function () {
-    return view('perfil');
-})->name('perfil');

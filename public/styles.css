@@ -49,64 +49,6 @@ body {
     justify-content: space-between;
 }
 
-.profile-buttons {
-    position: relative;
-    display: inline-block;
-}
-
-.profile-buttons {
-    position: relative;
-}
-
-.profile-buttons .profile-btn {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-}
-
-.profile-buttons .profile-btn:hover {
-    background-color: #555;
-}
-
-#profileDropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: #333;
-    border: 1px solid #444;
-    width: 180px;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#profileDropdown ul {
-    margin: 0;
-    padding: 0;
-}
-
-#profileDropdown ul li {
-    border-bottom: 1px solid #444;
-}
-
-#profileDropdown ul li a {
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    display: block;
-}
-
-#profileDropdown ul li a:hover {
-    background-color: #555;
-}
-
-.profile-buttons:hover #profileDropdown {
-    display: block;
-}
-
 /* Logo */
 .logo a {
     display: flex;

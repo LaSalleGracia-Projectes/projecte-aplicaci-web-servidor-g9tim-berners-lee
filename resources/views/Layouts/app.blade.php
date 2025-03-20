@@ -13,7 +13,7 @@
     const BASE_URL = "{{ config('tmdb.base_url') }}";
     const IMG_URL = "{{ config('tmdb.img_url') }}";
 </script>
-<script type="module" src="{{ asset('script.js') }}"></script>
+<script type="module" src="{{ asset('js/main.js') }}"></script>
 
 </head>
 <body>
@@ -25,5 +25,8 @@
   @include('partials.back-to-top')
   @include('partials.footer')
   @stack('scripts')
+
+  <!-- Yield para scripts específicos de cada página -->
+  @yield('scripts')
 </body>
 
