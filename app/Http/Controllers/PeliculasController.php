@@ -15,9 +15,9 @@ class PeliculasController extends Controller
 
         // Obtener películas aleatorias para la sección destacada
         $randomMovies = PeliculasSeries::where('tipo', 'pelicula')
-                        ->inRandomOrder()
-                        ->limit(5)
-                        ->get();
+            ->inRandomOrder()
+            ->limit(5)
+            ->get();
 
         // Géneros predefinidos
         $genresList = [
@@ -36,12 +36,10 @@ class PeliculasController extends Controller
 
     public function show($id)
     {
-        // Intentar obtener la película de la base de datos primero
         $pelicula = PeliculasSeries::where('id', $id)
-                  ->where('tipo', 'pelicula')
-                  ->first();
+            ->where('tipo', 'pelicula')
+            ->first();
 
-        // Si no existe en la base de datos, buscar en TMDB
         if (!$pelicula) {
             $apiKey = env('TMDB_API_KEY');
             $response = Http::get("https://api.themoviedb.org/3/movie/{$id}?api_key={$apiKey}&language=es-ES");
@@ -52,35 +50,48 @@ class PeliculasController extends Controller
 
             $peliculaData = $response->json();
 
-            // Crear una nueva entrada en la base de datos
             $pelicula = new PeliculasSeries();
             $pelicula->id = $peliculaData['id'];
             $pelicula->titulo = $peliculaData['title'];
             $pelicula->sinopsis = $peliculaData['overview'] ?? '';
-            $pelicula->elenco = $this->getActorsList($peliculaData['id'], $apiKey);
             $pelicula->año_estreno = substr($peliculaData['release_date'] ?? date('Y-m-d'), 0, 4);
             $pelicula->duracion = $peliculaData['runtime'] ?? null;
             $pelicula->api_id = $peliculaData['id'];
             $pelicula->tipo = 'pelicula';
-
             $pelicula->save();
         }
 
-        // Obtener la URL del póster y rating desde TMDB
+        // Obtener información adicional desde la API de TMDB
         $apiKey = env('TMDB_API_KEY');
         $tmdbId = $pelicula->api_id ?? $pelicula->id;
-        $response = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}?api_key={$apiKey}&language=es-ES");
 
+        $response = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}?api_key={$apiKey}&language=es-ES");
         if (!$response->failed()) {
             $movieData = $response->json();
             $pelicula->poster_url = 'https://image.tmdb.org/t/p/w500' . ($movieData['poster_path'] ?? '');
             $pelicula->tmdb_rating = $movieData['vote_average'] ?? 0;
+            $pelicula->backdrop_url = isset($movieData['backdrop_path']) ? 'https://image.tmdb.org/t/p/original' . $movieData['backdrop_path'] : null;
         } else {
             $pelicula->poster_url = asset('images/no-poster.jpg');
             $pelicula->tmdb_rating = 0;
+            $pelicula->backdrop_url = null;
         }
 
-        return view('infoPelicula', compact('pelicula'));
+        // Obtener elenco y director
+        $casting = $this->getActorsList($tmdbId, $apiKey);
+        $elenco = $casting['elenco'];
+        $director = $casting['director'];
+
+        // Obtener proveedores de streaming
+        $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
+
+        $watchProviders = [];
+        if (!$watchProvidersResponse->failed()) {
+            $watchProvidersData = $watchProvidersResponse->json();
+            $watchProviders = $watchProvidersData['results']['ES'] ?? [];
+        }
+
+        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders'));
     }
 
     /**
@@ -91,20 +102,14 @@ class PeliculasController extends Controller
         $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}/credits?api_key={$apiKey}&language=es-ES");
 
         if ($response->failed()) {
-            return '';
+            return [];
         }
 
         $credits = $response->json();
-        $actors = [];
 
-        // Tomar los primeros 5 actores
-        $cast = $credits['cast'] ?? [];
-        for ($i = 0; $i < min(5, count($cast)); $i++) {
-            if (isset($cast[$i]['name'])) {
-                $actors[] = $cast[$i]['name'];
-            }
-        }
+        $elenco = $credits['cast'] ?? [];
+        $director = collect($credits['crew'])->firstWhere('job', 'Director');
 
-        return implode(', ', $actors);
+        return compact('elenco', 'director'); // Devuelve un array con la información
     }
 }
