@@ -97,14 +97,16 @@ class PeliculasController extends Controller
         $credits = $response->json();
         $actors = [];
 
-        // Tomar los primeros 5 actores
-        $cast = $credits['cast'] ?? [];
-        for ($i = 0; $i < min(5, count($cast)); $i++) {
-            if (isset($cast[$i]['name'])) {
-                $actors[] = $cast[$i]['name'];
-            }
-        }
+        $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$id}/watch/providers?api_key={$apiKey}");
+        $watchProviders = $watchProvidersResponse->json()['results']['ES'] ?? [];
 
-        return implode(', ', $actors);
+        $creditsResponse = Http::get("https://api.themoviedb.org/3/movie/{$id}/credits?api_key={$apiKey}&language=es-ES");
+        $credits = $creditsResponse->json();
+
+        $elenco = $credits['cast'] ?? [];
+        $director = collect($credits['crew'])->firstWhere('job', 'Director');
+
+        return view('infoPelicula', compact('pelicula', 'watchProviders', 'elenco', 'director'));
     }
+
 }

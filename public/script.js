@@ -872,6 +872,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (localStorage.getItem("token")) {
         loginLink.style.display = "none";
         registerLink.style.display = "none";
+        logoutButton.style.display = "block";
+    } else {
+        logoutButton.style.display = "none";
     }
 
     // Botón de logout
@@ -946,6 +949,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch((error) => console.error("Error:", error));
     });
 });
+
 
 // ========================================
 // SECCIÓN CRÍTICOS
