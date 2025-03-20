@@ -14,7 +14,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 
 Route::get('/peliculas', [PeliculasController::class, 'index'])->name('peliculas');
-Route::get('/peliculas/{id}', [PeliculasController::class, 'show'])->name('pelicula.detail');
+Route::get('/pelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.detail');
 
 Route::get('/infoPelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.show');
 

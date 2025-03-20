@@ -1,0 +1,303 @@
+/* VARIABLES DE COLOR */
+:root {
+    /* Colores principales */
+    --verde-neon: #14ff14;
+    --verde-principal: #00ff3c;
+    --verde-claro: #00ffdd;
+    --blanco: #FFFFFF;
+    --negro: #000000;
+    --negro-suave: #121212;
+    /* Colores de estados */
+    --verde-pastel: #66BB6A;
+    --verde-oscuro: #1B5E20;
+    --rojo-suave: #E53935;
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--negro);
+    color: var(--blanco);
+    line-height: 1.6;
+}
+
+/* HEADER FIJO */
+.main-header {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--verde-neon);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ESPACIADO PARA QUE NO TAPE EL CONTENIDO */
+.movie-detail {
+    padding-top: 100px;
+}
+
+/* MOVIE HEADER */
+.movie-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(180deg, var(--negro-suave) 0%, var(--negro) 100%);
+    border-bottom: 2px solid var(--verde-neon);
+}
+
+.movie-poster img {
+    width: 300px;
+    height: 450px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px var(--verde-neon);
+}
+
+.movie-info {
+    max-width: 600px;
+    margin-left: 40px;
+}
+
+.movie-info h1 {
+    font-size: 2.5em;
+    color: var(--verde-principal);
+    text-shadow: 0 0 10px rgba(20, 255, 20, 0.3);
+}
+
+/* METADATA DE PELÍCULA */
+.movie-meta {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
+    font-size: 1.2em;
+}
+
+.movie-meta i {
+    color: var(--verde-neon);
+    margin-right: 5px;
+}
+
+/* SINOPSIS */
+.movie-description {
+    margin-top: 20px;
+}
+
+.movie-description h2 {
+    color: var(--verde-principal);
+    border-left: 4px solid var(--verde-neon);
+    padding-left: 10px;
+    font-size: 1.5em;
+}
+
+/* REPARTO */
+.movie-cast h2 {
+    color: var(--verde-principal);
+    margin-top: 20px;
+}
+
+/* BOTONES DE ACCIÓN */
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.action-buttons button {
+    background: none;
+    border: 2px solid var(--verde-neon);
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.action-buttons button:hover {
+    background: var(--verde-neon);
+    color: var(--negro);
+}
+
+.action-buttons i {
+    margin-right: 5px;
+}
+
+/* TABS */
+.movie-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    color: var(--blanco);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 10px 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: var(--verde-neon);
+}
+
+.tab-button::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--verde-neon);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.tab-button.active::after {
+    width: 100%;
+}
+
+/* CONTENIDO DE LOS TABS */
+.tab-panel {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.tab-panel.active {
+    display: block;
+    background: rgba(18, 18, 18, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+/* CRÍTICAS */
+.add-review {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.add-review h3 {
+    color: var(--verde-principal);
+}
+
+.add-review textarea {
+    width: 100%;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--verde-neon);
+    color: var(--blanco);
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+/* ESTRELLAS */
+.stars i {
+    color: var(--verde-neon);
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.stars i:hover,
+.stars i.fas {
+    color: var(--verde-claro);
+}
+
+/* BOTÓN DE CRÍTICA */
+.btn-submit-review {
+    background: var(--verde-neon);
+    color: var(--negro);
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+}
+
+.btn-submit-review:hover {
+    background: var(--verde-claro);
+}
+
+/* PELÍCULAS SIMILARES */
+.related-movies-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.movie-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    width: 200px;
+}
+
+.movie-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.movie-card h3 {
+    color: var(--verde-neon);
+    margin-top: 10px;
+}
+
+.btn-details {
+    display: block;
+    background: var(--verde-neon);
+    color: var(--negro);
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.btn-details:hover {
+    background: var(--verde-claro);
+}
+
+/* BOTÓN VOLVER */
+.back-button {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.back-button a {
+    background: var(--verde-neon);
+    color: var(--negro);
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 15px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.back-button a:hover {
+    background: var(--verde-claro);
+}
