@@ -36,6 +36,10 @@
                     <i class="fas fa-user-plus"></i>
                     <span>Registrarse</span>
                 </button>
+                <button id="profileLink" class="auth-btn profile-btn">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </button>
             </div>
         </div>
     </div>

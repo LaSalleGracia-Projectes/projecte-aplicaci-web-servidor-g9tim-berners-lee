@@ -16,6 +16,7 @@ const authModule = {
         const closeLogin = document.getElementById("closeLogin");
         const closeRegister = document.getElementById("closeRegister");
         const movieDetailModal = document.getElementById("movieDetailModal");
+        const profileLink = document.getElementById("profileLink");
 
         // Abrir modales
         if (loginLink && loginModal) {
@@ -29,6 +30,16 @@ const authModule = {
             registerLink.addEventListener("click", (e) => {
                 e.preventDefault();
                 registerModal.classList.add("show");
+            });
+        }
+
+        if (profileLink) {
+            profileLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                const token = localStorage.getItem("token");
+                if (token) {
+                    window.location.href = "/profile";
+                }
             });
         }
 
