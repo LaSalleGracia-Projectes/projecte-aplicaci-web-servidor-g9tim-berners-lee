@@ -10,8 +10,7 @@
 <main class="pelicula-detalle">
     <!-- Banner grande con título -->
     <div class="banner">
-        <img src="{{ isset($pelicula['backdrop_path']) ? 'https://image.tmdb.org/t/p/original'.$pelicula['backdrop_path'] : asset('images/default-backdrop.jpg') }}"
-             alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
+    <img src="{{ $pelicula->backdrop_url}}" alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
         <div class="titulo-overlay">
             <h1>{{ $pelicula['title'] ?? $pelicula->titulo }}</h1>
             @if(!empty($pelicula['tagline'] ?? ''))
@@ -44,39 +43,41 @@
                 </button>
             </div>
 
-            <!-- Dónde ver (servicios de streaming) -->
-            <div class="donde-ver">
-                <h3>Disponible en:</h3>
-                <div class="plataformas">
-                    @if(isset($watchProviders['flatrate']) && count($watchProviders['flatrate']) > 0)
-                        @foreach($watchProviders['flatrate'] as $plataforma)
-                        <div class="plataforma">
-                            <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                            <span>{{ $plataforma['provider_name'] }}</span>
-                        </div>
-                        @endforeach
-                    @elseif(isset($watchProviders['rent']) && count($watchProviders['rent']) > 0)
-                        <h4>Alquiler:</h4>
-                        @foreach($watchProviders['rent'] as $plataforma)
-                        <div class="plataforma">
-                            <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                            <span>{{ $plataforma['provider_name'] }}</span>
-                        </div>
-                        @endforeach
-                    @elseif(isset($watchProviders['buy']) && count($watchProviders['buy']) > 0)
-                        <h4>Compra:</h4>
-                        @foreach($watchProviders['buy'] as $plataforma)
-                        <div class="plataforma">
-                            <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                            <span>{{ $plataforma['provider_name'] }}</span>
-                        </div>
-                        @endforeach
-                    @else
-                        <p>Información no disponible</p>
-                    @endif
-                </div>
+<!-- Dónde ver (servicios de streaming) -->
+<div class="donde-ver">
+    <h3>Disponible en:</h3>
+    <div class="plataformas">
+        @if(isset($watchProviders['flatrate']) && count($watchProviders['flatrate']) > 0)
+            @foreach($watchProviders['flatrate'] as $plataforma)
+            <div class="plataforma">
+                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
+                <span>{{ $plataforma['provider_name'] }}</span>
             </div>
+            @endforeach
+        @elseif(isset($watchProviders['rent']) && count($watchProviders['rent']) > 0)
+            <h4>Alquiler:</h4>
+            @foreach($watchProviders['rent'] as $plataforma)
+            <div class="plataforma">
+                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
+                <span>{{ $plataforma['provider_name'] }}</span>
+            </div>
+            @endforeach
+        @elseif(isset($watchProviders['buy']) && count($watchProviders['buy']) > 0)
+            <h4>Compra:</h4>
+            @foreach($watchProviders['buy'] as $plataforma)
+            <div class="plataforma">
+                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
+                <span>{{ $plataforma['provider_name'] }}</span>
+            </div>
+            @endforeach
+        @else
+            <p>Información no disponible</p>
+        @endif
+    </div>
+</div>
+
         </div>
+
 
         <!-- Columna central: información detallada -->
         <div class="columna-central">

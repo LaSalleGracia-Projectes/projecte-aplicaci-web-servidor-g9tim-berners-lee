@@ -15,9 +15,9 @@ class PeliculasController extends Controller
 
         // Obtener películas aleatorias para la sección destacada
         $randomMovies = PeliculasSeries::where('tipo', 'pelicula')
-                        ->inRandomOrder()
-                        ->limit(5)
-                        ->get();
+            ->inRandomOrder()
+            ->limit(5)
+            ->get();
 
         // Géneros predefinidos
         $genresList = [
@@ -37,13 +37,12 @@ class PeliculasController extends Controller
     public function show($id)
     {
         $pelicula = PeliculasSeries::where('id', $id)
-                  ->where('tipo', 'pelicula')
-                  ->first();
+            ->where('tipo', 'pelicula')
+            ->first();
 
         if (!$pelicula) {
             $apiKey = env('TMDB_API_KEY');
             $response = Http::get("https://api.themoviedb.org/3/movie/{$id}?api_key={$apiKey}&language=es-ES");
-            dd($pelicula);
 
             if ($response->failed()) {
                 abort(404, 'La película no se encontró');
@@ -71,9 +70,11 @@ class PeliculasController extends Controller
             $movieData = $response->json();
             $pelicula->poster_url = 'https://image.tmdb.org/t/p/w500' . ($movieData['poster_path'] ?? '');
             $pelicula->tmdb_rating = $movieData['vote_average'] ?? 0;
+            $pelicula->backdrop_url = isset($movieData['backdrop_path']) ? 'https://image.tmdb.org/t/p/original' . $movieData['backdrop_path'] : null;
         } else {
             $pelicula->poster_url = asset('images/no-poster.jpg');
             $pelicula->tmdb_rating = 0;
+            $pelicula->backdrop_url = null;
         }
 
         // Obtener elenco y director
@@ -81,7 +82,16 @@ class PeliculasController extends Controller
         $elenco = $casting['elenco'];
         $director = $casting['director'];
 
-        return view('infoPelicula', compact('pelicula', 'elenco', 'director'));
+        // Obtener proveedores de streaming
+        $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
+
+        $watchProviders = [];
+        if (!$watchProvidersResponse->failed()) {
+            $watchProvidersData = $watchProvidersResponse->json();
+            $watchProviders = $watchProvidersData['results']['ES'] ?? [];
+        }
+
+        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders'));
     }
 
     /**
