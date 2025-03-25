@@ -80,6 +80,8 @@ const authModule = {
         if (localStorage.getItem("token")) {
             if (loginLink) loginLink.style.display = "none";
             if (registerLink) registerLink.style.display = "none";
+        } else {
+            if (profileLink) profileLink.style.display = "none";
         }
 
         // Botón de logout

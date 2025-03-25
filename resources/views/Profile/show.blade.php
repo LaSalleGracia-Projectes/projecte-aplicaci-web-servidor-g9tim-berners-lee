@@ -31,6 +31,9 @@
                 <a href="{{ route('profile.change-password') }}" class="btn-neon">
                     <i class="fas fa-key"></i> Cambiar Contraseña
                 </a>
+                <button id="logout-btn" class="btn-neon btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
             </div>
         </div>
     </div>

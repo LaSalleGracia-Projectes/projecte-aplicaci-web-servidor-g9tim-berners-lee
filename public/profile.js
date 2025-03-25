@@ -3,6 +3,18 @@
  * CineNeon - Sistema de gestión de películas
  */
 
+const logoutButton = document.getElementById("logout-btn");
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+        console.log("Saliendo...");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/";
+    });
+} else {
+    console.log("No se encontró el botón de logout.");
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inicialización de pestañas
     initTabs();
