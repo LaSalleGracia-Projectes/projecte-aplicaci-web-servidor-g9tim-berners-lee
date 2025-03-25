@@ -37,8 +37,9 @@ const authModule = {
             profileLink.addEventListener("click", (e) => {
                 e.preventDefault();
                 const token = localStorage.getItem("token");
-                if (token) {
-                    window.location.href = "/profile";
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (token && user && user.id) {
+                    window.location.href = `/profile/${user.id}`;
                 }
             });
         }
@@ -79,12 +80,15 @@ const authModule = {
         if (localStorage.getItem("token")) {
             if (loginLink) loginLink.style.display = "none";
             if (registerLink) registerLink.style.display = "none";
+        } else {
+            if (profileLink) profileLink.style.display = "none";
         }
 
         // Botón de logout
         if (logoutButton) {
             logoutButton.addEventListener("click", () => {
                 localStorage.removeItem("token");
+                localStorage.removeItem("user");
                 window.location.reload();
             });
         }
@@ -119,8 +123,9 @@ const authModule = {
                         alert("Error en el registro: " + JSON.stringify(data.errors));
                     } else if (data.token) {
                         localStorage.setItem("token", data.token);
+                        localStorage.setItem("user", JSON.stringify(data.user));
                         document.getElementById("registerModal").classList.remove("show");
-                        window.location.href = "/"; // Redirige a la página principal
+                        window.location.href = "/";
                     } else {
                         alert("Error en el registro");
                     }
@@ -156,6 +161,7 @@ const authModule = {
                         alert("Error en el login: " + JSON.stringify(data.errors));
                     } else if (data.token) {
                         localStorage.setItem("token", data.token);
+                        localStorage.setItem("user", JSON.stringify(data.user));
                         window.location.href = "/";
                     } else {
                         alert("Error en el login");

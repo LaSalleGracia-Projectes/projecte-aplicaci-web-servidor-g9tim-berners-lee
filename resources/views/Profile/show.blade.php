@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('profile.css') }}">
+<link rel="stylesheet" href="{{ asset('profile.css') }}">
 @endpush
 
 @section('content')
@@ -9,11 +9,11 @@
     <div class="profile-header">
         <div class="profile-avatar">
             @if($user->foto_perfil)
-                <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil">
+            <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil">
             @else
-                <div class="profile-avatar-placeholder">
-                    <i class="fas fa-user"></i>
-                </div>
+            <div class="profile-avatar-placeholder">
+                <i class="fas fa-user"></i>
+            </div>
             @endif
         </div>
         <div class="profile-info">
@@ -25,12 +25,15 @@
             </div>
 
             <div class="action-buttons">
-                <a href="{{ route('profile.edit') }}" class="btn-neon">
+                <a href="{{ route('profile.edit', $user->id) }}" class= "btn-neon">
                     <i class="fas fa-edit"></i> Editar Perfil
                 </a>
                 <a href="{{ route('profile.change-password') }}" class="btn-neon">
                     <i class="fas fa-key"></i> Cambiar Contraseña
                 </a>
+                <button id="logout-btn" class="btn-neon btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
             </div>
         </div>
     </div>
@@ -50,9 +53,9 @@
             <div class="bio-container">
                 <h2>Sobre mí</h2>
                 @if($user->biografia)
-                    <p>{{ $user->biografia }}</p>
+                <p>{{ $user->biografia }}</p>
                 @else
-                    <p class="empty-state">No has añadido una biografía todavía.</p>
+                <p class="empty-state">No has añadido una biografía todavía.</p>
                 @endif
             </div>
         </div>
@@ -88,5 +91,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('profile.js') }}"></script>
+<script src="{{ asset('profile.js') }}"></script>
 @endsection

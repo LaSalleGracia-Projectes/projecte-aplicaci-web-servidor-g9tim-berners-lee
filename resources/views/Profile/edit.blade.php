@@ -13,8 +13,8 @@
             </div>
         @endif
 
-        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="profile-form">
-            @csrf
+        <form action="{{ route('profile.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="profile-form">
+        @csrf
             @method('PUT')
 
             <div class="form-group">
@@ -70,7 +70,7 @@
                 <button type="submit" class="btn-neon">
                     <i class="fas fa-save"></i> Guardar Cambios
                 </button>
-                <a href="{{ route('profile.show') }}" class="btn-cancel">
+                <a href="{{ route('profile.show', $user->id) }}" class="btn-cancel">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             </div>
