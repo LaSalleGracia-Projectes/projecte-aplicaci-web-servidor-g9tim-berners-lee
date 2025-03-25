@@ -13,8 +13,8 @@ use App\Http\Controllers\UsuariosController;
 
 // Rutas de perfil - todas públicas temporalmente para demo
 Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
-Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
-Route::put('/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
+Route::get('/profile/{id}/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile/{id}', [UserProfileController::class, 'update'])->name('profile.update');
 Route::get('/profile/change-password', [UserProfileController::class, 'showChangePasswordForm'])->name('profile.change-password');
 Route::post('/profile/change-password', [UserProfileController::class, 'changePassword'])->name('profile.password.update');
 Route::get('/', [HomeController::class, 'index'])->name('home');

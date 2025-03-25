@@ -22,33 +22,44 @@ class UserProfileController extends Controller
     /**
      * Mostrar el formulario para editar el perfil (versión demo)
      */
-    public function edit()
+    public function edit($id)
     {
-        // Mismo usuario de ejemplo
-        $user = new User();
-        $user->name = "Usuario Ejemplo";
-        $user->email = "usuario@ejemplo.com";
-        $user->biografia = "Esta es una biografía de ejemplo para mostrar cómo se vería el perfil de un usuario.";
-        $user->foto_perfil = null;
-
+        $user = User::findOrFail($id);
         return view('profile.edit', compact('user'));
     }
 
     /**
      * Simulación de actualización del perfil (versión demo)
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        // Solo simulamos la validación
-        $request->validate([
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
             'name' => 'required|string|max:50',
-            'email' => 'required|string|email|max:100',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'biografia' => 'nullable|string|max:500',
             'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Redirigimos como si se hubiera actualizado
-        return redirect()->route('profile.show')->with('success', 'Perfil actualizado correctamente (demostración)');
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->biografia = $validatedData['biografia'] ?? null;
+
+        if ($request->hasFile('foto_perfil')) {
+            if ($user->foto_perfil) {
+                Storage::delete('public/' . $user->foto_perfil);
+            }
+
+            $photoPath = $request->file('foto_perfil')->store('profile_photos', 'public');
+            $user->foto_perfil = $photoPath;
+        }
+
+        $user->save();
+
+        // Asegúrate de pasar el ID del usuario al redirigir
+        return redirect()->route('profile.show', ['id' => $user->id])
+            ->with('success', 'Perfil actualizado correctamente');
     }
 
     /**
