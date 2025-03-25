@@ -9,9 +9,10 @@ use App\Http\Controllers\TendenciasController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RandomController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\UsuariosController;
 
 // Rutas de perfil - todas públicas temporalmente para demo
-Route::get('/profile', [UserProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
 Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
 Route::put('/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
 Route::get('/profile/change-password', [UserProfileController::class, 'showChangePasswordForm'])->name('profile.change-password');

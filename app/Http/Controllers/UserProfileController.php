@@ -10,17 +10,12 @@ class UserProfileController extends Controller
     /**
      * Mostrar el perfil del usuario (versión demo)
      */
-    public function show()
+    public function show($id)
     {
-        // Creamos un usuario de ejemplo para mostrar sin autenticación
-        $user = new User();
-        $user->name = "Usuario Ejemplo";
-        $user->email = "usuario@ejemplo.com";
-        $user->biografia = "Esta es una biografía de ejemplo para mostrar cómo se vería el perfil de un usuario.";
-        $user->foto_perfil = null; // Sin foto de perfil
-        $user->rol = "usuario";
-        $user->created_at = now()->subMonths(6); // Miembro desde hace 6 meses
-
+        $user = User::find($id);
+        if (!$user) {
+            abort(404);
+        }
         return view('profile.show', compact('user'));
     }
 
