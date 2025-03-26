@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('profile.css') }}">
+<link rel="stylesheet" href="{{ asset('profile.css') }}">
 @endpush
 @section('content')
 <div class="profile-container">
@@ -8,20 +8,20 @@
         <h1>Editar Perfil</h1>
 
         @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
         @endif
 
         <form action="{{ route('profile.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="profile-form">
-        @csrf
+            @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="name">Nombre</label>
                 <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required class="form-input">
                 @error('name')
-                    <span class="form-error">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -29,7 +29,7 @@
                 <label for="email">Correo electrónico</label>
                 <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required class="form-input">
                 @error('email')
-                    <span class="form-error">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -37,19 +37,19 @@
                 <label for="biografia">Biografía</label>
                 <textarea id="biografia" name="biografia" rows="5" class="form-textarea">{{ old('biografia', $user->biografia) }}</textarea>
                 @error('biografia')
-                    <span class="form-error">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group profile-photo-upload">
                 <label>Foto de Perfil</label>
                 <div class="current-photo">
-                    @if($user->foto_perfil)
-                        <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil actual">
+                    @if ($user->foto_perfil)
+                    <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil" width="150">
                     @else
-                        <div class="photo-placeholder">
-                            <i class="fas fa-user"></i>
-                        </div>
+                    <div class="photo-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
                     @endif
                 </div>
 
@@ -62,7 +62,7 @@
                 </div>
 
                 @error('foto_perfil')
-                    <span class="form-error">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -80,5 +80,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('profile.js') }}"></script>
+<script src="{{ asset('profile.js') }}"></script>
 @endsection
