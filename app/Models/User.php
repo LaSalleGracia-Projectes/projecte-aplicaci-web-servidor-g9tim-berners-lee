@@ -18,6 +18,7 @@ class User extends Authenticatable
         'email',
         'password',
         'foto_perfil',
+        'foto_perfil_mime',
         'biografia',
         'rol',
     ];
@@ -33,6 +34,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getFotoPerfilBase64Attribute()
+    {
+        if ($this->attributes['foto_perfil'] && $this->foto_perfil_mime) {
+            return 'data:' . $this->foto_perfil_mime . ';base64,' . base64_encode($this->attributes['foto_perfil']);
+        }
+        return null;
     }
 
     // ✅ Relación con Valoraciones

@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class UserProfileController extends Controller
 {
-    /**
-     * Mostrar el perfil del usuario (versión demo)
-     */
     public function show($id)
     {
         $user = User::find($id);
@@ -19,18 +17,12 @@ class UserProfileController extends Controller
         return view('profile.show', compact('user'));
     }
 
-    /**
-     * Mostrar el formulario para editar el perfil (versión demo)
-     */
     public function edit($id)
     {
         $user = User::findOrFail($id);
         return view('profile.edit', compact('user'));
     }
 
-    /**
-     * Simulación de actualización del perfil (versión demo)
-     */
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -45,19 +37,14 @@ class UserProfileController extends Controller
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
         $user->biografia = $validatedData['biografia'] ?? null;
-
         if ($request->hasFile('foto_perfil')) {
             if ($user->foto_perfil) {
-                Storage::delete('public/' . $user->foto_perfil);
+                Storage::disk('public')->delete($user->foto_perfil);
             }
-
-            $photoPath = $request->file('foto_perfil')->store('profile_photos', 'public');
-            $user->foto_perfil = $photoPath;
+            $path = $request->file('foto_perfil')->store('perfiles', 'public');
+            $user->foto_perfil = $path;
         }
-
         $user->save();
-
-        // Asegúrate de pasar el ID del usuario al redirigir
         return redirect()->route('profile.show', ['id' => $user->id])
             ->with('success', 'Perfil actualizado correctamente');
     }
@@ -69,6 +56,18 @@ class UserProfileController extends Controller
     {
         return view('profile.change-password');
     }
+
+    public function obtenerFotoPerfil($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (!$user->foto_perfil) {
+            return response()->file(public_path('images/default-profile.png'));
+        }
+
+        return response()->file(storage_path('app/public/' . $user->foto_perfil));
+    }
+
 
     /**
      * Simulación de cambio de contraseña (versión demo)
