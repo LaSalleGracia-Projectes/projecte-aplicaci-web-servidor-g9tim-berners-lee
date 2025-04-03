@@ -4,56 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class UserProfileController extends Controller
 {
-    /**
-     * Mostrar el perfil del usuario (versión demo)
-     */
-    public function show()
+    public function show($id)
     {
-        // Creamos un usuario de ejemplo para mostrar sin autenticación
-        $user = new User();
-        $user->name = "Usuario Ejemplo";
-        $user->email = "usuario@ejemplo.com";
-        $user->biografia = "Esta es una biografía de ejemplo para mostrar cómo se vería el perfil de un usuario.";
-        $user->foto_perfil = null; // Sin foto de perfil
-        $user->rol = "usuario";
-        $user->created_at = now()->subMonths(6); // Miembro desde hace 6 meses
-
+        $user = User::find($id);
+        if (!$user) {
+            abort(404);
+        }
         return view('profile.show', compact('user'));
     }
 
-    /**
-     * Mostrar el formulario para editar el perfil (versión demo)
-     */
-    public function edit()
+    public function edit($id)
     {
-        // Mismo usuario de ejemplo
-        $user = new User();
-        $user->name = "Usuario Ejemplo";
-        $user->email = "usuario@ejemplo.com";
-        $user->biografia = "Esta es una biografía de ejemplo para mostrar cómo se vería el perfil de un usuario.";
-        $user->foto_perfil = null;
-
+        $user = User::findOrFail($id);
         return view('profile.edit', compact('user'));
     }
 
-    /**
-     * Simulación de actualización del perfil (versión demo)
-     */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        // Solo simulamos la validación
-        $request->validate([
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
             'name' => 'required|string|max:50',
-            'email' => 'required|string|email|max:100',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'biografia' => 'nullable|string|max:500',
             'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Redirigimos como si se hubiera actualizado
-        return redirect()->route('profile.show')->with('success', 'Perfil actualizado correctamente (demostración)');
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->biografia = $validatedData['biografia'] ?? null;
+        if ($request->hasFile('foto_perfil')) {
+            if ($user->foto_perfil) {
+                Storage::disk('public')->delete($user->foto_perfil);
+            }
+            $path = $request->file('foto_perfil')->store('perfiles', 'public');
+            $user->foto_perfil = $path;
+        }
+        $user->save();
+        return redirect()->route('profile.show', ['id' => $user->id])
+            ->with('success', 'Perfil actualizado correctamente');
     }
 
     /**
@@ -63,6 +56,18 @@ class UserProfileController extends Controller
     {
         return view('profile.change-password');
     }
+
+    public function obtenerFotoPerfil($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (!$user->foto_perfil) {
+            return response()->file(public_path('images/default-profile.png'));
+        }
+
+        return response()->file(storage_path('app/public/' . $user->foto_perfil));
+    }
+
 
     /**
      * Simulación de cambio de contraseña (versión demo)
