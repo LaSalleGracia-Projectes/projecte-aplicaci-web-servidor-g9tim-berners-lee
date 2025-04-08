@@ -4,28 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ContenidoListas;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreContenidoListasRequest;
-use App\Http\Requests\UpdateContenidoListasRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ContenidoListasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $contenidos = ContenidoListas::all();
-        return response()->json($contenidos);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -33,55 +15,53 @@ class ContenidoListasController extends Controller
     {
         $request->validate([
             'id_lista' => 'required|exists:listas,id',
-            'id_pelicula' => 'required|exists:peliculas_series,id',
+            'id_pelicula' => 'required|exists:peliculas,id',
         ]);
 
-        $contenidoLista = ContenidoListas::create([
+        // Verificar que la lista pertenezca al usuario autenticado
+        $lista = \App\Models\Listas::findOrFail($request->id_lista);
+
+        if ($lista->user_id != Auth::id()) {
+            return response()->json(['message' => 'No tienes permiso para modificar esta lista'], 403);
+        }
+
+        // Verificar si la película ya está en la lista
+        $existente = ContenidoListas::where('id_lista', $request->id_lista)
+            ->where('id_pelicula', $request->id_pelicula)
+            ->exists();
+
+        if ($existente) {
+            return response()->json(['message' => 'Esta película ya está en la lista'], 400);
+        }
+
+        // Crear el nuevo contenido
+        $contenido = ContenidoListas::create([
             'id_lista' => $request->id_lista,
-            'id_pelicula' => $request->id_pelicula,
+            'id_pelicula' => $request->id_pelicula
         ]);
 
-        return response()->json($contenidoLista, 201);
+        return response()->json([
+            'message' => 'Película añadida a la lista',
+            'data' => $contenido
+        ], 201);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        // Buscar el contenido en la lista con el ID especificado
-        $contenidoLista = ContenidoListas::findOrFail($id);
-    
-        // Devolver los detalles del contenido de la lista
-        return response()->json($contenidoLista);
-    }
-    
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ContenidoListas $contenidoListas)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateContenidoListasRequest $request)
-    {
-        //
-    }
-    
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $contenidoLista = ContenidoListas::findOrFail($id);
-        $contenidoLista->delete();
+        $contenido = ContenidoListas::findOrFail($id);
 
-        return response()->json(['message' => 'Contenido eliminado de la lista']);
+        // Verificar que la lista pertenezca al usuario autenticado
+        $lista = \App\Models\Listas::findOrFail($contenido->id_lista);
+
+        if ($lista->user_id != Auth::id()) {
+            return response()->json(['message' => 'No tienes permiso para modificar esta lista'], 403);
+        }
+
+        $contenido->delete();
+
+        return response()->json(['message' => 'Película eliminada de la lista']);
     }
 }

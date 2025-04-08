@@ -1,0 +1,248 @@
+.create-list-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.create-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--verde-neon);
+}
+
+.header-content h1 {
+    font-size: 2rem;
+    color: var(--verde-neon);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-content h1 i {
+    font-size: 1.8rem;
+}
+
+.header-content .subtitle {
+    color: var(--blanco);
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+.create-list-form-container {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--verde-neon);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--verde-neon);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label i {
+    width: 20px;
+    text-align: center;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--verde-neon);
+    border-radius: 8px;
+    color: var(--blanco);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.description-tips {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 255, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.description-tips p {
+    color: var(--verde-neon);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.description-tips ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.description-tips li {
+    color: var(--blanco);
+    opacity: 0.8;
+    margin-bottom: 0.3rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.description-tips li::before {
+    content: '•';
+    color: var(--verde-neon);
+    position: absolute;
+    left: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 2rem;
+}
+
+/* Estilos de botones actualizados */
+.btn-neon {
+    background: none;
+    border: 2px solid var(--verde-neon);
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-neon:hover {
+    background: var(--verde-neon);
+    color: var(--negro);
+    box-shadow: 0 0 15px var(--verde-neon);
+}
+
+.btn-neon i {
+    margin-right: 8px;
+}
+
+.btn-cancel {
+    background: none;
+    border: 2px solid var(--rojo-suave);
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-cancel:hover {
+    background: var(--rojo-suave);
+    color: var(--blanco);
+}
+
+.btn-cancel i {
+    margin-right: 8px;
+}
+
+.btn-create {
+    background: none;
+    border: 2px solid var(--verde-neon);
+    color: var(--blanco);
+}
+
+.btn-create:hover {
+    background: var(--verde-neon);
+    color: var(--negro);
+    box-shadow: 0 0 15px var(--verde-neon);
+}
+
+.invalid-feedback {
+    color: var(--rojo-suave);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .create-list-container {
+        padding: 1rem;
+    }
+
+    .create-list-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-neon, .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .create-list-form-container {
+        padding: 1rem;
+    }
+
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .description-tips {
+        font-size: 0.9rem;
+    }
+}
