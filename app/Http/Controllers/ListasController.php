@@ -27,9 +27,14 @@ class ListasController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if (!$request->query('user_id')) {
+            return redirect()->route('home')->with('error', 'Usuario no especificado');
+        }
+
+        $user_id = $request->query('user_id');
+        return view('listas.create', compact('user_id'));
     }
 
     /**
@@ -38,16 +43,19 @@ class ListasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:users,id',
             'nombre_lista' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:500'
         ]);
 
         $lista = Listas::create([
             'user_id' => $request->user_id,
             'nombre_lista' => $request->nombre_lista,
+            'descripcion' => $request->descripcion
         ]);
 
-        return response()->json($lista, 201);
+        return redirect()->route('profile.show', ['id' => $request->user_id])
+                        ->with('success', 'Lista creada exitosamente');
     }
 
     /**
@@ -56,15 +64,23 @@ class ListasController extends Controller
     public function show($id)
     {
         $lista = Listas::with('contenidos')->findOrFail($id);
-        return response()->json($lista);
+
+        // Si es una solicitud de API
+        if (request()->expectsJson()) {
+            return response()->json($lista);
+        }
+
+        // Si es una solicitud web
+        return view('listas.show', compact('lista'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Listas $listas)
+    public function edit($id)
     {
-        //
+        $lista = Listas::findOrFail($id);
+        return view('listas.edit', compact('lista'));
     }
 
     /**

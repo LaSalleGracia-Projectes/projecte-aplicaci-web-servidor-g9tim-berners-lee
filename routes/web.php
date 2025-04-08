@@ -21,6 +21,11 @@ Route::get('/profile/change-password', [UserProfileController::class, 'showChang
 Route::post('/profile/change-password', [UserProfileController::class, 'changePassword'])->name('profile.password.update');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::resource('listas', App\Http\Controllers\ListasController::class);
+Route::post('/api/contenido-listas', [App\Http\Controllers\ContenidoListasController::class, 'store']);
+Route::delete('/api/contenido-listas/{id}', [App\Http\Controllers\ContenidoListasController::class, 'destroy'])
+    ->name('contenido-listas.destroy');
+
 Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 Route::get('/haztecritico', [CriticosController::class, 'index'])->name('haztecritico');
 
