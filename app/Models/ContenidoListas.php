@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Listas;
-use App\Models\PeliculasSeries;
+use Illuminate\Support\Facades\Http;
 
 class ContenidoListas extends Model
 {
@@ -27,8 +27,15 @@ class ContenidoListas extends Model
         return $this->belongsTo(Listas::class, 'id_lista');
     }
 
-    public function peliculaSerie()
+    public function getPeliculaAttribute()
     {
-        return $this->belongsTo(PeliculasSeries::class, 'id_pelicula');
+        $apiKey = env('TMDB_API_KEY');
+        $response = Http::get("https://api.themoviedb.org/3/movie/{$this->id_pelicula}?api_key={$apiKey}&language=es-ES");
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return null;
     }
 }

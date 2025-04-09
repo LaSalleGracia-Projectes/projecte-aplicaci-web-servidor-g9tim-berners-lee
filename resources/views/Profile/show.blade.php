@@ -111,7 +111,7 @@
                             <div class="list-thumbnails">
                                 @foreach($lista->contenidosListas->take(4) as $contenido)
                                     <div class="thumbnail">
-                                        <img src="{{ asset('storage/posters/' . $contenido->pelicula->poster) }}" alt="{{ $contenido->pelicula->titulo }}">
+                                        <img src="https://image.tmdb.org/t/p/w500{{ $contenido->pelicula['poster_path'] ?? '' }}" alt="{{ $contenido->pelicula['title'] ?? '' }}">
                                     </div>
                                 @endforeach
                                 @if(count($lista->contenidosListas) > 4)
