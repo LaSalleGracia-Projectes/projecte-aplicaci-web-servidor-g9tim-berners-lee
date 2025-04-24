@@ -6,6 +6,7 @@ use App\Models\Listas;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreListasRequest;
 use App\Http\Requests\UpdateListasRequest;
+use Illuminate\Support\Facades\Log;
 
 class ListasController extends Controller
 {
@@ -29,11 +30,12 @@ class ListasController extends Controller
      */
     public function create(Request $request)
     {
-        if (!$request->query('user_id')) {
+        $user_id = $request->query('user_id');
+
+        if (!$user_id) {
             return redirect()->route('home')->with('error', 'Usuario no especificado');
         }
 
-        $user_id = $request->query('user_id');
         return view('listas.create', compact('user_id'));
     }
 
@@ -63,7 +65,7 @@ class ListasController extends Controller
      */
     public function show($id)
     {
-        $lista = Listas::with('contenidos')->findOrFail($id);
+        $lista = Listas::with('contenidosListas')->findOrFail($id);
 
         // Si es una solicitud de API
         if (request()->expectsJson()) {
@@ -90,9 +92,18 @@ class ListasController extends Controller
     {
         $lista = Listas::findOrFail($id);
 
-        $lista->update($request->all());
+        $request->validate([
+            'nombre_lista' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:500'
+        ]);
 
-        return response()->json($lista);
+        $lista->update([
+            'nombre_lista' => $request->nombre_lista,
+            'descripcion' => $request->descripcion
+        ]);
+
+        return redirect()->route('listas.show', $lista->id)
+                        ->with('success', 'Lista actualizada exitosamente');
     }
 
     /**

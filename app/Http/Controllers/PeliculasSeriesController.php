@@ -6,9 +6,19 @@ use App\Models\PeliculasSeries;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePeliculasSeriesRequest;
 use App\Http\Requests\UpdatePeliculasSeriesRequest;
+use Illuminate\Support\Facades\Http;
 
 class PeliculasSeriesController extends Controller
 {
+    protected $apiKey;
+    protected $baseUrl;
+
+    public function __construct()
+    {
+        $this->apiKey = config('services.tmdb.api_key');
+        $this->baseUrl = config('services.tmdb.base_url');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -88,5 +98,48 @@ class PeliculasSeriesController extends Controller
         $pelicula->delete();
 
         return response()->json(['message' => 'Película/Serie eliminada']);
+    }
+
+    public function searchTMDB(Request $request)
+    {
+        $query = $request->query('query');
+
+        if (!$query) {
+            return response()->json(['error' => 'Query parameter is required'], 400);
+        }
+
+        try {
+            $response = Http::get("{$this->baseUrl}/search/movie", [
+                'api_key' => $this->apiKey,
+                'query' => $query,
+                'language' => 'es-ES'
+            ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+
+            return response()->json(['error' => 'Error al buscar películas'], $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al conectar con TMDB'], 500);
+        }
+    }
+
+    public function getMovieFromTMDB($id)
+    {
+        try {
+            $response = Http::get("{$this->baseUrl}/movie/{$id}", [
+                'api_key' => $this->apiKey,
+                'language' => 'es-ES'
+            ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+
+            return response()->json(['error' => 'Error al obtener la película'], $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al conectar con TMDB'], 500);
+        }
     }
 }
