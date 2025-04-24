@@ -6,6 +6,7 @@ use App\Models\Listas;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreListasRequest;
 use App\Http\Requests\UpdateListasRequest;
+use Illuminate\Support\Facades\Log;
 
 class ListasController extends Controller
 {
@@ -29,11 +30,12 @@ class ListasController extends Controller
      */
     public function create(Request $request)
     {
-        if (!$request->query('user_id')) {
+        $user_id = $request->query('user_id');
+
+        if (!$user_id) {
             return redirect()->route('home')->with('error', 'Usuario no especificado');
         }
 
-        $user_id = $request->query('user_id');
         return view('listas.create', compact('user_id'));
     }
 

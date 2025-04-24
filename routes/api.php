@@ -22,14 +22,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+Route::apiResource('contenido_listas', ContenidoListasController::class);
 Route::apiResource('usuarios', UsuariosController::class);
 Route::apiResource('peliculas_series', PeliculasSeriesController::class);
 Route::apiResource('valoraciones', ValoracionesController::class);
 Route::apiResource('comentarios', ComentariosController::class);
 Route::apiResource('likes_comentarios', LikesComentariosController::class);
 Route::apiResource('listas', ListasController::class);
-Route::apiResource('contenido_listas', ContenidoListasController::class);
 Route::apiResource('notificaciones', NotificacionesController::class);
 Route::apiResource('recomendaciones', RecomendacionesController::class);
 Route::apiResource('seguimientos', SeguimientoController::class);
 Route::apiResource('administradores', AdministradoresController::class);
+
+// Rutas para TMDB
+Route::get('/tmdb/search', [PeliculasSeriesController::class, 'searchTMDB']);
+Route::get('/tmdb/movie/{id}', [PeliculasSeriesController::class, 'getMovieFromTMDB']);
