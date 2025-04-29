@@ -90,7 +90,10 @@ class PeliculasController extends Controller
             $watchProviders = $watchProvidersData['results']['ES'] ?? [];
         }
 
-        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders'));
+        // Obtener comentarios de la película
+        $comentarios = $pelicula->comentarios()->with('usuario')->orderBy('created_at', 'desc')->get();
+
+        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'comentarios'));
     }
 
     /**

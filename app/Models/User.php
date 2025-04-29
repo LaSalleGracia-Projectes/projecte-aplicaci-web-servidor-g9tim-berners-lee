@@ -79,4 +79,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Seguimiento::class, 'user_id');
     }
+
+    public function isAdmin()
+    {
+        return $this->rol === 'admin';
+    }
 }

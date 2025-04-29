@@ -13,25 +13,25 @@ class Comentarios extends Model
     /** @use HasFactory<\Database\Factories\ComentariosFactory> */
     use HasFactory;
 
-    protected $table = 'Comentarios';
+    protected $table = 'comentarios';
 
     protected $fillable = [
         'user_id',
         'id_pelicula',
         'comentario',
         'es_spoiler',
-        'destacado',
-        'fecha_creacion',
+        'created_at',
+        'updated_at'
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function usuario()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function peliculaSerie()
+    public function pelicula()
     {
         return $this->belongsTo(PeliculasSeries::class, 'id_pelicula');
     }
