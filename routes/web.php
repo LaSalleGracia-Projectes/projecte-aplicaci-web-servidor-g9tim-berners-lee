@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RandomController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\ComentariosController;
 
 // Rutas de perfil - todas públicas temporalmente para demo
 Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
@@ -43,3 +44,10 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/random/generate', [RandomController::class, 'generate'])->name('random.generate');
+
+// Rutas para comentarios
+Route::prefix('api')->group(function () {
+    Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
+    Route::post('/comentarios', [ComentariosController::class, 'store']);
+    Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
+});

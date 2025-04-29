@@ -56,6 +56,7 @@ class PeliculasController extends Controller
             $pelicula->sinopsis = $peliculaData['overview'] ?? '';
             $pelicula->año_estreno = substr($peliculaData['release_date'] ?? date('Y-m-d'), 0, 4);
             $pelicula->duracion = $peliculaData['runtime'] ?? null;
+            $pelicula->api_id = $peliculaData['id'];
             $pelicula->tipo = 'pelicula';
             $pelicula->save();
         }

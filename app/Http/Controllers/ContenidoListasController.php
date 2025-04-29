@@ -4,10 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\ContenidoListas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreContenidoListasRequest;
+use App\Http\Requests\UpdateContenidoListasRequest;
 
 class ContenidoListasController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $contenidos = ContenidoListas::all();
+        return response()->json($contenidos);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -16,38 +34,42 @@ class ContenidoListasController extends Controller
         $request->validate([
             'id_lista' => 'required|exists:listas,id',
             'tmdb_id' => 'required|integer',
-            'title' => 'required|string',
-            'poster_path' => 'nullable|string',
-            'release_date' => 'nullable|date',
-            'vote_average' => 'nullable|numeric',
+            'tipo' => 'required|in:pelicula,serie',
         ]);
 
-        // Verificar si la película ya está en la lista
-        $existente = ContenidoListas::where('id_lista', $request->id_lista)
-            ->where('tmdb_id', $request->tmdb_id)
-            ->exists();
+        $contenidoLista = ContenidoListas::create([
+            'id_lista' => $request->id_lista,
+            'tmdb_id' => $request->tmdb_id,
+            'tipo' => $request->tipo,
+        ]);
 
-        if ($existente) {
-            return response()->json(['message' => 'Esta película ya está en la lista'], 400);
-        }
+        return response()->json($contenidoLista, 201);
+    }
 
-        try {
-            // Crear el nuevo contenido
-            $contenido = ContenidoListas::create([
-                'id_lista' => $request->id_lista,
-                'tmdb_id' => $request->tmdb_id,
-                'tipo' => 'pelicula',
-                'fecha_agregado' => now()
-            ]);
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $contenidoLista = ContenidoListas::findOrFail($id);
 
-            return response()->json([
-                'message' => 'Película añadida a la lista',
-                'data' => $contenido
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Error al crear contenido de lista: ' . $e->getMessage());
-            return response()->json(['message' => 'Error al añadir la película a la lista'], 500);
-        }
+        return response()->json($contenidoLista);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(ContenidoListas $contenidoListas)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateContenidoListasRequest $request)
+    {
+        //
     }
 
     /**
@@ -55,14 +77,21 @@ class ContenidoListasController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $contenido = ContenidoListas::findOrFail($id);
-            $contenido->delete();
+        $contenidoLista = ContenidoListas::findOrFail($id);
+        $contenidoLista->delete();
 
-            return response()->json(['message' => 'Película eliminada de la lista']);
-        } catch (\Exception $e) {
-            Log::error('Error al eliminar contenido de lista: ' . $e->getMessage());
-            return response()->json(['message' => 'Error al eliminar la película de la lista'], 500);
-        }
+        return response()->json(['message' => 'Contenido eliminado de la lista']);
+    }
+
+    /**
+     * Get content for a specific list.
+     */
+    public function getContenidoByListaId($id_lista)
+    {
+        $contenidos = ContenidoListas::where('id_lista', $id_lista)->get();
+        return response()->json([
+            'message' => 'Contenido de la lista obtenido correctamente',
+            'data' => $contenidos
+        ], 200);
     }
 }

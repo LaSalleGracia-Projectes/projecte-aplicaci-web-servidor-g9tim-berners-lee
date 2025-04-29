@@ -3,39 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Valoraciones;
-use App\Http\Requests\StoreValoracionesRequest;
-use App\Http\Requests\UpdateValoracionesRequest;
 use Illuminate\Http\Request;
 
 class ValoracionesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $valoraciones = Valoraciones::all();
-        return response()->json($valoraciones);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
-            'id_pelicula' => 'required|exists:peliculas_series,id',
+            'user_id' => 'required|exists:users,id',
+            'id_pelicula' => 'required|integer',
             'valoracion' => 'required|in:like,dislike',
         ]);
+
+        // Verificar si ya existe la valoración
+        $existingValoracion = Valoraciones::where('user_id', $request->user_id)
+            ->where('id_pelicula', $request->id_pelicula)
+            ->first();
+
+        if ($existingValoracion) {
+            return response()->json($existingValoracion, 200);
+        }
 
         $valoracion = Valoraciones::create([
             'user_id' => $request->user_id,
@@ -46,44 +36,28 @@ class ValoracionesController extends Controller
         return response()->json($valoracion, 201);
     }
 
-
     /**
-     * Display the specified resource.
+     * Get user's favorite movies/shows.
      */
-    public function show($id)
+    public function getUserFavorites($userId)
     {
-        $valoracion = Valoraciones::findOrFail($id);
-        return response()->json($valoracion);
+        $favoritos = Valoraciones::where('user_id', $userId)
+            ->where('valoracion', 'like')
+            ->get();
+
+        return response()->json($favoritos);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Check if a movie/show is marked as favorite by a user.
      */
-    public function edit(Valoraciones $valoraciones)
+    public function checkFavoriteStatus($userId, $peliculaId)
     {
-        //
-    }
+        $favorito = Valoraciones::where('user_id', $userId)
+            ->where('id_pelicula', $peliculaId)
+            ->where('valoracion', 'like')
+            ->exists();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $valoracion = Valoraciones::findOrFail($id);
-
-        $valoracion->update($request->all());
-
-        return response()->json($valoracion);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $valoracion = Valoraciones::findOrFail($id);
-        $valoracion->delete();
-
-        return response()->json(['message' => 'Valoración eliminada']);
+        return response()->json($favorito);
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notificaciones;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreNotificacionesRequest;
-use App\Http\Requests\UpdateNotificacionesRequest;
 
 class NotificacionesController extends Controller
 {
@@ -14,16 +13,24 @@ class NotificacionesController extends Controller
      */
     public function index()
     {
-        $notificaciones = Notificaciones::all();
+        $notificaciones = Notificaciones::with('usuario')->orderBy('created_at', 'desc')->get();
         return response()->json($notificaciones);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get notifications for a specific user
      */
-    public function create()
+    public function getUserNotificaciones($userId)
     {
-        //
+        $notificaciones = Notificaciones::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($notificacion) {
+                $notificacion->leido = (bool)$notificacion->leido;
+                return $notificacion;
+            });
+            
+        return response()->json($notificaciones);
     }
 
     /**
@@ -32,15 +39,18 @@ class NotificacionesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:users,id',
             'mensaje' => 'required|string',
-            'tipo' => 'required|in:nueva_temporada,nuevo_comentario,estreno',
+            'tipo' => 'required|in:nuevo_like,nuevo_comentario',
         ]);
 
         $notificacion = Notificaciones::create([
             'user_id' => $request->user_id,
             'mensaje' => $request->mensaje,
             'tipo' => $request->tipo,
+            'leido' => false,
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         return response()->json($notificacion, 201);
@@ -56,11 +66,32 @@ class NotificacionesController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mark notification as read
      */
-    public function edit(Notificaciones $notificaciones)
+    public function markAsRead($id)
     {
-        //
+        $notificacion = Notificaciones::findOrFail($id);
+        
+        $notificacion->leido = true;
+        $notificacion->updated_at = now();
+        $notificacion->save();
+        
+        return response()->json($notificacion);
+    }
+
+    /**
+     * Mark all notifications as read for a user
+     */
+    public function markAllAsRead($userId)
+    {
+        Notificaciones::where('user_id', $userId)
+            ->where('leido', false)
+            ->update([
+                'leido' => true,
+                'updated_at' => now()
+            ]);
+            
+        return response()->json(['message' => 'Todas las notificaciones marcadas como leídas']);
     }
 
     /**
