@@ -6,7 +6,6 @@ use App\Models\Listas;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreListasRequest;
 use App\Http\Requests\UpdateListasRequest;
-use Illuminate\Support\Facades\Log;
 
 class ListasController extends Controller
 {
@@ -28,15 +27,9 @@ class ListasController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
-        $user_id = $request->query('user_id');
-
-        if (!$user_id) {
-            return redirect()->route('home')->with('error', 'Usuario no especificado');
-        }
-
-        return view('listas.create', compact('user_id'));
+        //
     }
 
     /**
@@ -47,17 +40,14 @@ class ListasController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'nombre_lista' => 'required|string|max:100',
-            'descripcion' => 'nullable|string|max:500'
         ]);
 
         $lista = Listas::create([
             'user_id' => $request->user_id,
             'nombre_lista' => $request->nombre_lista,
-            'descripcion' => $request->descripcion
         ]);
 
-        return redirect()->route('profile.show', ['id' => $request->user_id])
-                        ->with('success', 'Lista creada exitosamente');
+        return response()->json($lista, 201);
     }
 
     /**
@@ -66,23 +56,15 @@ class ListasController extends Controller
     public function show($id)
     {
         $lista = Listas::with('contenidosListas')->findOrFail($id);
-
-        // Si es una solicitud de API
-        if (request()->expectsJson()) {
-            return response()->json($lista);
-        }
-
-        // Si es una solicitud web
-        return view('listas.show', compact('lista'));
+        return response()->json($lista);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Listas $listas)
     {
-        $lista = Listas::findOrFail($id);
-        return view('listas.edit', compact('lista'));
+        //
     }
 
     /**
@@ -92,18 +74,9 @@ class ListasController extends Controller
     {
         $lista = Listas::findOrFail($id);
 
-        $request->validate([
-            'nombre_lista' => 'required|string|max:100',
-            'descripcion' => 'nullable|string|max:500'
-        ]);
+        $lista->update($request->all());
 
-        $lista->update([
-            'nombre_lista' => $request->nombre_lista,
-            'descripcion' => $request->descripcion
-        ]);
-
-        return redirect()->route('listas.show', $lista->id)
-                        ->with('success', 'Lista actualizada exitosamente');
+        return response()->json($lista);
     }
 
     /**
@@ -116,4 +89,14 @@ class ListasController extends Controller
 
         return response()->json(['message' => 'Lista eliminada']);
     }
+
+    public function getListasByUsuario($userId)
+{
+    $listas = Listas::where('user_id', $userId)->get();
+
+    return response()->json([
+        'message' => 'Listas del usuario obtenidas correctamente',
+        'data' => $listas
+    ], 200);
+}
 }
