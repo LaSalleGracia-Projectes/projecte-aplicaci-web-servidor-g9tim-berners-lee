@@ -1,0 +1,757 @@
+:root {
+    /* Colores principales */
+    --verde-neon: #14ff14;
+    --verde-principal: #00ff3c;
+    --verde-claro: #00ffdd;
+    --blanco: #FFFFFF;
+    --negro: #000000;
+    --negro-suave: #121212;
+    --negro-medio: #1e1e1e;
+    --azul-oscuro: #001233;
+
+    /* Variables del tema */
+    --bg-color: var(--negro);
+    --card-bg: var(--negro-suave);
+    --card-bg-dark: var(--negro-medio);
+    --text-color: var(--blanco);
+    --text-color-light: rgba(255, 255, 255, 0.8);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --primary-color: var(--verde-principal);
+    --primary-color-dark: #00cc30;
+
+    /* Colores de estados */
+    --verde-pastel: #66BB6A;
+    --verde-oscuro: #1B5E20;
+    --rojo-suave: #E53935;
+    --amarillo: #FFC107;
+
+    /* Sombras */
+    --sombra-suave: 0 5px 15px rgba(255, 255, 255, 0.1);
+    --sombra-media: 0 5px 15px rgba(255, 255, 255, 0.2);
+    --sombra-fuerte: 0 5px 15px rgba(255, 255, 255, 0.3);
+
+    /* Transiciones */
+    --transicion-normal: all 0.3s ease;
+    --transicion-rapida: all 0.2s ease;
+}
+
+.serie-detalle {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Banner */
+.banner {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    overflow: hidden;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.5);
+}
+
+.titulo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+}
+
+.titulo-overlay h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.titulo-overlay .tagline {
+    font-size: 1.2rem;
+    color: #ddd;
+    font-style: italic;
+}
+
+/* Contenedor principal */
+.serie-content-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: -100px auto 0;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Columna izquierda */
+.columna-izquierda {
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+}
+
+.poster {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1.5rem;
+}
+
+.poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Botones de acción */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.action-buttons button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.action-buttons button:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+}
+
+.action-buttons button i {
+    font-size: 1.2rem;
+}
+
+/* Servicios de streaming */
+.donde-ver {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.donde-ver h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.plataformas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.plataforma {
+    text-align: center;
+}
+
+.plataforma img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.plataforma span {
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+}
+
+/* Columna central */
+.columna-central {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Metadatos */
+.serie-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.serie-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-light);
+}
+
+.serie-meta i {
+    color: var(--primary-color);
+}
+
+/* Sinopsis */
+.sinopsis {
+    margin-bottom: 3rem;
+}
+
+.sinopsis h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.sinopsis p {
+    line-height: 1.6;
+    color: var(--text-color-light);
+}
+
+/* Temporadas */
+.temporadas {
+    margin-bottom: 3rem;
+}
+
+.temporadas h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.temporadas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.temporada-card {
+    background-color: var(--card-bg-dark);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.temporada-card:hover {
+    transform: translateY(-5px);
+}
+
+.temporada-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.temporada-info {
+    padding: 1rem;
+}
+
+.temporada-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.temporada-info p {
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+    margin-bottom: 0.25rem;
+}
+
+/* Detalles de producción */
+.produccion {
+    margin-bottom: 3rem;
+}
+
+.produccion h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.produccion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.detail-value {
+    color: var(--text-color-light);
+}
+
+/* Elenco */
+.elenco {
+    margin-bottom: 3rem;
+}
+
+.elenco h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.actores-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.actor {
+    background-color: var(--card-bg-dark);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.actor:hover {
+    transform: translateY(-5px);
+}
+
+.actor img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.actor-info {
+    padding: 1rem;
+}
+
+.actor-nombre {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.actor-personaje {
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+}
+
+/* Series similares */
+.series-similares {
+    margin-bottom: 3rem;
+}
+
+.series-similares h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.similares-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.serie-card {
+    background-color: var(--card-bg-dark);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.serie-card:hover {
+    transform: translateY(-5px);
+}
+
+.serie-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.serie-info {
+    padding: 1rem;
+}
+
+.serie-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.serie-info .rating {
+    color: var(--text-color-light);
+    margin-bottom: 1rem;
+}
+
+.btn-details {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-details:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Videos/Trailers */
+.videos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.video-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Botón de volver */
+.back-button {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.back-button .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.back-button .btn:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateX(-5px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .serie-content-container {
+        grid-template-columns: 1fr;
+    }
+
+    .columna-izquierda {
+        position: static;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .banner {
+        height: 50vh;
+    }
+
+    .titulo-overlay h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .serie-content-container {
+        margin-top: -50px;
+        padding: 0 1rem;
+    }
+
+    .banner {
+        height: 40vh;
+    }
+
+    .titulo-overlay h1 {
+        font-size: 2rem;
+    }
+
+    .columna-central {
+        padding: 1.5rem;
+    }
+
+    .serie-meta {
+        gap: 1rem;
+    }
+
+    .temporadas-grid,
+    .actores-container,
+    .similares-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .banner {
+        height: 30vh;
+    }
+
+    .titulo-overlay {
+        padding: 1rem;
+    }
+
+    .titulo-overlay h1 {
+        font-size: 1.5rem;
+    }
+
+    .serie-meta {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .temporadas-grid,
+    .actores-container,
+    .similares-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* Banner meta información */
+.banner-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.banner-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.banner-meta .rating {
+    color: var(--amarillo);
+}
+
+/* Badge de serie en emisión */
+.badge-new {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--verde-principal);
+    color: var(--negro);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Calificación de usuarios */
+.user-rating {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.user-rating h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.rating-stars {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--text-color-light);
+}
+
+.rating-stars i {
+    cursor: pointer;
+    transition: var(--transicion-rapida);
+}
+
+.rating-stars i:hover,
+.rating-stars i.active {
+    color: var(--amarillo);
+    transform: scale(1.2);
+}
+
+.rating-value {
+    display: block;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+/* Modal de trailer */
+.modal-content {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    color: var(--text-color);
+    font-size: 1.3rem;
+}
+
+.modal-header .close {
+    color: var(--text-color);
+    opacity: 0.8;
+    transition: var(--transicion-rapida);
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.modal-body .video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.modal-body .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Notificaciones */
+.notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification i {
+    font-size: 1.2rem;
+}
+
+.notification.success {
+    border-left: 4px solid var(--verde-principal);
+}
+
+.notification.success i {
+    color: var(--verde-principal);
+}
+
+.notification.error {
+    border-left: 4px solid var(--rojo-suave);
+}
+
+.notification.error i {
+    color: var(--rojo-suave);
+}
+
+/* Mejoras en las temporadas */
+.temporada-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.temporada-info {
+    background: linear-gradient(to top, var(--card-bg-dark) 70%, transparent);
+}
+
+.temporada-info .overview {
+    display: none;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-color-light);
+}
+
+.temporada-card:hover .overview {
+    display: block;
+}
+
+.temporada-info .air-date {
+    color: var(--verde-principal);
+}
+
+.temporada-info .episode-count {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+/* Mejoras responsive */
+@media (max-width: 768px) {
+    .banner-meta {
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 1rem;
+    }
+
+    .notification {
+        min-width: auto;
+        width: calc(100vw - 40px);
+    }
+}

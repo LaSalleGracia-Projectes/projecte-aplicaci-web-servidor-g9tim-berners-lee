@@ -1,0 +1,718 @@
+/* Grid de estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+}
+
+.stat-icon i {
+    font-size: 1.8rem;
+    color: #00ffff;
+}
+
+.stat-info h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Mejoras en la tabla */
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+}
+
+.admin-table th {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #00ffff;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.admin-table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(0, 255, 255, 0.05);
+}
+
+/* Avatar de usuario */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar i {
+    font-size: 1.2rem;
+    color: #00ffff;
+}
+
+/* Badges de estado */
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-badge.usuario {
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+}
+
+.status-badge.critico {
+    background: rgba(255, 165, 0, 0.1);
+    color: #ffa500;
+}
+
+.status-badge.premium {
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+}
+
+.status-badge.activo {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+}
+
+.status-badge.inactivo {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff0000;
+}
+
+/* Botones de acción */
+.action-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0.2rem;
+    transition: all 0.3s ease;
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+}
+
+.action-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.action-btn.verified {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+}
+
+.action-btn.delete {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff0000;
+}
+
+/* Filtros mejorados */
+.filters-container {
+    margin-bottom: 2rem;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filters-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background: #00ffff;
+    color: #000;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Modal mejorado */
+.admin-modal {
+    max-width: 500px;
+    width: 90%;
+    margin: 2rem auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #00ffff;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #888;
+}
+
+.neon-input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.neon-input:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+/* Toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 255, 255, 0.1);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #00ffff;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #00ff00;
+}
+
+.labels {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Botones de acción */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-neon {
+    padding: 0.8rem 1.5rem;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #00ffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-neon:hover {
+    background: rgba(0, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-neon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estilos específicos para las películas */
+.movie-icon {
+    background: rgba(255, 128, 0, 0.1);
+}
+
+.movie-icon i {
+    color: #ff8000;
+}
+
+.movie-poster {
+    width: 50px;
+    height: 70px;
+    background: rgba(255, 128, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-poster i {
+    font-size: 1.5rem;
+    color: #ff8000;
+}
+
+.poster-preview {
+    width: 150px;
+    height: 200px;
+    background: rgba(255, 128, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.poster-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.poster-preview-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.movies-table .rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+}
+
+.rating-stars i {
+    color: #ffd700;
+    margin-right: 2px;
+}
+
+.rating-value {
+    font-weight: bold;
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 1rem;
+}
+
+.status-badge.pelicula {
+    background: rgba(255, 128, 0, 0.1);
+    color: #ff8000;
+}
+
+.status-badge.serie {
+    background: rgba(138, 43, 226, 0.1);
+    color: #8a2be2;
+}
+
+.action-btn.is-featured {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+.file-input {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+
+/* Estilos específicos para las valoraciones */
+.review-icon {
+    background: rgba(255, 0, 128, 0.1);
+}
+
+.review-icon i {
+    color: #ff0080;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-name {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    text-transform: capitalize;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.comment-preview {
+    max-width: 300px;
+    line-height: 1.4;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.show-more-btn {
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.show-more-btn:hover {
+    text-decoration: underline;
+}
+
+.status-badge.destacado {
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+}
+
+.status-badge.normal {
+    background: rgba(128, 128, 128, 0.1);
+    color: #808080;
+}
+
+.action-btn.is-highlighted {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+.review-detail-content {
+    padding: 1rem;
+}
+
+.review-detail-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.review-title {
+    margin-bottom: 1rem;
+}
+
+.review-title h5 {
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.review-text {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.detail-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Mejoras generales para tablas */
+.admin-table-container {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.admin-table th:first-child,
+.admin-table td:first-child {
+    padding-left: 1rem;
+}
+
+.admin-table th:last-child,
+.admin-table td:last-child {
+    padding-right: 1rem;
+}
+
+/* Mejoras para el diseño responsive */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filters-body {
+        grid-template-columns: 1fr;
+    }
+
+    .comment-preview {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-header-actions {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    .table-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .bulk-actions {
+        width: 100%;
+    }
+
+    .comment-preview {
+        max-width: 150px;
+    }
+}
+
+/* Efectos de animación */
+.admin-table tbody tr {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.admin-table tbody tr:hover {
+    background-color: rgba(0, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.action-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.action-btn:hover::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Estilos para notificaciones */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: 500;
+    z-index: 1000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification.success {
+    background: rgba(0, 255, 0, 0.2);
+    border-left: 4px solid #00ff00;
+}
+
+.notification.error {
+    background: rgba(255, 0, 0, 0.2);
+    border-left: 4px solid #ff0000;
+}
+
+.notification i {
+    font-size: 1.2rem;
+}
+
+.notification.success i {
+    color: #00ff00;
+}
+
+.notification.error i {
+    color: #ff0000;
+}
