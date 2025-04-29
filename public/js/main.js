@@ -29,36 +29,8 @@ window.cargarTendencias = () => trendingModule.cargarTendencias();
 window.renderFavorites = () => favoritesModule.renderFavorites();
 window.renderCriticos = () => criticsModule.renderCriticos();
 
-/**
- * Función para verificar si la página puede usar el sistema antiguo
- * como respaldo si el nuevo sistema falla
- */
-async function cargarScriptOriginal() {
-    try {
-        // Obtener el script original desde el servidor
-        const scriptUrl = '/script.js.original';  // Suponiendo que renombramos el script original
-        const response = await fetch(scriptUrl);
-
-        if (!response.ok) {
-            console.log('El script original no está disponible, utilizando solo el modular.');
-            return false;
-        }
-
-        // Crear un elemento script e insertarlo en la página
-        const script = document.createElement('script');
-        script.textContent = await response.text();
-        document.body.appendChild(script);
-
-        console.log('Script original cargado como respaldo.');
-        return true;
-    } catch (error) {
-        console.error('Error al cargar el script original:', error);
-        return false;
-    }
-}
-
 // Inicialización de módulos cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     // Inicializar módulos según la página
     setupGlobalNavigation();
 
@@ -77,21 +49,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log("CritFlix inicializado correctamente");
     } catch (error) {
         console.error("Error en la inicialización:", error);
-        console.log("Intentando cargar script original como respaldo...");
-
-        // Si hay error, intentar cargar el script original como respaldo
-        const scriptCargado = await cargarScriptOriginal();
-        if (scriptCargado) {
-            // Si se cargó el script original, intentar inicializar funciones clave
-            try {
-                if (typeof window.cargarBanner === 'function') window.cargarBanner();
-                if (typeof window.cargarTendencias === 'function') window.cargarTendencias();
-                if (typeof window.renderFavorites === 'function') window.renderFavorites();
-                if (typeof window.renderCriticos === 'function') window.renderCriticos();
-            } catch (err) {
-                console.error("Error al inicializar con script original:", err);
-            }
-        }
     }
 });
 

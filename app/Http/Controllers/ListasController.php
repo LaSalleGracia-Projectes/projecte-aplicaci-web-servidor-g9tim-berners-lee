@@ -38,7 +38,7 @@ class ListasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:users,id',
             'nombre_lista' => 'required|string|max:100',
         ]);
 
@@ -55,7 +55,7 @@ class ListasController extends Controller
      */
     public function show($id)
     {
-        $lista = Listas::with('contenidos')->findOrFail($id);
+        $lista = Listas::with('contenidosListas')->findOrFail($id);
         return response()->json($lista);
     }
 
@@ -89,4 +89,14 @@ class ListasController extends Controller
 
         return response()->json(['message' => 'Lista eliminada']);
     }
+
+    public function getListasByUsuario($userId)
+{
+    $listas = Listas::where('user_id', $userId)->get();
+
+    return response()->json([
+        'message' => 'Listas del usuario obtenidas correctamente',
+        'data' => $listas
+    ], 200);
+}
 }

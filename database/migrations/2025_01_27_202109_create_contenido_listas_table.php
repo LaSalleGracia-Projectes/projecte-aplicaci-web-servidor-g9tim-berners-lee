@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('contenidos_listas', function (Blueprint $table) {
             $table->id('id');
             $table->unsignedBigInteger('id_lista');
-            $table->unsignedBigInteger('id_pelicula');
+            $table->integer('tmdb_id');
+            $table->string('tipo');
+            $table->timestamp('fecha_agregado')->useCurrent();
+
             $table->foreign('id_lista')->references('id')->on('listas');
-            $table->foreign('id_pelicula')->references('id')->on('peliculas_series');
-            $table->timestamps();
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contenido_listas');
+        Schema::dropIfExists('contenidos_listas');
     }
 };

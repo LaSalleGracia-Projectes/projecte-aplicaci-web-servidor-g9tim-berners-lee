@@ -41,7 +41,7 @@
             </div>
 
             <div class="auth-links">
-                <p>¿No tienes cuenta? <a href="{{ route('register.form') }}">Regístrate</a></p>
+                <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
             </div>
         </form>
     </div>

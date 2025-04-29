@@ -49,7 +49,7 @@
             </div>
 
             <div class="auth-links">
-                <p>¿Ya tienes cuenta? <a href="{{ route('login.form') }}">Iniciar Sesión</a></p>
+                <p>¿Ya tienes cuenta? <a href="{{ route('login') }}">Iniciar Sesión</a></p>
             </div>
         </form>
     </div>

@@ -3,95 +3,13 @@ import helpers from '../utils/helpers.js';
 
 const authModule = {
     init() {
-        this.setupModals();
         this.checkAuthState();
         this.setupForms();
     },
 
-    setupModals() {
-        const loginLink = document.getElementById("loginLink");
-        const registerLink = document.getElementById("registerLink");
-        const loginModal = document.getElementById("loginModal");
-        const registerModal = document.getElementById("registerModal");
-        const closeLogin = document.getElementById("closeLogin");
-        const closeRegister = document.getElementById("closeRegister");
-        const movieDetailModal = document.getElementById("movieDetailModal");
-        const profileLink = document.getElementById("profileLink");
-
-        // Abrir modales
-        if (loginLink && loginModal) {
-            loginLink.addEventListener("click", (e) => {
-                e.preventDefault();
-                loginModal.classList.add("show");
-            });
-        }
-
-        if (registerLink && registerModal) {
-            registerLink.addEventListener("click", (e) => {
-                e.preventDefault();
-                registerModal.classList.add("show");
-            });
-        }
-
-        if (profileLink) {
-            profileLink.addEventListener("click", (e) => {
-                e.preventDefault();
-                const token = localStorage.getItem("token");
-                const user = JSON.parse(localStorage.getItem("user"));
-                if (token && user && user.id) {
-                    window.location.href = `/profile/${user.id}`;
-                }
-            });
-        }
-
-        // Cerrar modales con el botón [X]
-        if (closeLogin && loginModal) {
-            closeLogin.addEventListener("click", () => {
-                loginModal.classList.remove("show");
-            });
-        }
-
-        if (closeRegister && registerModal) {
-            closeRegister.addEventListener("click", () => {
-                registerModal.classList.remove("show");
-            });
-        }
-
-        // Cerrar modales al hacer clic fuera del contenido
-        window.addEventListener("click", (e) => {
-            if (loginModal && e.target === loginModal) {
-                loginModal.classList.remove("show");
-            }
-            if (registerModal && e.target === registerModal) {
-                registerModal.classList.remove("show");
-            }
-            if (movieDetailModal && e.target === movieDetailModal) {
-                movieDetailModal.classList.remove("show");
-            }
-        });
-    },
-
     checkAuthState() {
-        const loginLink = document.getElementById("loginLink");
-        const registerLink = document.getElementById("registerLink");
-        const logoutButton = document.getElementById("logoutButton");
-
-        // Ocultar enlaces si hay token en localStorage
-        if (localStorage.getItem("token")) {
-            if (loginLink) loginLink.style.display = "none";
-            if (registerLink) registerLink.style.display = "none";
-        } else {
-            if (profileLink) profileLink.style.display = "none";
-        }
-
-        // Botón de logout
-        if (logoutButton) {
-            logoutButton.addEventListener("click", () => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                window.location.reload();
-            });
-        }
+        // Ya no necesitamos esta funcionalidad ya que Laravel maneja la autenticación
+        // y los enlaces se muestran/ocultan con las directivas @guest y @auth
     },
 
     setupForms() {
@@ -99,39 +17,44 @@ const authModule = {
         const registerForm = document.getElementById("registerForm");
         if (registerForm) {
             registerForm.addEventListener("submit", async (event) => {
-                event.preventDefault(); // Evita la redirección por defecto
+                event.preventDefault();
 
-                const name = document.querySelector("#registerModal input[name='name']").value;
-                const email = document.querySelector("#registerModal input[name='email']").value;
-                const password = document.querySelector("#registerModal input[name='password']").value;
-                const password_confirmation = document.querySelector("#registerModal input[name='password_confirmation']").value;
+                const formData = new FormData(registerForm);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    password_confirmation: formData.get('password_confirmation')
+                };
 
                 try {
-                    const response = await fetch("/api/register", {
+                    const response = await fetch("/register", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             Accept: "application/json",
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: JSON.stringify({ name, email, password, password_confirmation }),
+                        body: JSON.stringify(data),
                     });
 
-                    const data = await response.json();
-                    console.log("Respuesta del servidor:", data);
+                    const responseData = await response.json();
 
-                    if (data.errors) {
-                        alert("Error en el registro: " + JSON.stringify(data.errors));
-                    } else if (data.token) {
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(data.user));
-                        document.getElementById("registerModal").classList.remove("show");
-                        window.location.href = "/";
+                    if (responseData.errors) {
+                        // Mostrar errores en el formulario
+                        Object.keys(responseData.errors).forEach(key => {
+                            const errorElement = document.querySelector(`#${key}-error`);
+                            if (errorElement) {
+                                errorElement.textContent = responseData.errors[key][0];
+                            }
+                        });
                     } else {
-                        alert("Error en el registro");
+                        // Redirigir al home después del registro exitoso
+                        window.location.href = "/";
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Error en la conexión. Inténtalo de nuevo.");
+                    helpers.showToast("Error en la conexión. Inténtalo de nuevo.", "error");
                 }
             });
         }
@@ -142,33 +65,41 @@ const authModule = {
             loginForm.addEventListener("submit", async (event) => {
                 event.preventDefault();
 
-                const email = document.querySelector("#loginModal input[name='correo']").value;
-                const password = document.querySelector("#loginModal input[name='contrasena']").value;
+                const formData = new FormData(loginForm);
+                const data = {
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    remember: formData.get('remember') === 'on'
+                };
 
                 try {
-                    const response = await fetch("/api/login", {
+                    const response = await fetch("/login", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             Accept: "application/json",
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: JSON.stringify({ email, password }),
+                        body: JSON.stringify(data),
                     });
 
-                    const data = await response.json();
+                    const responseData = await response.json();
 
-                    if (data.errors) {
-                        alert("Error en el login: " + JSON.stringify(data.errors));
-                    } else if (data.token) {
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(data.user));
-                        window.location.href = "/";
+                    if (responseData.errors) {
+                        // Mostrar errores en el formulario
+                        Object.keys(responseData.errors).forEach(key => {
+                            const errorElement = document.querySelector(`#${key}-error`);
+                            if (errorElement) {
+                                errorElement.textContent = responseData.errors[key][0];
+                            }
+                        });
                     } else {
-                        alert("Error en el login");
+                        // Redirigir al home después del login exitoso
+                        window.location.href = "/";
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Error en la conexión. Inténtalo de nuevo.");
+                    helpers.showToast("Error en la conexión. Inténtalo de nuevo.", "error");
                 }
             });
         }

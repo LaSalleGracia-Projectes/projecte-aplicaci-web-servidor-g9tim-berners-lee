@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Listas;
-use App\Models\PeliculasSeries;
 
 class ContenidoListas extends Model
 {
@@ -16,7 +15,8 @@ class ContenidoListas extends Model
 
     protected $fillable = [
         'id_lista',
-        'id_pelicula',
+        'tmdb_id',
+        'tipo',
         'fecha_agregado',
     ];
 
@@ -25,10 +25,5 @@ class ContenidoListas extends Model
     public function lista()
     {
         return $this->belongsTo(Listas::class, 'id_lista');
-    }
-
-    public function peliculaSerie()
-    {
-        return $this->belongsTo(PeliculasSeries::class, 'id_pelicula');
     }
 }

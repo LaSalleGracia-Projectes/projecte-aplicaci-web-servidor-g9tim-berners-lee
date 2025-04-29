@@ -3,91 +3,134 @@
 namespace App\Http\Controllers;
 
 use App\Models\LikesComentarios;
-use App\Http\Requests\StoreLikesComentariosRequest;
-use App\Http\Requests\UpdateLikesComentariosRequest;
+use App\Models\Comentarios;
+use App\Models\Notificaciones;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LikesComentariosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $likes = LikesComentarios::all();
-        return response()->json($likes);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
+            'user_id' => 'required|exists:users,id',
             'id_comentario' => 'required|exists:comentarios,id',
             'tipo' => 'required|in:like,dislike',
         ]);
 
-        $likeComentario = LikesComentarios::create([
-            'user_id' => $request->user_id,
-            'id_comentario' => $request->id_comentario,
-            'tipo' => $request->tipo,
+        $existingLike = LikesComentarios::where('user_id', $request->user_id)
+            ->where('id_comentario', $request->id_comentario)
+            ->first();
+
+        $comentario = Comentarios::with('usuario')->findOrFail($request->id_comentario);
+        $usuario_comentario = $comentario->usuario;
+        $usuario_like = User::findOrFail($request->user_id);
+
+        if ($existingLike && $existingLike->tipo === $request->tipo) {
+            $existingLike->delete();
+            
+            $comentario = $this->getComentarioWithLikes($request->id_comentario);
+            return response()->json([
+                'message' => $request->tipo.' eliminado',
+                'comentario' => $comentario
+            ]);
+        }
+        
+        else if ($existingLike) {
+            $existingLike->tipo = $request->tipo;
+            $existingLike->save();
+            
+            $comentario = $this->getComentarioWithLikes($request->id_comentario);
+            return response()->json([
+                'message' => $request->tipo.' actualizado',
+                'comentario' => $comentario
+            ]);
+        }
+        
+        else {
+            $likeComentario = LikesComentarios::create([
+                'user_id' => $request->user_id,
+                'id_comentario' => $request->id_comentario,
+                'tipo' => $request->tipo,
+            ]);
+            
+            if ($usuario_comentario->id != $request->user_id) {
+                $tipoAccion = $request->tipo === 'like' ? 'le ha gustado' : 'no le ha gustado';
+                $mensaje = "{$usuario_like->name} {$tipoAccion} tu comentario";
+                
+                Notificaciones::create([
+                    'user_id' => $usuario_comentario->id,
+                    'mensaje' => $mensaje,
+                    'tipo' => 'nuevo_like',
+                    'leido' => false,
+                ]);
+            }
+            
+            $comentario = $this->getComentarioWithLikes($request->id_comentario);
+            return response()->json([
+                'message' => $request->tipo.' creado',
+                'comentario' => $comentario
+            ], 201);
+        }
+    }
+
+    /**
+     * Get the likes status of a comment for a specific user
+     */
+    public function getLikeStatus($comentarioId, $userId)
+    {
+        $like = LikesComentarios::where('id_comentario', $comentarioId)
+            ->where('user_id', $userId)
+            ->first();
+            
+        if (!$like) {
+            return response()->json(['status' => 'none']);
+        }
+        
+        return response()->json(['status' => $like->tipo]);
+    }
+    
+    /**
+     * Get comment with like/dislike counts
+     */
+    private function getComentarioWithLikes($comentarioId)
+    {
+        $comentario = Comentarios::with('usuario')->findOrFail($comentarioId);
+        
+        $likes = LikesComentarios::where('id_comentario', $comentarioId)
+            ->where('tipo', 'like')
+            ->count();
+            
+        $dislikes = LikesComentarios::where('id_comentario', $comentarioId)
+            ->where('tipo', 'dislike')
+            ->count();
+            
+        $comentario->likes_count = $likes;
+        $comentario->dislikes_count = $dislikes;
+        
+        return $comentario;
+    }
+    
+    /**
+     * Get likes and dislikes count for a comment
+     */
+    public function getLikesCount($comentarioId)
+    {
+        $likes = LikesComentarios::where('id_comentario', $comentarioId)
+            ->where('tipo', 'like')
+            ->count();
+            
+        $dislikes = LikesComentarios::where('id_comentario', $comentarioId)
+            ->where('tipo', 'dislike')
+            ->count();
+            
+        return response()->json([
+            'likes' => $likes,
+            'dislikes' => $dislikes
         ]);
-
-        return response()->json($likeComentario, 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $likeComentario = LikesComentarios::findOrFail($id);
-        return response()->json($likeComentario);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(LikesComentarios $likesComentarios)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $likeComentario = LikesComentarios::findOrFail($id);
-
-        $request->validate([
-            'tipo' => ['required', 'in:like,dislike'],
-        ]);
-
-        $likeComentario->update($request->all());
-
-        return response()->json($likeComentario);
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $likeComentario = LikesComentarios::findOrFail($id);
-        $likeComentario->delete();
-
-        return response()->json(['message' => 'Like/Dislike eliminado']);
     }
 }

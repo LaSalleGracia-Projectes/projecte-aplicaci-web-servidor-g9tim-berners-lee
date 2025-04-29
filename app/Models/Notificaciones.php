@@ -11,17 +11,16 @@ class Notificaciones extends Model
     /** @use HasFactory<\Database\Factories\NotificacionesFactory> */
     use HasFactory;
 
-    protected $table = 'Notificaciones';
+    protected $table = 'notificaciones';
 
     protected $fillable = [
         'user_id',
         'mensaje',
         'tipo',
-        'leido',
-        'fecha_creacion',
+        'leido'
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function usuario()
     {
