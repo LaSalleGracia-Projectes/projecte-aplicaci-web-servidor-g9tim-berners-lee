@@ -1,0 +1,741 @@
+/* Admin Panel - Main CSS File
+ * Archivo principal que importa todos los archivos CSS del panel
+ * de administración y agrega estilos globales
+ */
+
+/* Importar variables */
+@import url('variables.css');
+
+/* Importar estilos de layout */
+@import url('layout.css');
+
+/* Importar componentes */
+@import url('components.css');
+
+/* Importar tablas */
+@import url('tables.css');
+
+/* Importar dashboard */
+@import url('dashboard.css');
+
+/* Variables */
+:root {
+    --verde-neon: #14ff14;
+    --cyan-neon: #00ffdd;
+    --rojo-neon: #ff4444;
+    --amarillo-neon: #ffd700;
+    --rosa-neon: #ff00ff;
+    --azul-neon: #4d4dff;
+    --purpura-neon: #bc13fe;
+
+    --bg-dark: #0a0a0a;
+    --bg-darker: #050505;
+    --bg-card: #121212;
+    --bg-sidebar: #0f0f0f;
+
+    --text-light: #f5f5f5;
+    --text-muted: #8a8a8a;
+    --border-color: #2a2a2a;
+    --hover-bg: #1e1e1e;
+    --sidebar-width: 250px;
+    --header-height: 70px;
+    --glow-intensity: 0.5;
+}
+
+/* Ajustes globales */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    margin: 0;
+    padding: 0;
+    padding-top: 0;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* Contenedor principal del admin */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Header admin */
+.admin-header {
+    padding: 1rem 2rem;
+    background-color: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    position: relative;
+}
+
+.admin-header-title h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-search {
+    position: relative;
+    width: 300px;
+}
+
+.admin-search input {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-darker);
+    color: var(--text-light);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.admin-search button {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.admin-search input:focus {
+    border-color: var(--verde-neon);
+    box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
+    outline: none;
+}
+
+.admin-notifications {
+    position: relative;
+}
+
+.admin-notifications button {
+    background-color: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-notifications button:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--verde-neon);
+    color: var(--verde-neon);
+    box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--rojo-neon);
+    color: var(--text-light);
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+/* Área principal */
+.admin-main {
+    flex: 1;
+    margin-left: 250px;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* Barra lateral */
+.admin-sidebar {
+    width: 250px;
+    background: linear-gradient(to bottom, var(--bg-sidebar), var(--bg-darker));
+    border-right: 1px solid var(--border-color);
+    position: fixed;
+    height: 100vh;
+    padding: 1.5rem 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.admin-logo {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.admin-logo h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.admin-logo span {
+    color: var(--verde-neon);
+    text-shadow: 0 0 10px var(--verde-neon);
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-light);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.admin-nav-item i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.admin-nav-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--verde-neon);
+    box-shadow: 0 0 15px rgba(20, 255, 20, 0.1);
+}
+
+.admin-nav-item.active {
+    background-color: var(--hover-bg);
+    color: var(--verde-neon);
+    box-shadow: 0 0 15px rgba(20, 255, 20, 0.15);
+}
+
+.admin-nav-item.active i {
+    color: var(--verde-neon);
+    text-shadow: 0 0 10px var(--verde-neon);
+}
+
+.admin-nav-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 0.75rem 0;
+}
+
+/* Contenido principal */
+.admin-content {
+    padding: 2rem;
+}
+
+/* Grid de estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--verde-neon);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(20, 255, 20, 0.1);
+    color: var(--verde-neon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+    background-color: rgba(0, 255, 221, 0.1);
+    color: var(--cyan-neon);
+}
+
+.stat-card:nth-child(3) .stat-icon {
+    background-color: rgba(255, 215, 0, 0.1);
+    color: var(--amarillo-neon);
+}
+
+.stat-card:nth-child(4) .stat-icon {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: var(--rojo-neon);
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-info h3 {
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--text-light);
+}
+
+.stat-detail {
+    font-size: 0.85rem;
+    color: var(--verde-neon);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.stat-card:nth-child(2) .stat-detail {
+    color: var(--cyan-neon);
+}
+
+.stat-card:nth-child(3) .stat-detail {
+    color: var(--amarillo-neon);
+}
+
+.stat-card:nth-child(4) .stat-detail {
+    color: var(--rojo-neon);
+}
+
+/* Gráfico de roles */
+.roles-chart-card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.roles-chart-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--verde-neon);
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.card-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-neon {
+    padding: 0.5rem 1.25rem;
+    background-color: transparent;
+    border: 1px solid var(--verde-neon);
+    color: var(--verde-neon);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-neon:hover {
+    background-color: var(--verde-neon);
+    color: var(--bg-darker);
+    box-shadow: 0 0 15px rgba(20, 255, 20, 0.5);
+}
+
+.roles-chart-container {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+    gap: 2rem;
+    min-height: 400px;
+}
+
+.roles-chart {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roles-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+    padding-left: 2rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+    background-color: var(--hover-bg);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-color.admin {
+    background-color: var(--rojo-neon);
+    box-shadow: 0 0 10px var(--rojo-neon);
+}
+
+.legend-color.premium {
+    background-color: var(--amarillo-neon);
+    box-shadow: 0 0 10px var(--amarillo-neon);
+}
+
+.legend-color.critico {
+    background-color: var(--cyan-neon);
+    box-shadow: 0 0 10px var(--cyan-neon);
+}
+
+.legend-color.usuario {
+    background-color: var(--verde-neon);
+    box-shadow: 0 0 10px var(--verde-neon);
+}
+
+.legend-label {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.legend-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.legend-value.admin {
+    color: var(--rojo-neon);
+}
+
+.legend-value.premium {
+    color: var(--amarillo-neon);
+}
+
+.legend-value.critico {
+    color: var(--cyan-neon);
+}
+
+.legend-value.usuario {
+    color: var(--verde-neon);
+}
+
+.roles-total {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 500;
+    text-align: center;
+}
+
+.roles-total span {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--purpura-neon);
+    text-shadow: 0 0 10px var(--purpura-neon);
+    margin-left: 0.5rem;
+}
+
+/* Tablas */
+.users-table-card,
+.reviews-table-card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.users-table-card:hover,
+.reviews-table-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--verde-neon);
+}
+
+.table-filter {
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.table-filter:focus {
+    border-color: var(--verde-neon);
+    box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
+    outline: none;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    padding: 0 1.5rem 1.5rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--text-light);
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+.table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.table td {
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.role-admin {
+    background-color: rgba(255, 68, 68, 0.15);
+    color: var(--rojo-neon);
+    border: 1px solid var(--rojo-neon);
+}
+
+.role-premium {
+    background-color: rgba(255, 215, 0, 0.15);
+    color: var(--amarillo-neon);
+    border: 1px solid var(--amarillo-neon);
+}
+
+.role-critico {
+    background-color: rgba(0, 255, 221, 0.15);
+    color: var(--cyan-neon);
+    border: 1px solid var(--cyan-neon);
+}
+
+.role-usuario {
+    background-color: rgba(20, 255, 20, 0.15);
+    color: var(--verde-neon);
+    border: 1px solid var(--verde-neon);
+}
+
+/* Botones de acción */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-darker);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--verde-neon);
+    border-color: var(--verde-neon);
+    box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
+}
+
+.action-btn.delete:hover {
+    background-color: var(--hover-bg);
+    color: var(--rojo-neon);
+    border-color: var(--rojo-neon);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.15);
+}
+
+/* Utilidades */
+.d-flex {
+    display: flex;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .roles-chart-container {
+        grid-template-columns: 1fr;
+    }
+
+    .roles-legend {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .admin-sidebar {
+        width: 80px;
+        padding: 1rem 0;
+    }
+
+    .admin-logo {
+        padding: 0 0.5rem 1rem;
+        text-align: center;
+    }
+
+    .admin-logo h1 {
+        font-size: 1.2rem;
+    }
+
+    .admin-logo span {
+        display: none;
+    }
+
+    .admin-nav-item span {
+        display: none;
+    }
+
+    .admin-nav-item {
+        padding: 0.75rem;
+        justify-content: center;
+    }
+
+    .admin-nav-item i {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+
+    .admin-main {
+        margin-left: 80px;
+    }
+
+    .admin-search {
+        width: 200px;
+    }
+}
+
+@media (max-width: 767px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    .admin-content {
+        padding: 1rem;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .card-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .legend-item {
+        padding: 0.5rem;
+    }
+}
+

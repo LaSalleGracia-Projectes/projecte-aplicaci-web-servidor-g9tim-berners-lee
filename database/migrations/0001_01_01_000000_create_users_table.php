@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('foto_perfil')->nullable();
             $table->text('biografia')->nullable();
-            $table->enum('rol', ['usuario', 'critico', 'premium'])->default('usuario');
+            $table->enum('rol', ['usuario', 'critico', 'premium', 'admin'])->default('usuario');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
