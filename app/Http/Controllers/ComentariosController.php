@@ -3,27 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comentarios;
-use App\Http\Requests\StoreComentariosRequest;
-use App\Http\Requests\UpdateComentariosRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ComentariosController extends Controller
-{
+class ComentariosController extends Controller {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $comentarios = Comentarios::all();
+        $comentarios = Comentarios::with('usuario')->get();
         return response()->json($comentarios);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -32,19 +22,24 @@ class ComentariosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:usuarios,id',
-            'id_pelicula' => 'required|exists:peliculas_series,id',
+            'user_id' => 'required|exists:users,id',
+            'tmdb_id' => 'required|integer',
+            'tipo' => 'required|in:pelicula,serie',
             'comentario' => 'required|string',
+            'es_spoiler' => 'boolean',
         ]);
-
+        
         $comentario = Comentarios::create([
             'user_id' => $request->user_id,
-            'id_pelicula' => $request->id_pelicula,
+            'tmdb_id' => $request->tmdb_id,
+            'tipo' => $request->tipo,
             'comentario' => $request->comentario,
             'es_spoiler' => $request->es_spoiler ?? false,
-            'destacado' => $request->destacado ?? false,
+            'destacado' => false,
         ]);
-
+        
+        $comentario->load('usuario');
+        
         return response()->json($comentario, 201);
     }
 
@@ -53,16 +48,8 @@ class ComentariosController extends Controller
      */
     public function show($id)
     {
-        $comentario = Comentarios::findOrFail($id);
+        $comentario = Comentarios::with('usuario')->findOrFail($id);
         return response()->json($comentario);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comentarios $comentarios)
-    {
-        //
     }
 
     /**
@@ -71,9 +58,11 @@ class ComentariosController extends Controller
     public function update(Request $request, $id)
     {
         $comentario = Comentarios::findOrFail($id);
-
+        
         $comentario->update($request->all());
-
+        
+        $comentario->load('usuario');
+        
         return response()->json($comentario);
     }
 
@@ -84,7 +73,21 @@ class ComentariosController extends Controller
     {
         $comentario = Comentarios::findOrFail($id);
         $comentario->delete();
-
+        
         return response()->json(['message' => 'Comentario eliminado']);
+    }
+    
+    /**
+     * Get comments for a specific movie or series.
+     */
+    public function getComentariosByTmdbId($tmdbId, $tipo)
+    {
+        $comentarios = Comentarios::with('usuario')
+            ->where('tmdb_id', $tmdbId)
+            ->where('tipo', $tipo)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return response()->json($comentarios);
     }
 }

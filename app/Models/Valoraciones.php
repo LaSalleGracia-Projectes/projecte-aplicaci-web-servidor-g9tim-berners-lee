@@ -4,32 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PeliculasSeries;
-use App\Models\User;
 
 class Valoraciones extends Model
 {
-    /** @use HasFactory<\Database\Factories\ValoracionesFactory> */
     use HasFactory;
-
-    protected $table = 'Valoraciones';
 
     protected $fillable = [
         'user_id',
-        'id_pelicula',
-        'valoracion',
-        'fecha_creacion',
+        'id_pelicula', // ID de TMDB, ahora sin referencia a peliculas_series
+        'valoracion'
     ];
 
-    public $timestamps = false;
-
-    public function usuario()
+    // Relación con el usuario
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function peliculaSerie()
-    {
-        return $this->belongsTo(PeliculasSeries::class, 'id_pelicula');
     }
 }

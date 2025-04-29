@@ -4,6 +4,61 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('movie-details.css') }}">
+    <style>
+        .comentarios-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .nuevo-comentario {
+            margin-bottom: 2rem;
+        }
+
+        .comentario {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .spoiler-warning {
+            background: #fff3cd;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .contenido-spoiler {
+            display: none;
+        }
+
+        .spoiler .contenido-comentario {
+            display: none;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -236,6 +291,7 @@
                     <div class="add-review">
                         <h3>¿Ya la viste? Deja tu crítica</h3>
                         <form id="review-form">
+                            <input type="hidden" name="id_pelicula" value="{{ $pelicula->id }}">
                             <div class="rating-selector">
                                 <span>Tu puntuación:</span>
                                 <div class="stars" role="radiogroup" aria-label="Puntuación">
@@ -244,14 +300,17 @@
                                     @endfor
                                 </div>
                             </div>
-                            <textarea name="review-text" placeholder="Escribe tu opinión sobre esta película..." aria-label="Tu crítica"></textarea>
+                            <textarea name="comentario" placeholder="Escribe tu opinión sobre esta película..." aria-label="Tu crítica" required></textarea>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="es_spoiler" name="es_spoiler">
+                                <label class="form-check-label" for="es_spoiler">Esta crítica contiene spoilers</label>
+                            </div>
                             <button type="submit" class="btn-submit-review">Publicar crítica</button>
                         </form>
                     </div>
 
                     <div class="reviews-list">
-                        <p class="no-reviews">Aún no hay críticas para esta película. ¡Sé el primero en opinar!</p>
-                        <!-- Aquí se cargarán dinámicamente las críticas -->
+                        <!-- Los comentarios se cargarán dinámicamente aquí -->
                     </div>
                 </section>
 
