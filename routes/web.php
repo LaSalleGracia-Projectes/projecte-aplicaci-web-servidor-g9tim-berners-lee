@@ -42,9 +42,11 @@ Route::get('/serie/{id}', [SeriesController::class, 'show'])->name('serie.detail
 Route::get('/tendencias', [TendenciasController::class, 'index'])->name('tendencias');
 
 // Rutas de autenticación
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
-Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register.form');
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -117,11 +119,11 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http
 
     // Estadísticas
     Route::get('/stats', [AdminController::class, 'getStats']);
+});
 
 // Rutas para comentarios
 Route::prefix('api')->group(function () {
     Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
-
 });
