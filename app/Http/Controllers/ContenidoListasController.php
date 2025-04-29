@@ -33,12 +33,14 @@ class ContenidoListasController extends Controller
     {
         $request->validate([
             'id_lista' => 'required|exists:listas,id',
-            'id_pelicula' => 'required|exists:peliculas_series,id',
+            'tmdb_id' => 'required|integer',
+            'tipo' => 'required|in:pelicula,serie',
         ]);
 
         $contenidoLista = ContenidoListas::create([
             'id_lista' => $request->id_lista,
-            'id_pelicula' => $request->id_pelicula,
+            'tmdb_id' => $request->tmdb_id,
+            'tipo' => $request->tipo,
         ]);
 
         return response()->json($contenidoLista, 201);
@@ -49,14 +51,11 @@ class ContenidoListasController extends Controller
      */
     public function show($id)
     {
-        // Buscar el contenido en la lista con el ID especificado
         $contenidoLista = ContenidoListas::findOrFail($id);
-    
-        // Devolver los detalles del contenido de la lista
+
         return response()->json($contenidoLista);
     }
     
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -73,7 +72,6 @@ class ContenidoListasController extends Controller
         //
     }
     
-
     /**
      * Remove the specified resource from storage.
      */
@@ -83,5 +81,17 @@ class ContenidoListasController extends Controller
         $contenidoLista->delete();
 
         return response()->json(['message' => 'Contenido eliminado de la lista']);
+    }
+
+    /**
+     * Get content for a specific list.
+     */
+    public function getContenidoByListaId($id_lista)
+    {
+        $contenidos = ContenidoListas::where('id_lista', $id_lista)->get();
+        return response()->json([
+            'message' => 'Contenido de la lista obtenido correctamente',
+            'data' => $contenidos
+        ], 200);
     }
 }

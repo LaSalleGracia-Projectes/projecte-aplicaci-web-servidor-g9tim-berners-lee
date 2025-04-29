@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+
 
 class UserController extends Controller
 {
@@ -33,7 +37,7 @@ class UserController extends Controller
     {
     $request->validate([
         'name' => 'required|string|max:50',
-        'email' => 'required|email|unique:user',
+        'email' => 'required|email|unique:users',
         'password' => 'required|string|min:6',
     ]);
 
@@ -76,7 +80,7 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'sometimes|string|max:50',
-            'email' => 'sometimes|email|unique:User,email,' . $id,
+            'email' => 'sometimes|email|unique:users,email,' . $id,
             'password' => 'sometimes|string|min:6',
         ]);
 

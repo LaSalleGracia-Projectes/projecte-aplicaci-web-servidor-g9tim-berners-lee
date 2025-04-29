@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('notificaciones', function (Blueprint $table) {
             $table->id('id');
             $table->text('mensaje');
-            $table->enum('tipo', ['nueva_temporada', 'nuevo_comentario', 'estreno']);
+            $table->enum('tipo', ['nuevo_like', 'nuevo_comentario']);
             $table->boolean('leido')->default(false);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
