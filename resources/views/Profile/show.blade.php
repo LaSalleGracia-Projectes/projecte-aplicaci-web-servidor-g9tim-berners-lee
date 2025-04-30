@@ -132,9 +132,13 @@
                                 <a href="{{ route('listas.edit', $lista->id) }}" class="btn-link btn-edit" title="Editar lista">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
-                                <button class="btn-link btn-delete delete-list" data-id="{{ $lista->id }}" title="Eliminar lista">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                                <form method="POST" action="{{ route('listas.destroy', $lista->id) }}" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-link btn-delete delete-list" data-id="{{ $lista->id }}" title="Eliminar lista">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                         @endforeach
@@ -150,4 +154,17 @@
 
 @section('scripts')
 <script src="{{ asset('profile.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar la eliminación de listas
+    document.querySelectorAll('.delete-list').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('¿Estás seguro de que quieres eliminar esta lista?')) {
+                this.closest('form').submit();
+            }
+        });
+    });
+});
+</script>
 @endsection

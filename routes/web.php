@@ -12,6 +12,8 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentariosController;
+use App\Http\Controllers\ListasController;
+use App\Http\Controllers\PeliculasSeriesController;
 
 // Rutas de perfil - protegidas por autenticación
     Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
@@ -27,6 +29,14 @@ Route::resource('listas', App\Http\Controllers\ListasController::class);
 Route::post('/api/contenido-listas', [App\Http\Controllers\ContenidoListasController::class, 'store']);
 Route::delete('/api/contenido-listas/{id}', [App\Http\Controllers\ContenidoListasController::class, 'destroy'])
     ->name('contenido-listas.destroy');
+
+// Rutas para las vistas de listas
+Route::get('/listas/create', [ListasController::class, 'create'])->name('listas.create');
+Route::get('/listas/{id}', [ListasController::class, 'show'])->name('listas.show');
+Route::get('/listas/{lista}/edit', [ListasController::class, 'edit'])->name('listas.edit');
+Route::get('/listas/redirect/destroy/{userId}', [ListasController::class, 'redirectAfterDestroy'])->name('listas.redirect.destroy');
+Route::get('/listas/redirect/store/{listaId}', [ListasController::class, 'redirectAfterStore'])->name('listas.redirect.store');
+Route::get('/listas/redirect/update/{listaId}', [ListasController::class, 'redirectAfterUpdate'])->name('listas.redirect.update');
 
 Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 Route::get('/haztecritico', [CriticosController::class, 'index'])->name('haztecritico');

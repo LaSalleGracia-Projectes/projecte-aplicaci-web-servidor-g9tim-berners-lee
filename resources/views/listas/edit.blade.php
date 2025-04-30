@@ -11,8 +11,8 @@
             <h1><i class="fas fa-edit"></i> Editar Lista</h1>
             <p class="subtitle">Modifica los detalles de tu lista personalizada</p>
         </div>
-        <a href="javascript:void(0);" onclick="window.history.back();" class="btn-neon">
-            <i class="fas fa-arrow-left"></i> Volver
+        <a href="{{ route('profile.show', $lista->user_id) }}" class="btn-neon">
+            <i class="fas fa-arrow-left"></i> Volver al Perfil
         </a>
     </div>
 

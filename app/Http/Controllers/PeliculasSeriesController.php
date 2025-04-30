@@ -6,6 +6,7 @@ use App\Models\PeliculasSeries;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePeliculasSeriesRequest;
 use App\Http\Requests\UpdatePeliculasSeriesRequest;
+use Illuminate\Support\Facades\Http;
 
 class PeliculasSeriesController extends Controller
 {

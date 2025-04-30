@@ -35,5 +35,5 @@ Route::apiResource('seguimientos', SeguimientoController::class);
 Route::apiResource('administradores', AdministradoresController::class);
 
 // Rutas para TMDB
-Route::get('/tmdb/search', [PeliculasSeriesController::class, 'searchTMDB']);
-Route::get('/tmdb/movie/{id}', [PeliculasSeriesController::class, 'getMovieFromTMDB']);
+// Route::get('/tmdb/search', [PeliculasSeriesController::class, 'searchTMDB']);
+// Route::get('/tmdb/movie/{id}', [PeliculasSeriesController::class, 'getMovieDetails']);

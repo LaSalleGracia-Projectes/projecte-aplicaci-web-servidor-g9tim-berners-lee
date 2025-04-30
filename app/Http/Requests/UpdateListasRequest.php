@@ -11,7 +11,7 @@ class UpdateListasRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateListasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nombre_lista' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:500',
         ];
     }
 }

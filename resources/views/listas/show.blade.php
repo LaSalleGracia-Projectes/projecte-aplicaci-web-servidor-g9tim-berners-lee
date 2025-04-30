@@ -7,8 +7,8 @@
 @section('content')
 <div class="list-detail-container">
     <div class="back-button">
-        <a href="javascript:history.back()" class="btn-neon">
-            <i class="fas fa-arrow-left"></i> Volver
+        <a href="{{ route('profile.show', $lista->user_id) }}" class="btn-neon">
+            <i class="fas fa-arrow-left"></i> Volver al Perfil
         </a>
     </div>
 
