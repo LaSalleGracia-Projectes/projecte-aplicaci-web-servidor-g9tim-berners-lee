@@ -6,6 +6,7 @@ use App\Models\Listas;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreListasRequest;
 use App\Http\Requests\UpdateListasRequest;
+use Illuminate\Support\Facades\Http;
 
 class ListasController extends Controller
 {
@@ -56,10 +57,30 @@ class ListasController extends Controller
      */
     public function show($id)
     {
-        $lista = Listas::with('contenidosListas')->findOrFail($id);
+        $lista = Listas::with(['usuario', 'contenidosListas'])->findOrFail($id);
+
+        // Obtener detalles de cada película desde TMDB
+        foreach ($lista->contenidosListas as $contenido) {
+            try {
+                $response = Http::get("https://api.themoviedb.org/3/movie/{$contenido->tmdb_id}", [
+                    'api_key' => config('services.tmdb.api_key'),
+                    'language' => 'es-ES'
+                ]);
+
+                if ($response->successful()) {
+                    $contenido->pelicula = $response->json();
+                }
+            } catch (\Exception $e) {
+                // Si hay un error, simplemente continuamos con el siguiente
+                continue;
+            }
+        }
 
         if (request()->expectsJson()) {
-            return response()->json($lista);
+            return response()->json([
+                'message' => 'Lista obtenida correctamente',
+                'data' => $lista
+            ]);
         }
 
         return view('listas.show', compact('lista'));
@@ -68,8 +89,27 @@ class ListasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Listas $lista)
+    public function edit($id)
     {
+        $lista = Listas::with('contenidosListas')->findOrFail($id);
+
+        // Obtener detalles de cada película desde TMDB
+        foreach ($lista->contenidosListas as $contenido) {
+            try {
+                $response = Http::get("https://api.themoviedb.org/3/movie/{$contenido->tmdb_id}", [
+                    'api_key' => config('services.tmdb.api_key'),
+                    'language' => 'es-ES'
+                ]);
+
+                if ($response->successful()) {
+                    $contenido->pelicula = $response->json();
+                }
+            } catch (\Exception $e) {
+                // Si hay un error, simplemente continuamos con el siguiente
+                continue;
+            }
+        }
+
         return view('listas.edit', compact('lista'));
     }
 

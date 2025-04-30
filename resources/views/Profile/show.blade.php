@@ -2,6 +2,18 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('profile.css') }}">
 <link rel="stylesheet" href="{{ asset('css/listas.css') }}">
+<style>
+    .thumbnail-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: #2c3e50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ecf0f1;
+        font-size: 2rem;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -112,9 +124,14 @@
                                     <div class="list-thumbnails">
                                         @foreach($lista->contenidosListas->take(4) as $contenido)
                                             <div class="thumbnail">
-                                                <img src="https://image.tmdb.org/t/p/w500{{ $contenido->pelicula['poster_path'] }}"
-                                                     alt="{{ $contenido->pelicula['title'] }}"
-                                                     onerror="this.src='{{ asset('images/default-poster.jpg') }}'">
+                                                @if($contenido->pelicula && isset($contenido->pelicula['poster_path']))
+                                                    <img src="https://image.tmdb.org/t/p/w500{{ $contenido->pelicula['poster_path'] }}"
+                                                         alt="{{ $contenido->pelicula['title'] ?? 'Película' }}">
+                                                @else
+                                                    <div class="thumbnail-placeholder">
+                                                        <i class="fas fa-film"></i>
+                                                    </div>
+                                                @endif
                                             </div>
                                         @endforeach
                                         @if(count($lista->contenidosListas) > 4)

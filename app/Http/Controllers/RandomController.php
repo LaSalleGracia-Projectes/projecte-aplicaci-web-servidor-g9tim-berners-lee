@@ -19,6 +19,13 @@ class RandomController extends Controller
 
         $randomMovie = $query->inRandomOrder()->first();
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Película aleatoria obtenida correctamente',
+                'data' => $randomMovie
+            ]);
+        }
+
         // Redirigir de nuevo a la home pasando el resultado
         return redirect()->route('home')->with('randomMovie', $randomMovie);
     }

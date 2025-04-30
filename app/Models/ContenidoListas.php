@@ -18,6 +18,10 @@ class ContenidoListas extends Model
         'tmdb_id',
         'tipo',
         'fecha_agregado',
+        'titulo',
+        'poster_path',
+        'fecha_estreno',
+        'puntuacion'
     ];
 
     public $timestamps = false;

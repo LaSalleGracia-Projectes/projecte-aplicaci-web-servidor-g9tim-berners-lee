@@ -38,6 +38,16 @@ class CriticosController extends Controller
         // Create sample trending reviews
         $trendingReviews = $this->getDummyReviews($topCritics);
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Críticos obtenidos correctamente',
+                'data' => [
+                    'criticos' => $topCritics,
+                    'reviews_trending' => $trendingReviews
+                ]
+            ]);
+        }
+
         return view('criticos', compact('topCritics', 'trendingReviews'));
     }
 
