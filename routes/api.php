@@ -14,8 +14,6 @@ use App\Http\Controllers\RecomendacionesController;
 use App\Http\Controllers\SeguimientoController;
 use App\Http\Controllers\AdministradoresController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CriticasController;
-use App\Http\Controllers\LikesCriticasController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -39,19 +37,6 @@ Route::apiResource('administradores', AdministradoresController::class);
 // Rutas para TMDB
 // Route::get('/tmdb/search', [PeliculasSeriesController::class, 'searchTMDB']);
 // Route::get('/tmdb/movie/{id}', [PeliculasSeriesController::class, 'getMovieDetails']);
-
-// Rutas para críticas
-Route::get('/criticas', [CriticasController::class, 'index']);
-Route::post('/criticas', [CriticasController::class, 'store']);
-Route::get('/criticas/{id}', [CriticasController::class, 'show']);
-Route::put('/criticas/{id}', [CriticasController::class, 'update']);
-Route::delete('/criticas/{id}', [CriticasController::class, 'destroy']);
-Route::get('/criticas/tmdb/{tmdbId}/{tipo}', [CriticasController::class, 'getCriticasByTmdbId']);
-
-// Rutas para likes de críticas
-Route::post('/likes-criticas', [LikesCriticasController::class, 'store']);
-Route::delete('/likes-criticas/{id}', [LikesCriticasController::class, 'destroy']);
-Route::get('/likes-criticas/critica/{criticaId}', [LikesCriticasController::class, 'getLikesByCriticaId']);
 
 // Rutas para comentarios
 Route::get('/comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
