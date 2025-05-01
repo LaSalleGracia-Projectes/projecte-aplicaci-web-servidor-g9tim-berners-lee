@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Mail\WelcomeEmail;
@@ -31,13 +32,6 @@ class AuthController extends Controller
                 'rol' => 'usuario', // Asignar rol por defecto
             ]);
 
-            // Enviar el correo de bienvenida
-            try {
-                Mail::to($user->email)->send(new WelcomeEmail($user));
-            } catch (\Exception $e) {
-                Log::error('Error enviando email: ' . $e->getMessage());
-                // Continuamos con el proceso aunque falle el email
-            }
 
             // Para solicitudes AJAX, devolver respuesta JSON
             if ($request->expectsJson()) {
@@ -50,8 +44,8 @@ class AuthController extends Controller
                 ], 201);
             }
 
-            // Iniciar sesión automáticamente
-            auth()->login($user);
+           /* // Iniciar sesión automáticamente
+            Auth::login($user);*/
 
             // Para solicitudes de formulario, redirigir
             return redirect('/')->with('success', '¡Registro completado con éxito!');
@@ -84,38 +78,25 @@ class AuthController extends Controller
             ]);
 
             $credentials = $request->only('email', 'password');
+            $user = User::where('email', $request->email)->first();
+
+            // Para solicitudes AJAX, devolver respuesta JSON
+            if ($request->expectsJson()) {
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'message' => 'Inicio de sesión exitoso',
+                    'token' => $token,
+                    'user' => $user
+                ], 200);
+            }
 
             // Intento de autenticación
-            if (auth()->attempt($credentials, $request->filled('remember'))) {
+            if (Auth::attempt($credentials, $request->filled('remember'))) {
                 $request->session()->regenerate();
-
-                // Para solicitudes AJAX, devolver respuesta JSON
-                if ($request->expectsJson()) {
-                    $user = auth()->user();
-                    $token = $user->createToken('auth_token')->plainTextToken;
-
-                    return response()->json([
-                        'message' => 'Inicio de sesión exitoso',
-                        'token' => $token,
-                        'user' => $user
-                    ], 200);
-                }
-
                 // Para solicitudes de formulario, redirigir
                 return redirect()->intended('/');
             }
-
-            // Para solicitudes AJAX, devolver error JSON
-            if ($request->expectsJson()) {
-                throw ValidationException::withMessages([
-                    'email' => ['Las credenciales no son correctas.'],
-                ]);
-            }
-
-            // Para solicitudes de formulario, redirigir con errores
-            return back()->withErrors([
-                'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-            ])->withInput($request->except('password'));
 
         } catch (\Exception $e) {
             // Para solicitudes AJAX, devolver error JSON
@@ -144,8 +125,8 @@ class AuthController extends Controller
         }
 
         // Cerrar sesión web si está disponible
-        if (auth()->check()) {
-            auth()->logout();
+        if (Auth::check()) {
+            Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
@@ -177,4 +158,3 @@ class AuthController extends Controller
         return view('auth.register');
     }
 }
-
