@@ -112,8 +112,8 @@
                                     <div class="list-thumbnails">
                                         @foreach($lista->contenidosListas->take(4) as $contenido)
                                             <div class="thumbnail">
-                                                <img src="https://image.tmdb.org/t/p/w500{{ $contenido->pelicula['poster_path'] }}"
-                                                     alt="{{ $contenido->pelicula['title'] }}"
+                                                <img src="{{ $contenido->pelicula && isset($contenido->pelicula['poster_path']) ? 'https://image.tmdb.org/t/p/w500'.$contenido->pelicula['poster_path'] : asset('images/default-poster.jpg') }}"
+                                                     alt="{{ $contenido->pelicula ? $contenido->pelicula['title'] : 'Película sin título' }}"
                                                      onerror="this.src='{{ asset('images/default-poster.jpg') }}'">
                                             </div>
                                         @endforeach

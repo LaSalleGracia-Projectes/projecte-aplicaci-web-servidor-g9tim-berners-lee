@@ -1,313 +1,255 @@
-/* Admin Panel - Dashboard
- * Estilos específicos para la página principal del panel de administración
+/* Admin Panel - Dashboard CSS
+ * Estilos específicos para el dashboard del panel de administración
  */
 
-/* Estilos específicos para el dashboard */
-
-.admin-stats {
+/* Grid de estadísticas */
+.stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.admin-stat-card {
-    display: flex;
-    align-items: center;
-    padding: 20px;
+/* Tarjetas de estadísticas */
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    transition: all 0.3s ease;
+    padding: 1.5rem;
+    transition: all var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.admin-stat-icon {
-    font-size: 2.5rem;
-    margin-right: 15px;
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: #00ff66;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 102, 0.1));
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 1rem;
+    background-color: rgba(0, 255, 102, 0.1);
+    color: #00ff66;
+    font-size: 1.5rem;
 }
 
-.admin-stat-info {
-    flex: 1;
-}
-
-.admin-stat-title {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-    display: block;
-}
-
-.admin-stat-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0 0 5px;
-}
-
-.admin-stat-detail {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-}
-
-.admin-stat-detail i {
-    margin-right: 5px;
-}
-
-/* Sección de gráficas */
-.admin-charts {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.admin-chart-card {
-    padding: 20px;
-    border-radius: var(--border-radius);
-    width: 100%;
-}
-
-.chart-title {
+.stat-info h3 {
+    color: var(--text-light);
     font-size: 1.1rem;
-    margin-bottom: 15px;
-    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
-.chart-container {
-    height: 250px;
-    position: relative;
-    margin-top: 15px;
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00ff66;
+    margin-bottom: 0.5rem;
+}
+
+/* Colores específicos para cada tarjeta */
+.stat-card:nth-child(1) .stat-icon {
+    background-color: rgba(0, 255, 102, 0.1);
+    color: #00ff66;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+    background-color: rgba(0, 232, 255, 0.1);
+    color: #00e8ff;
+}
+
+.stat-card:nth-child(3) .stat-icon {
+    background-color: rgba(255, 204, 0, 0.1);
+    color: #ffcc00;
+}
+
+.stat-card:nth-child(4) .stat-icon {
+    background-color: rgba(255, 48, 96, 0.1);
+    color: #ff3060;
+}
+
+.stat-card:nth-child(1) .stat-number {
+    color: #00ff66;
+}
+
+.stat-card:nth-child(2) .stat-number {
+    color: #00e8ff;
+}
+
+.stat-card:nth-child(3) .stat-number {
+    color: #ffcc00;
+}
+
+.stat-card:nth-child(4) .stat-number {
+    color: #ff3060;
+}
+
+/* Contenedor de gráficos */
+.charts-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 /* Gráfico de barras */
-.chart-placeholder {
-    height: 100%;
+.chart-bars-container {
+    height: 300px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border-color);
-    border-left: 1px solid var(--border-color);
-    padding-left: 20px;
-    box-sizing: border-box;
-}
-
-.chart-bars {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    height: 90%;
-    width: 100%;
+    padding: 0 10px;
+    margin-top: 20px;
 }
 
 .chart-bar {
-    width: 2.5%;
-    min-width: 8px;
-    background: linear-gradient(to top, var(--accent-primary), var(--accent-secondary));
-    border-radius: 4px 4px 0 0;
-    transition: height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    flex: 1;
+    background: linear-gradient(to top, rgba(0, 255, 102, 0.8), rgba(0, 255, 102, 0.3));
+    margin: 0 1px;
+    border-radius: 3px 3px 0 0;
+    min-height: 5px;
+    transition: height 0.6s cubic-bezier(0.2, 0.8, 0.3, 1.2);
 }
 
-/* Gráfico circular - Donut */
+/* Gráfico de roles (doughnut) */
 .roles-chart-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    gap: 60px;
-    height: 100%;
-    width: 100%;
-    padding: 20px 0;
-}
-
-.roles-donut-container {
-    flex: 0 0 220px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 220px;
+    height: 300px;
     position: relative;
 }
 
-.chart-donut {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: conic-gradient(
-        var(--verde-neon) 0% 60%,
-        var(--verde-claro) 60% 85%,
-        var(--verde-pastel) 85% 100%
-    );
-    box-shadow: 0 0 20px rgba(20, 255, 20, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.chart-donut::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    height: 60%;
-    border-radius: 50%;
-    background-color: var(--bg-card);
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
-}
-
-.chart-donut::after {
-    content: 'Roles';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--verde-neon);
-    text-shadow: 0 0 5px rgba(20, 255, 20, 0.5);
-}
-
-.roles-legend-container {
-    flex: 0 0 auto;
-    background-color: rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid rgba(20, 255, 20, 0.2);
-    box-shadow: 0 0 10px rgba(20, 255, 20, 0.1);
-    min-width: 200px;
-}
-
-.legend-title {
-    margin: 0 0 15px 0;
-    font-size: 1.1rem;
-    color: var(--verde-neon);
-    text-shadow: 0 0 5px rgba(20, 255, 20, 0.4);
-    text-align: center;
-    border-bottom: 1px solid rgba(20, 255, 20, 0.3);
-    padding-bottom: 8px;
-}
-
-.chart-legend {
+/* Leyenda de roles */
+.roles-legend {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 15px;
+    margin-top: 20px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    transition: transform 0.2s ease;
+    gap: 8px;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .legend-item:hover {
-    background-color: rgba(20, 255, 20, 0.1);
-    transform: translateX(5px);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.legend-item.inactive {
+    opacity: 0.5;
 }
 
 .legend-color {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    margin-right: 12px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
 }
 
-.legend-item:nth-child(1) .legend-color {
-    background-color: var(--verde-neon);
+/* Colores actualizados para los roles */
+.legend-color.admin {
+    background-color: #ff3060;
+    box-shadow: 0 0 10px rgba(255, 48, 96, 0.5);
 }
 
-.legend-item:nth-child(2) .legend-color {
-    background-color: var(--verde-claro);
+.legend-color.premium {
+    background-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
 }
 
-.legend-item:nth-child(3) .legend-color {
-    background-color: var(--verde-pastel);
+.legend-color.critico {
+    background-color: #00e8ff;
+    box-shadow: 0 0 10px rgba(0, 232, 255, 0.5);
 }
 
-.legend-label {
-    font-size: 1rem;
-    color: var(--text-color);
-    font-weight: 500;
+.legend-color.usuario {
+    background-color: #00ff66;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
 }
 
-.legend-total {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    background-color: rgba(20, 255, 20, 0.1);
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid rgba(20, 255, 20, 0.2);
-}
-
-.legend-total strong {
-    color: var(--verde-neon);
-    font-weight: 700;
-}
-
-/* Sección de tablas recientes */
-.admin-recent {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Tablas recientes - común para usuarios y valoraciones */
-.admin-table-card {
-    width: 100%;
-    padding: 20px;
-    border-radius: var(--border-radius);
-}
-
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.table-header h3 {
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.action-link {
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-}
-
-.action-link i {
+.legend-value {
+    font-weight: 600;
+    font-size: 0.85rem;
     margin-left: 5px;
-    font-size: 0.8rem;
+}
+
+.legend-value.admin {
+    color: #ff3060;
+    text-shadow: 0 0 5px rgba(255, 48, 96, 0.3);
+}
+
+.legend-value.premium {
+    color: #ffcc00;
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
+}
+
+.legend-value.critico {
+    color: #00e8ff;
+    text-shadow: 0 0 5px rgba(0, 232, 255, 0.3);
+}
+
+.legend-value.usuario {
+    color: #00ff66;
+    text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
+}
+
+/* Actividad reciente */
+.recent-activity {
+    margin-top: 2rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
-    .admin-stats {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 1024px) {
+    .charts-container {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    .admin-stats {
+    .stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .roles-chart-container {
+    .roles-legend {
         flex-direction: column;
-        gap: 20px;
-    }
-
-    .chart-donut {
-        width: 180px;
-        height: 180px;
+        gap: 10px;
     }
 }

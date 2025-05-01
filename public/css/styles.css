@@ -1,0 +1,102 @@
+/* Styles.css - Estilos principales del sitio
+ * Este archivo contiene los estilos generales del sitio web
+ */
+
+/* Importar variables globales */
+@import url('variables.css');
+
+/* RESET Y CONFIGURACIÓN General */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--negro);
+    color: var(--blanco);
+    line-height: 1.6;
+}
+
+/* Estilos para roles */
+.critico {
+    /* flex: 0 0 300px; */
+    background: rgba(18, 18, 18, 0.9);
+    /* border: 1px solid rgba(0, 255, 135, 0.1); */
+    /* border-radius: 15px; */
+    /* padding: 25px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.critico:hover {
+    background-color: rgba(0, 255, 221, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 221, 0.3);
+    transform: translateY(-2px);
+}
+
+.critico i {
+    color: var(--cyan-neon);
+    margin-right: 0.5rem;
+}
+
+.critico .badge {
+    background-color: var(--cyan-neon);
+    color: var(--bg-dark);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* CRÍTICOS DESTACADOS */
+.criticos {
+    padding: 40px 20px;
+    background: linear-gradient(135deg, var(--negro) 0%, rgba(0, 255, 135, 0.05) 100%);
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 135, 0.1);
+}
+
+.criticos h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2em;
+    color: var(--verde-neon);
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);
+}
+
+.criticos-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 20px;
+    scroll-behavior: smooth;
+    position: relative;
+    max-width: calc(300px * 3 + 60px);
+    margin: 0 auto;
+}
+
+.critico:hover {
+    transform: translateY(-5px);
+    border-color: var(--verde-neon);
+    box-shadow: 0 5px 20px rgba(0, 255, 135, 0.2);
+}
+
+.critico-imagen {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid var(--verde-neon);
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+}

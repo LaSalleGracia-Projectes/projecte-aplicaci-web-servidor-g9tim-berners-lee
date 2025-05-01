@@ -28,7 +28,7 @@ class ComentariosController extends Controller {
             'comentario' => 'required|string',
             'es_spoiler' => 'boolean',
         ]);
-        
+
         $comentario = Comentarios::create([
             'user_id' => $request->user_id,
             'tmdb_id' => $request->tmdb_id,
@@ -37,9 +37,9 @@ class ComentariosController extends Controller {
             'es_spoiler' => $request->es_spoiler ?? false,
             'destacado' => false,
         ]);
-        
+
         $comentario->load('usuario');
-        
+
         return response()->json($comentario, 201);
     }
 
@@ -58,11 +58,11 @@ class ComentariosController extends Controller {
     public function update(Request $request, $id)
     {
         $comentario = Comentarios::findOrFail($id);
-        
+
         $comentario->update($request->all());
-        
+
         $comentario->load('usuario');
-        
+
         return response()->json($comentario);
     }
 
@@ -73,10 +73,10 @@ class ComentariosController extends Controller {
     {
         $comentario = Comentarios::findOrFail($id);
         $comentario->delete();
-        
+
         return response()->json(['message' => 'Comentario eliminado']);
     }
-    
+
     /**
      * Get comments for a specific movie or series.
      */
@@ -87,7 +87,7 @@ class ComentariosController extends Controller {
             ->where('tipo', $tipo)
             ->orderBy('created_at', 'desc')
             ->get();
-        
+
         return response()->json($comentarios);
     }
 }

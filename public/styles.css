@@ -4,17 +4,50 @@
     --verde-neon: #14ff14;
     --verde-principal: #00ff3c;
     --verde-claro: #00ffdd;
+    --cyan-neon: #00ffdd;
+    --rojo-neon: #ff4444;
+    --amarillo-neon: #ffd700;
+    --rosa-neon: #ff00ff;
+    --azul-neon: #4d4dff;
+    --purpura-neon: #bc13fe;
     --blanco: #FFFFFF;
     --negro: #000000;
     --negro-suave: #121212;
     --azul-oscuro: #001233;
+
     /* Colores de estados */
     --verde-pastel: #66BB6A;
     --verde-oscuro: #1B5E20;
     --rojo-suave: #E53935;
+
+    /* Colores de fondo */
+    --bg-dark: #0a0a0a;
+    --bg-darker: #050505;
+    --bg-card: #121212;
+    --bg-sidebar: #0f0f0f;
+    --bg-hover: #1a1a1a;
+
+    /* Colores de texto */
+    --text-light: #f5f5f5;
+    --text-muted: #8a8a8a;
+    --text-dark: #333333;
+
+    /* Bordes y sombras */
+    --border-color: #2a2a2a;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --glow-intensity: 0.5;
+
+    /* Dimensiones */
+    --sidebar-width: 250px;
+    --header-height: 70px;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
 }
 
-/* RESET Y CONFIGURACIOn General */
+/* RESET Y CONFIGURACIÓN General */
 * {
     margin: 0;
     padding: 0;
@@ -367,17 +400,7 @@ body {
     border: 1px solid var(--blanco);
   }
 
- /* Variables de ejemplo (ajusta según tu proyecto) */
-:root {
-    --negro: #000000;
-    --negro-suave: #121212;
-    --verde-neon: #14ff14;
-    --verde-claro: #00ffdd;
-    --verde-principal: #00ff3c;
-    --blanco: #ffffff;
-  }
-
-  /* =========================================
+ /* =========================================
      MODAL (FONDO) - VERSIÓN CON CLASE .show
      ========================================= */
   .modal {
@@ -981,11 +1004,11 @@ body {
 }
 
 .critico {
-    flex: 0 0 300px;
+    /*flex: 0 0 300px;*/
     background: rgba(18, 18, 18, 0.9);
-    border: 1px solid rgba(0, 255, 135, 0.1);
-    border-radius: 15px;
-    padding: 25px;
+   /* border: 1px solid rgba(0, 255, 135, 0.1);*/
+   /* border-radius: 15px;*/
+   /* padding: 25px;*/
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -94,6 +94,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
         Route::get('/reviews', [AdminController::class, 'reviews'])->name('admin.reviews');
         Route::get('/comments', [AdminController::class, 'comments'])->name('admin.comments');
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::put('/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+        Route::post('/profile/password', [AdminController::class, 'updatePassword'])->name('admin.profile.password');
     });
 });
 
@@ -101,6 +103,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http\Middleware\AdminMiddleware::class]], function () {
     // Usuarios
     Route::get('/users', [AdminController::class, 'getUsers']);
+    Route::get('/users/{id}', [AdminController::class, 'getUser']);
     Route::post('/users', [AdminController::class, 'createUser']);
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);

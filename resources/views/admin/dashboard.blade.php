@@ -1,733 +1,552 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('title', 'Dashboard - CritFlix Admin')
+
+@section('header-title', 'Panel de Control')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/main.css') }}">
 <style>
-    /* Variables actualizadas */
-    :root {
-        --primary-color: var(--verde-neon);
-        --secondary-color: var(--verde-claro);
-        --neon-primary-glow: 0 0 5px rgba(20, 255, 20, 0.3);
-        --neon-secondary-glow: 0 0 5px rgba(0, 255, 221, 0.3);
-        --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-    }
-
-    /* Mejoras generales */
-    body {
-        padding-top: 0;
-        background-color: #0a0a0a;
-    }
-
-    .admin-container {
+    /* Estilos para las tarjetas de estadísticas */
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        transition: all var(--transition-speed) ease;
+        position: relative;
+        overflow: hidden;
         display: flex;
-        min-height: 100vh;
-        background: var(--bg-gradient);
+        align-items: center;
     }
 
-    .admin-sidebar {
-        width: 250px;
-        background-color: rgba(10, 10, 10, 0.95);
-        border-right: 1px solid rgba(20, 255, 20, 0.1);
-        padding: 1.5rem 0;
-        position: fixed;
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--verde-neon);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
         top: 0;
         left: 0;
-        bottom: 0;
-        z-index: 100;
-        overflow-y: auto;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1));
+        opacity: 0;
+        transition: opacity var(--transition-speed) ease;
     }
 
-    .admin-main {
-        flex: 1;
-        margin-left: 250px;
-        padding-bottom: 2rem;
+    .stat-card:hover::before {
+        opacity: 1;
     }
 
-    .admin-header {
-        position: sticky;
-        top: 0;
-        padding: 1rem 2rem;
-        backdrop-filter: blur(10px);
-        background-color: rgba(26, 26, 26, 0.9);
-        border-bottom: 1px solid rgba(20, 255, 20, 0.1);
-        z-index: 90;
+    /* Estilos para gráfico de distribución de roles */
+    .roles-chart-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+        transition: all var(--transition-speed) ease;
+    }
+
+    .roles-chart-card:hover {
+        box-shadow: var(--shadow-lg);
+        border-color: var(--verde-neon);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .admin-header-title h2 {
-        margin: 0;
-        color: var(--verde-neon);
-        font-size: 1.6rem;
-        text-shadow: 0 0 10px rgba(20, 255, 20, 0.4);
-    }
-
-    .admin-header-actions {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .admin-content {
-        padding: 2rem;
-    }
-
-    .admin-logo {
-        text-align: center;
-        padding: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .admin-logo h1 {
-        font-size: 1.8rem;
-        color: #fff;
-        margin: 0;
-    }
-
-    .admin-logo span {
-        color: var(--verde-neon);
-        text-shadow: 0 0 8px rgba(20, 255, 20, 0.5);
-    }
-
-    .admin-nav {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0 1rem;
-    }
-
-    .admin-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        color: #ddd;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .admin-nav-item:hover {
-        background-color: rgba(20, 255, 20, 0.1);
-        color: #fff;
-    }
-
-    .admin-nav-item.active {
-        background-color: rgba(20, 255, 20, 0.15);
-        color: var(--verde-neon);
-        border-left: 3px solid var(--verde-neon);
-    }
-
-    .admin-nav-item i {
+    .card-header h3 {
         font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-light);
     }
 
-    .admin-nav-divider {
-        height: 1px;
-        background-color: rgba(255, 255, 255, 0.1);
-        margin: 1rem 0;
-    }
-
-    .admin-search {
-        position: relative;
-        max-width: 300px;
-    }
-
-    .admin-search input {
-        width: 100%;
-        padding: 0.6rem 1rem 0.6rem 2.5rem;
-        border-radius: 20px;
-        border: 1px solid rgba(20, 255, 20, 0.2);
-        background-color: rgba(0, 0, 0, 0.3);
-        color: #fff;
-        font-size: 0.9rem;
-    }
-
-    .admin-search button {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
-    }
-
-    .admin-notifications {
-        position: relative;
-    }
-
-    .admin-notifications button {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 1.2rem;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .admin-notifications button:hover {
-        background-color: rgba(20, 255, 20, 0.1);
-    }
-
-    .notification-badge {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: var(--verde-neon);
-        color: #000;
-        font-size: 0.7rem;
-        font-weight: bold;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: rgba(26, 26, 26, 0.6);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(20, 255, 20, 0.1);
-        border-radius: 10px;
+    .card-body {
         padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        transition: all 0.3s ease;
     }
 
-    .stat-card:hover {
-        border-color: rgba(20, 255, 20, 0.2);
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /* Estilos para tablas recientes */
+    .recent-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 1rem;
     }
 
-    .stat-icon {
-        width: 60px;
-        height: 60px;
+    .recent-table th {
+        padding: 1rem;
+        text-align: left;
+        background: rgba(0, 255, 0, 0.1);
+        color: var(--verde-neon);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .recent-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .recent-table tr:hover td {
+        background: rgba(0, 255, 0, 0.05);
+    }
+
+    .recent-table .user-info {
         display: flex;
         align-items: center;
-        justify-content: center;
-        background-color: rgba(20, 255, 20, 0.1);
-        border-radius: 10px;
-        font-size: 1.8rem;
+        gap: 0.75rem;
+    }
+
+    .recent-table .role-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .role-admin {
+        background-color: rgba(255, 48, 96, 0.15);
+        color: #ff3060;
+        border: 1px solid rgba(255, 48, 96, 0.3);
+    }
+
+    .role-premium {
+        background-color: rgba(255, 204, 0, 0.15);
+        color: #ffcc00;
+        border: 1px solid rgba(255, 204, 0, 0.3);
+    }
+
+    .role-critico {
+        background-color: rgba(0, 232, 255, 0.15);
+        color: #00e8ff;
+        border: 1px solid rgba(0, 232, 255, 0.3);
+    }
+
+    .role-usuario {
+        background-color: rgba(0, 255, 102, 0.15);
+        color: #00ff66;
+        border: 1px solid rgba(0, 255, 102, 0.3);
+    }
+
+    .rating-stars {
+        color: #ffcc00;
+    }
+
+    .view-all {
+        display: inline-block;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: var(--verde-neon);
+        text-decoration: none;
+        transition: all var(--transition-speed) ease;
+    }
+
+    .view-all:hover {
+        text-decoration: underline;
+        color: var(--verde-neon);
+        text-shadow: 0 0 5px var(--verde-neon);
+    }
+
+    /* Filtros para las tablas */
+    .table-filters {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+    }
+
+    .filter-btn.active {
+        border-color: var(--verde-neon);
+        color: var(--verde-neon);
+        background: rgba(0, 255, 0, 0.1);
+    }
+
+    .filter-btn:hover {
+        border-color: var(--verde-neon);
         color: var(--verde-neon);
     }
 
-    .stat-info {
-        flex: 1;
+    /* Estilos para la leyenda del gráfico */
+    .legend-color.admin {
+        background-color: #ff3060;
+        box-shadow: 0 0 5px rgba(255, 48, 96, 0.7);
     }
 
-    .stat-info h3 {
-        font-size: 1rem;
-        color: #aaa;
-        margin: 0 0 0.5rem 0;
+    .legend-color.premium {
+        background-color: #ffcc00;
+        box-shadow: 0 0 5px rgba(255, 204, 0, 0.7);
     }
 
-    .stat-number {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #fff;
-        margin: 0 0 0.3rem 0;
+    .legend-color.critico {
+        background-color: #00e8ff;
+        box-shadow: 0 0 5px rgba(0, 232, 255, 0.7);
     }
 
-    .stat-detail {
-        font-size: 0.8rem;
-        color: var(--verde-neon);
-        margin: 0;
+    .legend-color.usuario {
+        background-color: #00ff66;
+        box-shadow: 0 0 5px rgba(0, 255, 102, 0.7);
     }
 
-    .stat-detail i {
-        margin-right: 0.3rem;
+    .legend-value.admin {
+        color: #ff3060;
     }
 
-    .roles-chart-card {
-        background-color: rgba(26, 26, 26, 0.6);
-        border: 1px solid rgba(20, 255, 20, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 2rem;
+    .legend-value.premium {
+        color: #ffcc00;
+    }
+
+    .legend-value.critico {
+        color: #00e8ff;
+    }
+
+    .legend-value.usuario {
+        color: #00ff66;
+    }
+
+    /* Ajustes para que todo se vea bien cuando hay barra lateral */
+    .admin-content {
+        padding: 1.5rem;
+        width: 100%;
     }
 
     .roles-chart-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
         gap: 2rem;
-        padding: 2rem;
     }
 
-    @media (max-width: 992px) {
+    @media (max-width: 1199px) {
         .roles-chart-container {
             grid-template-columns: 1fr;
         }
-    }
 
-    .roles-chart {
-        position: relative;
-        height: 300px;
-    }
-
-    .users-table-card, .reviews-table-card {
-        background-color: rgba(26, 26, 26, 0.6);
-        border: 1px solid rgba(20, 255, 20, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    @media (max-width: 768px) {
-        .admin-sidebar {
-            width: 70px;
-            padding: 1rem 0;
-        }
-
-        .admin-sidebar .admin-logo h1 {
-            font-size: 1rem;
-        }
-
-        .admin-sidebar .admin-nav-item span {
-            display: none;
-        }
-
-        .admin-sidebar .admin-nav-item {
-            justify-content: center;
-            padding: 0.8rem;
-        }
-
-        .admin-sidebar .admin-nav-item i {
-            margin: 0;
-        }
-
-        .admin-main {
-            margin-left: 70px;
-        }
-    }
-
-    /* Para asegurar que las tarjetas de usuarios y reseñas tengan suficiente espacio */
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    .table {
-        min-width: 600px;
-    }
-
-    /* Ajustes adicionales para dispositivos más pequeños */
-    @media (max-width: 576px) {
-        .admin-content {
-            padding: 1rem;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .stat-card {
-            padding: 1rem;
-        }
-
-        .roles-chart-container {
-            padding: 1rem;
+        .roles-legend {
+            border-left: none;
+            border-top: 1px solid var(--border-color);
+            padding-left: 0;
+            padding-top: 1.5rem;
+            margin-top: 1rem;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="admin-logo">
-            <h1>Crit<span>Flix</span></h1>
-        </div>
-        <div class="admin-nav">
-            <a href="{{ url('/admin') }}" class="admin-nav-item active">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ url('/admin/users') }}" class="admin-nav-item">
+<div class="admin-content">
+    <!-- Tarjetas de estadísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
                 <i class="fas fa-users"></i>
-                <span>Usuarios</span>
-            </a>
-            <a href="{{ url('/admin/movies') }}" class="admin-nav-item">
+            </div>
+            <div class="stat-info">
+                <h3>Usuarios Totales</h3>
+                <div class="stat-number">{{ $stats['total_users'] }}</div>
+                <div class="stat-detail">
+                    <i class="fas fa-arrow-up"></i> {{ $stats['new_users_today'] }} nuevos hoy
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
                 <i class="fas fa-film"></i>
-                <span>Películas</span>
-            </a>
-            <a href="{{ url('/admin/reviews') }}" class="admin-nav-item">
+            </div>
+            <div class="stat-info">
+                <h3>Películas/Series</h3>
+                <div class="stat-number">{{ $stats['total_movies'] }}</div>
+                <div class="stat-detail">
+                    <i class="fas fa-database"></i> En la base de datos
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
                 <i class="fas fa-star"></i>
-                <span>Reseñas</span>
-            </a>
-            <div class="admin-nav-divider"></div>
-            <a href="{{ url('/profile') }}" class="admin-nav-item">
-                <i class="fas fa-user-cog"></i>
-                <span>Perfil</span>
-            </a>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="admin-nav-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesión</span>
-            </a>
+            </div>
+            <div class="stat-info">
+                <h3>Valoraciones</h3>
+                <div class="stat-number">{{ $stats['total_reviews'] }}</div>
+                <div class="stat-detail">
+                    <i class="fas fa-comments"></i> Con comentarios
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Visitas</h3>
+                <div class="stat-number">{{ $stats['visits_today'] ?? 0 }}</div>
+                <div class="stat-detail">
+                    <i class="fas fa-calendar"></i> En el día de hoy
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="admin-main">
-        <!-- Header -->
-        <div class="admin-header">
-            <div class="admin-header-title">
-                <h2>Panel de Control</h2>
+    <!-- Distribución de roles de usuario -->
+    <div class="roles-chart-card">
+        <div class="card-header">
+            <h3>Distribución de Roles de Usuario</h3>
+            <div class="card-actions">
+                <button class="btn-neon" onclick="window.critflixAdmin.reloadStats()">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
             </div>
-            <div class="admin-header-actions">
-                <div class="admin-search">
-                    <input type="text" placeholder="Buscar...">
-                    <button type="button"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="card-body">
+            <div class="roles-chart-container">
+                <div class="roles-chart">
+                    <canvas id="rolesChart" width="400" height="400"></canvas>
                 </div>
-                <div class="admin-notifications">
-                    <button type="button"><i class="fas fa-bell"></i></button>
-                    <span class="notification-badge">3</span>
+                <div class="roles-legend">
+                    <div class="legend-item">
+                        <div class="legend-color admin"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Administradores</div>
+                            <div class="legend-value admin">{{ $stats['role_percentages']['admin']['count'] ?? 0 }} ({{ $stats['role_percentages']['admin']['percentage'] ?? 0 }}%)</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color premium"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Premium</div>
+                            <div class="legend-value premium">{{ $stats['role_percentages']['premium']['count'] ?? 0 }} ({{ $stats['role_percentages']['premium']['percentage'] ?? 0 }}%)</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color critico"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Críticos</div>
+                            <div class="legend-value critico">{{ $stats['role_percentages']['critico']['count'] ?? 0 }} ({{ $stats['role_percentages']['critico']['percentage'] ?? 0 }}%)</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color usuario"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Usuarios</div>
+                            <div class="legend-value usuario">{{ $stats['role_percentages']['usuario']['count'] ?? 0 }} ({{ $stats['role_percentages']['usuario']['percentage'] ?? 0 }}%)</div>
+                        </div>
+                    </div>
+                    <div class="roles-total">
+                        <strong>Total de usuarios:</strong> {{ $stats['total_users'] }}
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Content -->
-        <div class="admin-content">
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Total Usuarios</h3>
-                        <p class="stat-number">{{ $stats['total_users'] }}</p>
-                        <p class="stat-detail">
-                            <i class="fas fa-arrow-up"></i> {{ $stats['new_users_today'] }} hoy
-                        </p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Total Películas</h3>
-                        <p class="stat-number">{{ $stats['total_movies'] }}</p>
-                        <p class="stat-detail">
-                            <i class="fas fa-plus"></i> 12 este mes
-                        </p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Total Reseñas</h3>
-                        <p class="stat-number">{{ $stats['total_reviews'] }}</p>
-                        <p class="stat-detail">
-                            <i class="fas fa-arrow-up"></i> 25 esta semana
-                        </p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Visitas Hoy</h3>
-                        <p class="stat-number">{{ $stats['visits_today'] }}</p>
-                        <p class="stat-detail">
-                            <i class="fas fa-arrow-up"></i> 12% vs ayer
-                        </p>
-                    </div>
+    <!-- Últimos usuarios registrados -->
+    <div class="recent-data-section">
+        <div class="roles-chart-card">
+            <div class="card-header">
+                <h3>Usuarios recientes</h3>
+                <div class="card-actions">
+                    <a href="{{ route('admin.users') }}" class="btn-neon">
+                        <i class="fas fa-eye"></i> Ver todos
+                    </a>
                 </div>
             </div>
-
-            <!-- Roles Chart -->
-            <div class="roles-chart-card">
-                <div class="card-header">
-                    <h3>Distribución de Roles</h3>
-                    <div class="card-actions">
-                        <button class="btn-neon">Exportar</button>
-                    </div>
-                </div>
-                <div class="roles-chart-container">
-                    <div class="roles-chart">
-                        <canvas id="role-distribution-chart"></canvas>
-                    </div>
-                    <div class="roles-legend">
-                        @php
-                            $rolePercentages = $stats['role_percentages'];
-                            $adminData = $rolePercentages['admin'] ?? ['count' => 0, 'percentage' => 0];
-                            $premiumData = $rolePercentages['premium'] ?? ['count' => 0, 'percentage' => 0];
-                            $criticoData = $rolePercentages['critico'] ?? ['count' => 0, 'percentage' => 0];
-                            $usuarioData = $rolePercentages['usuario'] ?? ['count' => 0, 'percentage' => 0];
-                        @endphp
-
-                        <div class="legend-item" data-role="admin">
-                            <div class="legend-color admin"></div>
-                            <div class="legend-label">Administradores</div>
-                            <div class="legend-value admin">{{ $adminData['count'] }} ({{ $adminData['percentage'] }}%)</div>
-                        </div>
-                        <div class="legend-item" data-role="premium">
-                            <div class="legend-color premium"></div>
-                            <div class="legend-label">Premium</div>
-                            <div class="legend-value premium">{{ $premiumData['count'] }} ({{ $premiumData['percentage'] }}%)</div>
-                        </div>
-                        <div class="legend-item" data-role="critico">
-                            <div class="legend-color critico"></div>
-                            <div class="legend-label">Críticos</div>
-                            <div class="legend-value critico">{{ $criticoData['count'] }} ({{ $criticoData['percentage'] }}%)</div>
-                        </div>
-                        <div class="legend-item" data-role="usuario">
-                            <div class="legend-color usuario"></div>
-                            <div class="legend-label">Usuarios</div>
-                            <div class="legend-value usuario">{{ $usuarioData['count'] }} ({{ $usuarioData['percentage'] }}%)</div>
-                        </div>
-
-                        <div class="roles-total">
-                            Total de usuarios: <span>{{ $stats['total_users'] }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Users -->
-            <div class="users-table-card">
-                <div class="card-header">
-                    <h3>Usuarios Recientes</h3>
-                    <div class="card-actions">
-                        <select class="table-filter">
-                            <option value="">Todos los roles</option>
-                            <option value="admin">Administradores</option>
-                            <option value="premium">Premium</option>
-                            <option value="critico">Críticos</option>
-                            <option value="usuario">Usuarios</option>
-                        </select>
-                        <button class="btn-neon">Ver Todos</button>
-                    </div>
-                </div>
+            <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="recent-table">
                         <thead>
                             <tr>
                                 <th>Usuario</th>
                                 <th>Email</th>
                                 <th>Rol</th>
-                                <th>Registrado</th>
-                                <th>Acciones</th>
+                                <th>Fecha</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($recentUsers as $user)
+                            @forelse($recentUsers as $user)
                             <tr>
-                                <td>{{ $user->name }}</td>
+                                <td>
+                                    <div class="user-info">
+                                        <img
+                                            src="{{ $user->imagen_perfil ? asset('storage/' . $user->imagen_perfil) : asset('img/avatar-default.png') }}"
+                                            alt="{{ $user->name }}"
+                                            class="user-avatar"
+                                            width="40"
+                                            height="40"
+                                        >
+                                        <span>{{ $user->name }}</span>
+                                    </div>
+                                </td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    <span class="badge role-{{ strtolower($user->rol) }}">
-                                        {{ ucfirst($user->rol) }}
-                                    </span>
+                                    <span class="role-badge role-{{ $user->rol }}">{{ ucfirst($user->rol) }}</span>
                                 </td>
-                                <td>{{ $user->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ url('/admin/users/'.$user->id) }}" class="action-btn">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url('/admin/users/'.$user->id.'/edit') }}" class="action-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="action-btn delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No hay usuarios recientes</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+                <a href="{{ route('admin.users') }}" class="view-all">Ver todos los usuarios <i class="fas fa-arrow-right"></i></a>
             </div>
+        </div>
+    </div>
 
-            <!-- Recent Reviews -->
-            <div class="reviews-table-card">
-                <div class="card-header">
-                    <h3>Reseñas Recientes</h3>
-                    <div class="card-actions">
-                        <select class="table-filter">
-                            <option value="">Todas las reseñas</option>
-                            <option value="positiva">Positivas</option>
-                            <option value="negativa">Negativas</option>
-                            <option value="neutral">Neutrales</option>
-                        </select>
-                        <button class="btn-neon">Ver Todas</button>
-                    </div>
+    <!-- Últimas valoraciones -->
+    <div class="recent-data-section">
+        <div class="roles-chart-card">
+            <div class="card-header">
+                <h3>Valoraciones recientes</h3>
+                <div class="card-actions">
+                    <a href="{{ route('admin.reviews') }}" class="btn-neon">
+                        <i class="fas fa-eye"></i> Ver todas
+                    </a>
                 </div>
+            </div>
+            <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="recent-table">
                         <thead>
                             <tr>
-                                <th>Película</th>
                                 <th>Usuario</th>
-                                <th>Puntuación</th>
+                                <th>Película/Serie</th>
+                                <th>Valoración</th>
                                 <th>Fecha</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($recentReviews as $review)
+                            @forelse($recentReviews as $review)
                             <tr>
-                                <td>{{ $review->movie_title }}</td>
                                 <td>{{ $review->user_name }}</td>
-                                <td>{{ $review->valoracion }}/10</td>
-                                <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y') }}</td>
+                                <td>{{ $review->movie_title }}</td>
                                 <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ url('/admin/reviews/'.$review->id) }}" class="action-btn">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url('/admin/reviews/'.$review->id.'/edit') }}" class="action-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="action-btn delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                    <div class="rating-stars">
+                                        @for($i = 0; $i < $review->valoracion; $i++)
+                                            <i class="fas fa-star"></i>
+                                        @endfor
+                                        @for($i = $review->valoracion; $i < 5; $i++)
+                                            <i class="far fa-star"></i>
+                                        @endfor
                                     </div>
                                 </td>
+                                <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}</td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No hay valoraciones recientes</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+                <a href="{{ route('admin.reviews') }}" class="view-all">Ver todas las valoraciones <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
 </div>
-
-<form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
-    @csrf
-</form>
-
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Configuración del gráfico de roles
-        const ctx = document.getElementById('role-distribution-chart').getContext('2d');
+document.addEventListener('DOMContentLoaded', function() {
+    // Colores para el gráfico
+    const colorRojo = '#ff3060';     // Rojo para admin
+    const colorAmarillo = '#ffcc00'; // Amarillo para premium
+    const colorCyan = '#00e8ff';     // Cyan para crítico
+    const colorVerde = '#00ff66';    // Verde para usuario
 
-        const data = {
-            labels: ['Administradores', 'Premium', 'Críticos', 'Usuarios'],
-            datasets: [{
-                data: [
-                    {{ $adminData['count'] }},
-                    {{ $premiumData['count'] }},
-                    {{ $criticoData['count'] }},
-                    {{ $usuarioData['count'] }}
-                ],
-                backgroundColor: [
-                    '#ff4444', // Rojo neón - Admin
-                    '#ffd700', // Amarillo neón - Premium
-                    '#00ffdd', // Cyan neón - Crítico
-                    '#14ff14'  // Verde neón - Usuario
-                ],
-                borderColor: '#0a0a0a',
-                borderWidth: 2,
-                hoverOffset: 15
-            }]
-        };
+    // Datos para el gráfico circular
+    const roleData = {
+        labels: ['Administradores', 'Premium', 'Críticos', 'Usuarios'],
+        datasets: [{
+            data: [
+                {{ $stats['role_percentages']['admin']['count'] ?? 0 }},
+                {{ $stats['role_percentages']['premium']['count'] ?? 0 }},
+                {{ $stats['role_percentages']['critico']['count'] ?? 0 }},
+                {{ $stats['role_percentages']['usuario']['count'] ?? 0 }}
+            ],
+            backgroundColor: [
+                colorRojo,
+                colorAmarillo,
+                colorCyan,
+                colorVerde
+            ],
+            borderColor: '#111',
+            borderWidth: 2,
+            hoverBackgroundColor: [
+                colorRojo,
+                colorAmarillo,
+                colorCyan,
+                colorVerde
+            ],
+            hoverBorderColor: '#fff'
+        }]
+    };
 
-        const config = {
-            type: 'doughnut',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        },
-                        padding: 10,
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: '#333',
-                        borderWidth: 1,
-                        displayColors: true,
-                        boxWidth: 10,
-                        boxHeight: 10,
-                        boxPadding: 3
-                    }
+    // Configuración del gráfico
+    const chartConfig = {
+        type: 'doughnut',
+        data: roleData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
                 },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
+                tooltip: {
+                    backgroundColor: 'rgba(0, 20, 0, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(0, 255, 0, 0.3)',
+                    borderWidth: 1,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
                 }
+            },
+            cutout: '70%',
+            rotation: -90,
+            circumference: 360,
+            animation: {
+                animateRotate: true,
+                animateScale: true
             }
-        };
+        }
+    };
 
-        const rolesChart = new Chart(ctx, config);
-
-        // Interactividad para los items de la leyenda
-        const legendItems = document.querySelectorAll('.legend-item');
-
-        legendItems.forEach((item, index) => {
-            item.addEventListener('mouseenter', () => {
-                // Destacar el segmento correspondiente
-                const dataset = rolesChart.data.datasets[0];
-                const dataClone = [...dataset.data];
-
-                dataClone.forEach((v, i) => {
-                    dataClone[i] = (i === index) ? v * 1.1 : v * 0.9;
-                });
-
-                dataset.hoverOffset = 20;
-                rolesChart.update();
-            });
-
-            item.addEventListener('mouseleave', () => {
-                // Restaurar el estado normal
-                const dataset = rolesChart.data.datasets[0];
-                dataset.data = [
-                    {{ $adminData['count'] }},
-                    {{ $premiumData['count'] }},
-                    {{ $criticoData['count'] }},
-                    {{ $usuarioData['count'] }}
-                ];
-                dataset.hoverOffset = 15;
-                rolesChart.update();
-            });
-        });
-    });
+    // Inicializar el gráfico
+    const ctx = document.getElementById('rolesChart').getContext('2d');
+    new Chart(ctx, chartConfig);
+});
 </script>
-@endsection
+@endpush
