@@ -11,15 +11,15 @@
             <h1><i class="fas fa-list-ul"></i> Crear Nueva Lista</h1>
             <p class="subtitle">Crea una lista personalizada para organizar tus películas favoritas</p>
         </div>
-        <a href="javascript:void(0);" onclick="window.history.back();" class="btn-neon">
-            <i class="fas fa-arrow-left"></i> Volver
+        <a href="{{ route('profile.show', request('user_id')) }}" class="btn-neon">
+            <i class="fas fa-arrow-left"></i> Volver al Perfil
         </a>
     </div>
 
     <div class="create-list-form-container">
         <form action="{{ route('listas.store') }}" method="POST" class="create-list-form">
             @csrf
-            <input type="hidden" name="user_id" id="userId">
+            <input type="hidden" name="user_id" value="{{ request('user_id') }}">
 
             <div class="form-section">
                 <div class="form-group">

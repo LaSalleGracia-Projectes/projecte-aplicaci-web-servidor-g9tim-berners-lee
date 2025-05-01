@@ -28,18 +28,28 @@
 </div>
 
             <div class="auth-buttons">
-                <button id="loginLink" class="auth-btn login-btn">
-                    <i class="fas fa-user"></i>
-                    <span>Iniciar Sesión</span>
-                </button>
-                <button id="registerLink" class="auth-btn register-btn">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Registrarse</span>
-                </button>
-                <button id="profileLink" class="auth-btn profile-btn">
-                    <i class="fas fa-user"></i>
-                    <span>Perfil</span>
-                </button>
+                @guest
+                    <a href="{{ route('login') }}" class="auth-btn login-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Iniciar Sesión</span>
+                    </a>
+                    <a href="{{ route('register') }}" class="auth-btn register-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Registrarse</span>
+                    </a>
+                @else
+                    <a href="{{ route('profile.show', auth()->id()) }}" class="auth-btn profile-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Perfil</span>
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="auth-btn logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </form>
+                @endguest
             </div>
         </div>
     </div>

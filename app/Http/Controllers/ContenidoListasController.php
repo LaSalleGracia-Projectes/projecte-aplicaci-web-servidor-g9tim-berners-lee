@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ContenidoListas;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreContenidoListasRequest;
 use App\Http\Requests\UpdateContenidoListasRequest;
+use App\Models\ContenidoListas;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ContenidoListasController extends Controller
 {
@@ -31,29 +33,37 @@ class ContenidoListasController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'id_lista' => 'required|exists:listas,id',
-            'tmdb_id' => 'required|integer',
-            'tipo' => 'required|in:pelicula,serie',
-        ]);
+        try {
+            $validated = $request->validate([
+                'id_lista' => 'required|exists:listas,id',
+                'tmdb_id' => 'required|integer',
+                'tipo' => 'required|string|in:movie,tv'
+            ]);
 
-        $contenidoLista = ContenidoListas::create([
-            'id_lista' => $request->id_lista,
-            'tmdb_id' => $request->tmdb_id,
-            'tipo' => $request->tipo,
-        ]);
+            $contenido = ContenidoListas::create([
+                'id_lista' => $validated['id_lista'],
+                'tmdb_id' => $validated['tmdb_id'],
+                'tipo' => $validated['tipo']
+            ]);
 
-        return response()->json($contenidoLista, 201);
+            return response()->json([
+                'message' => 'Película añadida correctamente',
+                'data' => $contenido
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al añadir la película',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(ContenidoListas $contenido)
     {
-        $contenidoLista = ContenidoListas::findOrFail($id);
-
-        return response()->json($contenidoLista);
+        return response()->json($contenido);
     }
 
     /**
@@ -67,20 +77,30 @@ class ContenidoListasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateContenidoListasRequest $request)
+    public function update(UpdateContenidoListasRequest $request, ContenidoListas $contenido)
     {
-        //
+        $validated = $request->validated();
+        $contenido->update($validated);
+        return response()->json($contenido);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(ContenidoListas $contenido)
     {
-        $contenidoLista = ContenidoListas::findOrFail($id);
-        $contenidoLista->delete();
-
-        return response()->json(['message' => 'Contenido eliminado de la lista']);
+        try {
+            $contenido->delete();
+            return response()->json([
+                'message' => 'Película eliminada correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error("Error en ContenidoListasController@destroy: " . $e->getMessage());
+            return response()->json([
+                'error' => 'Error interno del servidor',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

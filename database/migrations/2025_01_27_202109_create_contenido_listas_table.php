@@ -16,6 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('id_lista');
             $table->integer('tmdb_id');
             $table->string('tipo');
+            $table->string('titulo');
+            $table->string('poster_path')->nullable();
+            $table->date('fecha_estreno')->nullable();
+            $table->decimal('puntuacion', 3, 1)->nullable();
             $table->timestamp('fecha_agregado')->useCurrent();
 
             $table->foreign('id_lista')->references('id')->on('listas');
