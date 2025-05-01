@@ -43,7 +43,6 @@ Route::get('/haztecritico', [CriticosController::class, 'index'])->name('haztecr
 
 Route::get('/peliculas', [PeliculasController::class, 'index'])->name('peliculas');
 Route::get('/pelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.detail');
-
 Route::get('/infoPelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.show');
 
 Route::get('/series', [SeriesController::class, 'index'])->name('series');

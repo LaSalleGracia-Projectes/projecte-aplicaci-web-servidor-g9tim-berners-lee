@@ -65,7 +65,7 @@
 <main class="pelicula-detalle">
     <!-- Banner grande con título -->
     <div class="banner">
-    <img src="{{ $pelicula->backdrop_url}}" alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
+    <img src="{{ isset($pelicula['backdrop_path']) ? 'https://image.tmdb.org/t/p/original'.$pelicula['backdrop_path'] : asset('images/no-backdrop.jpg') }}" alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
         <div class="titulo-overlay">
             <h1>{{ $pelicula['title'] ?? $pelicula->titulo }}</h1>
             @if(!empty($pelicula['tagline'] ?? ''))
@@ -291,7 +291,7 @@
                     <div class="add-review">
                         <h3>¿Ya la viste? Deja tu crítica</h3>
                         <form id="review-form">
-                            <input type="hidden" name="id_pelicula" value="{{ $pelicula->id }}">
+                            <input type="hidden" name="id_pelicula" value="{{ $pelicula['id'] }}">
                             <div class="rating-selector">
                                 <span>Tu puntuación:</span>
                                 <div class="stars" role="radiogroup" aria-label="Puntuación">
