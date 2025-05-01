@@ -4,61 +4,6 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('movie-details.css') }}">
-    <style>
-        .comentarios-section {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .nuevo-comentario {
-            margin-bottom: 2rem;
-        }
-
-        .comentario {
-            background: white;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .comentario-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .usuario-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .spoiler-warning {
-            background: #fff3cd;
-            padding: 0.5rem;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-        }
-
-        .contenido-spoiler {
-            display: none;
-        }
-
-        .spoiler .contenido-comentario {
-            display: none;
-        }
-    </style>
 @endpush
 
 @section('content')
@@ -291,7 +236,7 @@
                     <div class="add-review">
                         <h3>¿Ya la viste? Deja tu crítica</h3>
                         <form id="review-form">
-                            <input type="hidden" name="id_pelicula" value="{{ $pelicula['id'] }}">
+                            <input type="hidden" name="id_pelicula" value="{{ $pelicula['id'] ?? $pelicula->tmdb_id }}">
                             <div class="rating-selector">
                                 <span>Tu puntuación:</span>
                                 <div class="stars" role="radiogroup" aria-label="Puntuación">
@@ -426,4 +371,130 @@
 
 @push('scripts')
 <script src="{{ asset('movie-details.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para cargar comentarios/críticas
+    function cargarComentarios() {
+        const tmdbId = '{{ $pelicula["id"] ?? $pelicula->tmdb_id }}';
+        fetch(`/api/comentarios/tmdb/${tmdbId}/pelicula`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar los comentarios');
+                }
+                return response.json();
+            })
+            .then(comentarios => {
+                const container = document.querySelector('.reviews-list');
+                container.innerHTML = '';
+
+                if (comentarios.length === 0) {
+                    container.innerHTML = '<p>No hay críticas aún. ¡Sé el primero en escribir una!</p>';
+                    return;
+                }
+
+                comentarios.forEach(comentario => {
+                    const comentarioHtml = `
+                        <div class="comentario ${comentario.es_spoiler ? 'spoiler' : ''}">
+                            <div class="comentario-header">
+                                <div class="usuario-info">
+                                    <img src="${comentario.usuario.foto_perfil ? '/storage/' + comentario.usuario.foto_perfil : '/images/default-avatar.png'}"
+                                         alt="${comentario.usuario.name}"
+                                         class="avatar">
+                                    <span>${comentario.usuario.name}</span>
+                                </div>
+                                <span class="fecha">${new Date(comentario.created_at).toLocaleDateString()}</span>
+                            </div>
+                            ${comentario.es_spoiler ? '<div class="spoiler-warning">Esta crítica contiene spoilers</div>' : ''}
+                            <div class="contenido-comentario">${comentario.comentario}</div>
+                            ${comentario.es_spoiler ? '<div class="contenido-spoiler">${comentario.comentario}</div>' : ''}
+                            <div class="comentario-actions">
+                                <button class="btn-like" data-id="${comentario.id}">
+                                    <i class="far fa-thumbs-up"></i> <span class="likes-count">${comentario.likes_count}</span>
+                                </button>
+                                <button class="btn-dislike" data-id="${comentario.id}">
+                                    <i class="far fa-thumbs-down"></i> <span class="dislikes-count">${comentario.dislikes_count}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += comentarioHtml;
+                });
+
+                // Agregar event listeners para los botones de like/dislike
+                document.querySelectorAll('.btn-like, .btn-dislike').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const comentarioId = this.dataset.id;
+                        const tipo = this.classList.contains('btn-like') ? 'like' : 'dislike';
+
+                        fetch('/api/likes_comentarios', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({
+                                user_id: {{ auth()->id() }},
+                                id_comentario: comentarioId,
+                                tipo: tipo
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            cargarComentarios(); // Recargar comentarios para actualizar contadores
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const container = document.querySelector('.reviews-list');
+                container.innerHTML = '<p>Error al cargar las críticas. Por favor, intenta de nuevo más tarde.</p>';
+            });
+    }
+
+    // Manejar envío del formulario de crítica
+    const comentarioForm = document.getElementById('comentarioForm');
+    if (comentarioForm) {
+        comentarioForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                user_id: formData.get('user_id'),
+                tmdb_id: formData.get('tmdb_id'),
+                tipo: formData.get('tipo'),
+                comentario: formData.get('comentario'),
+                es_spoiler: formData.get('es_spoiler') === 'on'
+            };
+
+            fetch('/api/comentarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al publicar la crítica');
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.reset();
+                cargarComentarios();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al publicar la crítica. Por favor, intenta de nuevo.');
+            });
+        });
+    }
+
+    // Cargar comentarios al iniciar
+    cargarComentarios();
+});
+</script>
 @endpush
