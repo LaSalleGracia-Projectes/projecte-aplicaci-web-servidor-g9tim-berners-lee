@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\RecomendacionesController;
 use App\Http\Controllers\SeguimientoController;
 use App\Http\Controllers\AdministradoresController;
+use App\Http\Controllers\SolicitudCriticoController;
 use App\Http\Controllers\AuthController;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -33,6 +34,7 @@ Route::apiResource('notificaciones', NotificacionesController::class);
 Route::apiResource('recomendaciones', RecomendacionesController::class);
 Route::apiResource('seguimientos', SeguimientoController::class);
 Route::apiResource('administradores', AdministradoresController::class);
+Route::apiResource('solicitudes_critico', SolicitudCriticoController::class);
 
 // Rutas adicionales para listas
 Route::get('listas/user/{userId}', [ListasController::class, 'getListasByUsuario']);
@@ -53,3 +55,6 @@ Route::put('notificaciones/read_all/{userId}', [NotificacionesController::class,
 // Rutas para valoraciones (favoritos)
 Route::get('valoraciones/usuario/{userId}', [ValoracionesController::class, 'getUserFavorites']);
 Route::get('valoraciones/check/{userId}/{peliculaId}', [ValoracionesController::class, 'checkFavoriteStatus']);
+
+// Rutas para solicitudes de crítico
+Route::get('solicitudes_critico/user/{userId}', [SolicitudCriticoController::class, 'getSolicitudesByUser']);
