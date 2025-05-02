@@ -79,4 +79,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Seguimiento::class, 'user_id');
     }
+
+    // ✅ Relación con Solicitudes de Crítico
+    public function solicitudesCritico()
+    {
+        return $this->hasMany(SolicitudCritico::class, 'user_id');
+    }
 }
