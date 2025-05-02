@@ -54,7 +54,7 @@ Route::put('notificaciones/read_all/{userId}', [NotificacionesController::class,
 
 // Rutas para valoraciones (favoritos)
 Route::get('valoraciones/usuario/{userId}', [ValoracionesController::class, 'getUserFavorites']);
-Route::get('valoraciones/check/{userId}/{peliculaId}', [ValoracionesController::class, 'checkFavoriteStatus']);
+Route::get('valoraciones/check/{userId}/{tmdb_id}', [ValoracionesController::class, 'checkFavoriteStatus']);
 
 // Rutas para solicitudes de crítico
 Route::get('solicitudes_critico/user/{userId}', [SolicitudCriticoController::class, 'getSolicitudesByUser']);
