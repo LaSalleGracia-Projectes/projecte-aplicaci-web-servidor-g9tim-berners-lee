@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('valoraciones', function (Blueprint $table) {
             $table->id('id');
-            $table->integer('id_pelicula'); // ID de TMDB, sin referencia a peliculas_series
+            $table->integer('tmdb_id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('valoracion', ['like', 'dislike']);
             $table->timestamps();

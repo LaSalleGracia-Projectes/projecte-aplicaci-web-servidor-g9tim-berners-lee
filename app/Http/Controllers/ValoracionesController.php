@@ -7,6 +7,16 @@ use Illuminate\Http\Request;
 
 class ValoracionesController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $valoraciones = Valoraciones::all();
+        return response()->json($valoraciones);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -14,13 +24,13 @@ class ValoracionesController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'id_pelicula' => 'required|integer',
+            'tmdb_id' => 'required|integer',
             'valoracion' => 'required|in:like,dislike',
         ]);
 
         // Verificar si ya existe la valoración
         $existingValoracion = Valoraciones::where('user_id', $request->user_id)
-            ->where('id_pelicula', $request->id_pelicula)
+            ->where('tmdb_id', $request->tmdb_id)
             ->first();
 
         if ($existingValoracion) {
@@ -29,11 +39,48 @@ class ValoracionesController extends Controller
 
         $valoracion = Valoraciones::create([
             'user_id' => $request->user_id,
-            'id_pelicula' => $request->id_pelicula,
+            'tmdb_id' => $request->tmdb_id,
             'valoracion' => $request->valoracion,
         ]);
 
         return response()->json($valoracion, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $valoracion = Valoraciones::findOrFail($id);
+        return response()->json($valoracion);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'valoracion' => 'required|in:like,dislike',
+        ]);
+
+        $valoracion = Valoraciones::findOrFail($id);
+        $valoracion->update([
+            'valoracion' => $request->valoracion
+        ]);
+
+        return response()->json($valoracion);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $valoracion = Valoraciones::findOrFail($id);
+        $valoracion->delete();
+
+        return response()->json(['message' => 'Valoración eliminada correctamente'], 200);
     }
 
     /**
@@ -54,7 +101,7 @@ class ValoracionesController extends Controller
     public function checkFavoriteStatus($userId, $peliculaId)
     {
         $favorito = Valoraciones::where('user_id', $userId)
-            ->where('id_pelicula', $peliculaId)
+            ->where('tmdb_id', $peliculaId)
             ->where('valoracion', 'like')
             ->exists();
 
