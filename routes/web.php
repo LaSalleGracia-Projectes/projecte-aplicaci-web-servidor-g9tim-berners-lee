@@ -144,3 +144,16 @@ Route::get('/test-email/{email}', [AuthController::class, 'testEmail'])->name('t
 // Rutas de autenticación con Google
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+// Rutas de políticas y contacto
+Route::get('/politicas/privacidad', function () {
+    return view('policies.privacy');
+})->name('policies.privacy');
+
+Route::get('/politicas/terminos', function () {
+    return view('policies.terms');
+})->name('policies.terms');
+
+Route::get('/contacto', function () {
+    return view('policies.contact');
+})->name('policies.contact');
