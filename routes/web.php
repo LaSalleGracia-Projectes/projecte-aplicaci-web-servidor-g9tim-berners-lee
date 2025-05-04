@@ -15,6 +15,7 @@ use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\EmailTestController;
 use App\Http\Controllers\ListasController;
 use App\Http\Controllers\PeliculasSeriesController;
+use App\Http\Controllers\LanguageController;
 
 
 // Rutas de perfil - protegidas por autenticación
@@ -27,15 +28,18 @@ use App\Http\Controllers\PeliculasSeriesController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::resource('listas', App\Http\Controllers\ListasController::class);
 Route::post('/api/contenido-listas', [App\Http\Controllers\ContenidoListasController::class, 'store']);
 Route::delete('/api/contenido-listas/{id}', [App\Http\Controllers\ContenidoListasController::class, 'destroy'])
     ->name('contenido-listas.destroy');
 
 // Rutas para las vistas de listas
+Route::get('/listas', [ListasController::class, 'index'])->name('listas.index');
 Route::get('/listas/create', [ListasController::class, 'create'])->name('listas.create');
+Route::post('/listas', [ListasController::class, 'store'])->name('listas.store');
 Route::get('/listas/{id}', [ListasController::class, 'show'])->name('listas.show');
 Route::get('/listas/{lista}/edit', [ListasController::class, 'edit'])->name('listas.edit');
+Route::put('/listas/{id}', [ListasController::class, 'update'])->name('listas.update');
+Route::delete('/listas/{id}', [ListasController::class, 'destroy'])->name('listas.destroy');
 Route::get('/listas/redirect/destroy/{userId}', [ListasController::class, 'redirectAfterDestroy'])->name('listas.redirect.destroy');
 Route::get('/listas/redirect/store/{listaId}', [ListasController::class, 'redirectAfterStore'])->name('listas.redirect.store');
 Route::get('/listas/redirect/update/{listaId}', [ListasController::class, 'redirectAfterUpdate'])->name('listas.redirect.update');
@@ -161,3 +165,12 @@ Route::get('/politicas/terminos', function () {
 Route::get('/contacto', function () {
     return view('policies.contact');
 })->name('policies.contact');
+
+// Rutas de idioma
+Route::get('/change-language/{locale}', [App\Http\Controllers\LanguageController::class, 'change'])->name('language.change');
+Route::get('/language/{locale}', [App\Http\Controllers\LanguageController::class, 'change']); // Ruta alternativa para compatibilidad
+
+// Ruta para prueba de idioma
+Route::get('/test-language', function () {
+    return view('test-language');
+})->name('test.language');

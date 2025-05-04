@@ -1,67 +1,192 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CritFlix - Plataforma de críticas de películas y series
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![CritFlix Logo](https://via.placeholder.com/200x100?text=CritFlix)
 
-## About Laravel
+## 📝 Descripción
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+CritFlix es una innovadora plataforma que permite a los usuarios explorar, valorar y compartir sus opiniones sobre películas y series. La aplicación conecta amantes del cine y las series de televisión, facilitando la creación de comunidades en torno a sus contenidos favoritos.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Características principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Exploración de contenido**: Navega por un extenso catálogo de películas y series desde la API de TMDB
+- **Sistema de valoraciones**: Califica películas y series con un sistema intuitivo
+- **Comentarios y discusiones**: Participa en conversaciones sobre tus contenidos favoritos
+- **Listas personalizadas**: Crea y comparte listas temáticas (favoritos, pendientes, recomendados, etc.)
+- **Perfiles de usuario**: Personaliza tu perfil y muestra tus preferencias cinematográficas
+- **Notificaciones**: Mantente al día con las interacciones y novedades
+- **Roles especiales**: Usuarios críticos verificados con opiniones destacadas
+- **Recomendaciones personalizadas**: Descubre nuevo contenido basado en tus gustos
 
-## Learning Laravel
+## 🛠️ Tecnologías utilizadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- **Laravel**: Framework PHP para el desarrollo del servidor
+- **MySQL**: Base de datos relacional
+- **Sanctum**: Sistema de autenticación mediante tokens
+- **Eloquent ORM**: Para la gestión de la base de datos
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend
+- **React/Vue.js**: Framework JavaScript para la interfaz de usuario
+- **Tailwind CSS**: Framework CSS para el diseño
+- **Axios**: Cliente HTTP para comunicación con la API
+- **TMDB API**: Fuente de datos para películas y series
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📊 Estructura de la base de datos
 
-## Laravel Sponsors
+### Tablas principales
+- `users`: Información de usuarios registrados
+- `comentarios`: Comentarios de usuarios sobre películas y series
+- `valoraciones`: Puntuaciones asignadas a películas y series
+- `listas`: Colecciones personalizadas creadas por usuarios
+- `contenidos_listas`: Relación entre listas y contenidos
+- `likes_comentarios`: Interacciones con comentarios
+- `respuestas_comentarios`: Respuestas a comentarios existentes
+- `notificaciones`: Sistema de alertas para usuarios
+- `solicitudes_critico`: Gestión de peticiones para convertirse en crítico
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🔄 API Endpoints
 
-### Premium Partners
+### Autenticación
+- `POST /api/register`: Registro de nuevos usuarios
+- `POST /api/login`: Inicio de sesión
+- `POST /api/logout`: Cierre de sesión (requiere autenticación)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Usuarios
+- `GET /api/usuarios`: Listar usuarios
+- `GET /api/usuarios/{id}`: Obtener información de un usuario
+- `PUT /api/usuarios/{id}`: Actualizar información de usuario
+- `DELETE /api/usuarios/{id}`: Eliminar usuario
 
-## Contributing
+### Películas y Series
+- `GET /api/peliculas_series`: Listar contenido almacenado
+- `GET /api/peliculas_series/{id}`: Obtener detalles de un contenido
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Valoraciones
+- `GET /api/valoraciones`: Listar valoraciones
+- `POST /api/valoraciones`: Crear valoración
+- `GET /api/valoraciones/usuario/{userId}`: Obtener favoritos de un usuario
+- `GET /api/valoraciones/check/{userId}/{tmdb_id}`: Verificar estado de favorito
 
-## Code of Conduct
+### Comentarios
+- `GET /api/comentarios`: Listar todos los comentarios
+- `POST /api/comentarios`: Crear un comentario
+- `GET /api/comentarios/{id}`: Obtener un comentario específico
+- `PUT /api/comentarios/{id}`: Actualizar un comentario
+- `DELETE /api/comentarios/{id}`: Eliminar un comentario
+- `GET /api/comentarios/tmdb/{tmdbId}/{tipo}`: Obtener comentarios por ID de TMDB
+- `GET /api/comentarios-pelicula/{tmdbId}`: Obtener comentarios de una película
+- `GET /api/comentarios-serie/{tmdbId}`: Obtener comentarios de una serie
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Respuestas a comentarios
+- `GET /api/respuestas_comentarios`: Listar todas las respuestas
+- `POST /api/respuestas-comentarios`: Crear una respuesta
+- `GET /api/respuestas_comentarios/comentario/{comentarioId}`: Obtener respuestas de un comentario
 
-## Security Vulnerabilities
+### Likes/Dislikes
+- `GET /api/likes_comentarios/status/{comentarioId}/{userId}`: Verificar estado de like
+- `GET /api/likes_comentarios/count/{comentarioId}`: Contar likes de un comentario
+- `POST /api/likes_comentarios`: Crear/actualizar like o dislike
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Listas personalizadas
+- `GET /api/listas`: Listar todas las listas
+- `POST /api/listas`: Crear una lista
+- `GET /api/listas/{id}`: Obtener una lista específica
+- `PUT /api/listas/{id}`: Actualizar una lista
+- `DELETE /api/listas/{id}`: Eliminar una lista
+- `GET /api/listas/user/{userId}`: Obtener listas de un usuario
 
-## License
+### Contenido de listas
+- `GET /api/contenido_listas`: Listar todo el contenido de listas
+- `POST /api/contenido_listas`: Agregar contenido a una lista
+- `DELETE /api/contenido_listas/{id}`: Eliminar contenido de una lista
+- `GET /api/contenido_listas/lista/{id_lista}`: Obtener contenido de una lista específica
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# projecte-aplicaci-web-servidor-g9tim-berners-lee" 
+### Notificaciones
+- `GET /api/notificaciones/user/{userId}`: Obtener notificaciones de un usuario
+- `PUT /api/notificaciones/read/{id}`: Marcar notificación como leída
+- `PUT /api/notificaciones/read_all/{userId}`: Marcar todas las notificaciones como leídas
+
+### Solicitudes de crítico
+- `GET /api/solicitudes_critico`: Listar solicitudes de crítico
+- `POST /api/solicitudes_critico`: Crear solicitud de crítico
+- `GET /api/solicitudes_critico/user/{userId}`: Obtener solicitudes de un usuario
+
+## 🚀 Instalación y configuración
+
+### Requisitos previos
+- PHP 8.1 o superior
+- Composer
+- Node.js y npm
+- MySQL
+
+### Pasos para la instalación
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/tu-usuario/critflix.git
+   cd critflix
+   ```
+
+2. **Instalar dependencias de PHP**
+   ```bash
+   composer install
+   ```
+
+3. **Configurar variables de entorno**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configurar la base de datos en el archivo .env**
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=critflix
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+5. **Ejecutar migraciones**
+   ```bash
+   php artisan migrate
+   ```
+
+6. **Instalar dependencias de JavaScript**
+   ```bash
+   npm install
+   ```
+
+7. **Compilar assets**
+   ```bash
+   npm run dev
+   ```
+
+8. **Iniciar el servidor de desarrollo**
+   ```bash
+   php artisan serve
+   ```
+
+## 👥 Equipo de desarrollo
+
+- **Backend**: Grupo TIM BERNERS-LEE
+- **Frontend**: Grupo TIM BERNERS-LEE
+- **Diseño UX/UI**: Grupo TIM BERNERS-LEE
+- **Base de datos**: Grupo TIM BERNERS-LEE
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 🔮 Futuras mejoras
+
+- Implementación de un sistema de recomendaciones basado en machine learning
+- Integración con redes sociales
+- Sistema de logros y gamificación
+- Transmisión y eventos en vivo para estrenos importantes
+- Marketplace para contenido exclusivo de críticos
+
+---
+
+© 2025 CritFlix - Desarrollado por Grupo TIM BERNERS-LEE

@@ -5,8 +5,8 @@ const BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = "ba232569da1aac2f9b80a35300d0b04f"; // Reemplazar con tu API key real
 const IMG_URL = "https://image.tmdb.org/t/p/w500";
 const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
-const DEFAULT_POSTER = "https://via.placeholder.com/500x750/121212/00ff3c?text=Sin+Imagen";
-const DEFAULT_BACKDROP = "https://via.placeholder.com/1280x720/121212/00ff3c?text=Sin+Imagen+de+Fondo";
+const DEFAULT_POSTER = "https://placehold.co/500x750/121212/00ff3c?text=Sin+Imagen";
+const DEFAULT_BACKDROP = "https://placehold.co/1280x720/121212/00ff3c?text=Sin+Imagen+de+Fondo";
 
 let allSeriesPage = 1;
 let isLoading = false;

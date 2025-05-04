@@ -1,19 +1,281 @@
 @extends('layouts.app')
 
-@section('title', $pelicula['title'] ?? $pelicula->titulo ?? 'Detalle de película')
+@section('title', isset($pelicula['title']) ? $pelicula['title'] : ($pelicula->titulo ?? 'Detalle de película'))
+
+@section('head')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="user-id" content="{{ auth()->id() }}">
+<meta name="tmdb-api-key" content="{{ env('TMDB_API_KEY') }}">
+@endsection
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('movie-details.css') }}">
+<link rel="stylesheet" href="{{ asset('movie-details.css') }}">
+<link rel="stylesheet" href="{{ asset('movie-details-fixed.css') }}">
+<link rel="stylesheet" href="{{ asset('css/movie-details-modal.css') }}">
+<style>
+/* Estilos básicos para películas */
+.pelicula-detalle {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 15px;
+}
+
+/* Estilos para el sistema de notificaciones */
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    max-width: 400px;
+}
+
+.notification {
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 280px;
+    max-width: 400px;
+}
+
+.notification.success {
+    background-color: #14ff14;
+    color: #000;
+}
+
+.notification.error {
+    background-color: #ff4d4d;
+}
+
+.notification.warning {
+    background-color: #ffbb33;
+    color: #000;
+}
+
+.notification.info {
+    background-color: #33b5e5;
+}
+
+/* Estilos para el modal de trailers */
+#trailerModalStatic {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    height: 90%;
+    max-height: 600px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#trailerContainerStatic {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+#closeTrailerBtn {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* Estilos para el sistema de comentarios */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review {
+    background-color: #121212;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #14ff14;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #14ff14;
+}
+
+.username {
+    color: #00ffdd;
+    font-weight: bold;
+}
+
+.review-date {
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.review-rating {
+    color: #FFC107;
+}
+
+.review-content {
+    color: #FFFFFF;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Estilos para respuestas a comentarios */
+.respuestas-container {
+    margin-top: 10px;
+    margin-left: 30px;
+    border-left: 2px solid var(--verde-neon);
+    padding-left: 15px;
+}
+
+.respuesta {
+    background-color: rgba(0, 255, 135, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.respuesta-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.respuesta-content {
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.respuesta-form {
+    margin-top: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.respuesta-form textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--verde-neon);
+    color: var(--blanco);
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.respuesta-form button {
+    background: var(--verde-neon);
+    color: var(--negro);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.respuesta-form button:hover {
+    background: var(--verde-claro);
+    transform: translateY(-2px);
+}
+
+.respuesta-text {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--verde-neon);
+    color: var(--blanco);
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.respuesta-form-container {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-reply {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-reply i {
+    font-size: 0.9em;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+.notification.hide {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+</style>
 @endpush
 
 @section('content')
-<meta name="user-id" content="{{ auth()->id() }}">
 <main class="pelicula-detalle">
     <!-- Banner grande con título -->
     <div class="banner">
-    <img src="{{ isset($pelicula['backdrop_path']) ? 'https://image.tmdb.org/t/p/original'.$pelicula['backdrop_path'] : asset('images/no-backdrop.jpg') }}" alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
+        <img src="{{ $posterBackgroundUrl ?? $pelicula['backdrop_path'] ? 'https://image.tmdb.org/t/p/original'.$pelicula['backdrop_path'] : asset('img/banner-default.jpg') }}" alt="{{ $pelicula['title'] ?? $pelicula->titulo ?? '' }}">
         <div class="titulo-overlay">
-            <h1>{{ $pelicula['title'] ?? $pelicula->titulo }}</h1>
+            <h1>{{ $pelicula['title'] ?? $pelicula->titulo ?? '' }}</h1>
             @if(!empty($pelicula['tagline'] ?? ''))
                 <p class="tagline">{{ $pelicula['tagline'] }}</p>
             @endif
@@ -25,15 +287,15 @@
         <div class="columna-izquierda">
             <!-- Poster de la película -->
             <div class="poster">
-                <img src="{{ isset($pelicula['poster_path'])
+                <img src="{{ isset($pelicula['poster_path']) && $pelicula['poster_path']
                     ? 'https://image.tmdb.org/t/p/w500'.$pelicula['poster_path']
-                    : ($pelicula->poster_url ?? asset('images/no-poster.jpg')) }}"
-                     alt="{{ $pelicula['title'] ?? $pelicula->titulo }}">
+                    : ($pelicula->poster_url ?? asset('img/no-poster.jpg')) }}"
+                     alt="{{ $pelicula['title'] ?? $pelicula->titulo ?? '' }}">
             </div>
 
             <!-- Botones de acción -->
             <div class="action-buttons">
-                <button class="btn-favorite" title="Añadir a favoritos">
+                <button class="btn-favorite" data-id="{{ $pelicula['id'] ?? $pelicula->tmdb_id ?? '' }}" title="Añadir a favoritos">
                     <i class="far fa-heart"></i> <span>Favorito</span>
                 </button>
                 <button class="btn-watchlist" title="Añadir a lista de visualización">
@@ -44,41 +306,55 @@
                 </button>
             </div>
 
-<!-- Dónde ver (servicios de streaming) -->
-<div class="donde-ver">
-    <h3>Disponible en:</h3>
-    <div class="plataformas">
-        @if(isset($watchProviders['flatrate']) && count($watchProviders['flatrate']) > 0)
-            @foreach($watchProviders['flatrate'] as $plataforma)
-            <div class="plataforma">
-                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                <span>{{ $plataforma['provider_name'] }}</span>
-            </div>
-            @endforeach
-        @elseif(isset($watchProviders['rent']) && count($watchProviders['rent']) > 0)
-            <h4>Alquiler:</h4>
-            @foreach($watchProviders['rent'] as $plataforma)
-            <div class="plataforma">
-                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                <span>{{ $plataforma['provider_name'] }}</span>
-            </div>
-            @endforeach
-        @elseif(isset($watchProviders['buy']) && count($watchProviders['buy']) > 0)
-            <h4>Compra:</h4>
-            @foreach($watchProviders['buy'] as $plataforma)
-            <div class="plataforma">
-                <img src="https://image.tmdb.org/t/p/w200{{ $plataforma['logo_path'] }}" alt="{{ $plataforma['provider_name'] }}">
-                <span>{{ $plataforma['provider_name'] }}</span>
-            </div>
-            @endforeach
-        @else
-            <p>Información no disponible</p>
-        @endif
-    </div>
-</div>
+            <!-- Dónde ver (servicios de streaming) -->
+            @if(isset($watchProviders['flatrate']) || isset($watchProviders['rent']) || isset($watchProviders['buy']))
+            <div class="streaming-services">
+                <h2>Dónde ver</h2>
 
+                @if(isset($watchProviders['flatrate']))
+                <div class="service-section">
+                    <h3>Streaming</h3>
+                    <div class="services-grid">
+                        @foreach($watchProviders['flatrate'] as $provider)
+                        <div class="service-item">
+                            <img src="https://image.tmdb.org/t/p/original{{ $provider['logo_path'] }}" alt="{{ $provider['provider_name'] }}">
+                            <span>{{ $provider['provider_name'] }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                @if(isset($watchProviders['rent']))
+                <div class="service-section">
+                    <h3>Alquiler</h3>
+                    <div class="services-grid">
+                        @foreach($watchProviders['rent'] as $provider)
+                        <div class="service-item">
+                            <img src="https://image.tmdb.org/t/p/original{{ $provider['logo_path'] }}" alt="{{ $provider['provider_name'] }}">
+                            <span>{{ $provider['provider_name'] }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                @if(isset($watchProviders['buy']))
+                <div class="service-section">
+                    <h3>Compra</h3>
+                    <div class="services-grid">
+                        @foreach($watchProviders['buy'] as $provider)
+                        <div class="service-item">
+                            <img src="https://image.tmdb.org/t/p/original{{ $provider['logo_path'] }}" alt="{{ $provider['provider_name'] }}">
+                            <span>{{ $provider['provider_name'] }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+            @endif
         </div>
-
 
         <!-- Columna central: información detallada -->
         <div class="columna-central">
@@ -87,7 +363,7 @@
                 @if(isset($pelicula['vote_average']) || isset($pelicula->tmdb_rating))
                 <span class="rating" title="Puntuación">
                     <i class="fas fa-star"></i>
-                    {{ isset($pelicula['vote_average']) ? number_format($pelicula['vote_average'], 1) : ($pelicula->tmdb_rating ?? 'N/A') }}/10
+                    {{ $pelicula['vote_average'] ? number_format($pelicula['vote_average'], 1) : ($pelicula->tmdb_rating ?? 'N/A') }}/10
                 </span>
                 @endif
 
@@ -121,11 +397,12 @@
 
             <!-- Producción y detalles técnicos -->
             <div class="produccion">
-                <div class="produccion-grid">
-                    @if(isset($director['name']) || isset($pelicula->director))
+                <h2>Detalles técnicos</h2>
+                <div class="production-details">
+                    @if(isset($director) && !empty($director))
                     <div class="detail-item">
                         <span class="detail-label">Director:</span>
-                        <span class="detail-value">{{ $director['name'] ?? $pelicula->director ?? 'Información no disponible' }}</span>
+                        <span class="detail-value">{{ $director['name'] ?? 'No disponible' }}</span>
                     </div>
                     @endif
 
@@ -133,30 +410,20 @@
                     <div class="detail-item">
                         <span class="detail-label">Productora:</span>
                         <span class="detail-value">
-                            {{ implode(', ', array_column($pelicula['production_companies'], 'name')) }}
+                            @foreach($pelicula['production_companies'] as $index => $company)
+                                {{ $company['name'] }}{{ $index < count($pelicula['production_companies']) - 1 ? ', ' : '' }}
+                            @endforeach
                         </span>
                     </div>
                     @endif
 
-                    @if(isset($pelicula['original_title']) || isset($pelicula->titulo_original))
+                    @if(isset($pelicula['production_countries']) && count($pelicula['production_countries']) > 0)
                     <div class="detail-item">
-                        <span class="detail-label">Título original:</span>
-                        <span class="detail-value">{{ $pelicula['original_title'] ?? $pelicula->titulo_original ?? $pelicula->titulo }}</span>
-                    </div>
-                    @endif
-
-                    @if(isset($pelicula['release_date']) || isset($pelicula->fecha_estreno))
-                    <div class="detail-item">
-                        <span class="detail-label">Fecha de estreno:</span>
+                        <span class="detail-label">País:</span>
                         <span class="detail-value">
-                            @php
-                                $fecha = isset($pelicula['release_date']) ? $pelicula['release_date'] : ($pelicula->fecha_estreno ?? $pelicula->año_estreno);
-                                // Formatear fecha si es posible
-                                if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
-                                    $fecha = \Carbon\Carbon::parse($fecha)->format('d/m/Y');
-                                }
-                            @endphp
-                            {{ $fecha }}
+                            @foreach($pelicula['production_countries'] as $index => $country)
+                                {{ $country['name'] }}{{ $index < count($pelicula['production_countries']) - 1 ? ', ' : '' }}
+                            @endforeach
                         </span>
                     </div>
                     @endif
@@ -262,7 +529,9 @@
 
                 <!-- Películas similares -->
                 <section id="similar" class="tab-panel">
-                    <h2>Películas similares</h2>
+                    <h2 class="section-title">
+                        <i class="fas fa-film"></i> Películas similares
+                    </h2>
                     <div class="related-movies-container">
                         @if(isset($peliculasSimilares) && count($peliculasSimilares) > 0)
                             @foreach($peliculasSimilares as $relatedMovie)
@@ -311,7 +580,11 @@
                                 </div>
                             @endforeach
                         @else
-                            <p>No se encontraron películas similares.</p>
+                            <div class="empty-content">
+                                <i class="fas fa-film"></i>
+                                <p>No se encontraron películas similares para esta película.</p>
+                                <span>Puedes explorar nuestro catálogo para descubrir más películas.</span>
+                            </div>
                         @endif
                     </div>
                 </section>
@@ -355,5 +628,14 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="{{ asset('movie-details.js') }}"></script>
 @endpush
+
+<!-- Modal para trailers -->
+<div id="trailerModalStatic">
+    <div class="modal-content">
+        <button id="closeTrailerBtn"><i class="fas fa-times"></i></button>
+        <div id="trailerContainerStatic"></div>
+    </div>
+</div>
