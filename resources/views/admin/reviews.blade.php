@@ -1,533 +1,663 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('title', 'Gestión de Valoraciones - CritFlix Admin')
+
+@section('header-title', 'Gestión de Valoraciones')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/main.css') }}">
 <style>
-    :root {
-        --primary-color: var(--verde-neon);
-        --secondary-color: var(--verde-claro);
-        --neon-primary-glow: 0 0 5px rgba(20, 255, 20, 0.5), 0 0 10px rgba(20, 255, 20, 0.3);
-        --neon-secondary-glow: 0 0 5px rgba(0, 255, 221, 0.5), 0 0 10px rgba(0, 255, 221, 0.3);
+    .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        transition: all var(--transition-speed) ease;
+        margin-bottom: 1.5rem;
     }
 
-    .admin-sidebar {
-        border-right: 1px solid var(--verde-neon);
-    }
-
-    .admin-logo span {
-        color: var(--verde-neon);
-        text-shadow: var(--neon-primary-glow);
-    }
-
-    .admin-nav-item.active {
-        color: var(--verde-neon);
-        background-color: rgba(20, 255, 20, 0.1);
-        border-left: 3px solid var(--verde-neon);
-    }
-
-    .admin-nav-item:hover {
-        color: var(--verde-neon);
-        background-color: rgba(20, 255, 20, 0.05);
-    }
-
-    .neon-card {
-        border: 1px solid rgba(20, 255, 20, 0.3);
-    }
-
-    .neon-card:hover {
+    .card:hover {
+        box-shadow: var(--shadow-lg);
         border-color: var(--verde-neon);
-        box-shadow: var(--neon-primary-glow);
     }
 
-    .stat-icon {
-        background-color: rgba(20, 255, 20, 0.1);
-        color: var(--verde-neon);
-        text-shadow: var(--neon-primary-glow);
-        border: 1px solid rgba(20, 255, 20, 0.3);
-    }
-
-    .stat-number {
-        color: var(--verde-neon);
-        text-shadow: var(--neon-primary-glow);
-    }
-
-    /* Estilos para los botones de acción */
-    .action-btn {
-        color: var(--verde-neon);
-        transition: all 0.3s ease;
-        width: 32px;
-        height: 32px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin: 0 2px;
-    }
-
-    .action-btn:hover {
-        color: var(--verde-claro);
-        text-shadow: var(--neon-primary-glow);
-        background-color: rgba(20, 255, 20, 0.1);
-    }
-
-    .action-btn.view:hover {
-        color: var(--accent-info);
-    }
-
-    .action-btn.edit:hover {
-        color: var(--accent-warning);
-    }
-
-    .action-btn.delete:hover {
-        color: var(--accent-danger);
-    }
-
-    .action-btn.approve:hover {
-        color: var(--verde-neon);
-    }
-
-    .action-btn.reject:hover {
-        color: var(--accent-danger);
-    }
-
-    /* Estilos específicos para esta sección */
-    .filter-btn.active {
-        background-color: rgba(20, 255, 20, 0.15);
-        color: var(--verde-neon);
-        box-shadow: var(--neon-primary-glow);
-    }
-
-    /* Estilos para la sección de filtros */
-    .filters-header {
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(20, 255, 20, 0.2);
     }
 
-    .filters-header h3 {
-        font-size: 18px;
-        color: var(--verde-neon);
+    .card-header h3 {
         margin: 0;
-        text-shadow: 0 0 3px rgba(20, 255, 20, 0.3);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .review-filters {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .review-filters .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .filter-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background-color: var(--bg-darker);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        color: var(--text-light);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .filter-control:focus {
+        border-color: var(--verde-neon);
+        box-shadow: 0 0 0 0.2rem rgba(0, 255, 102, 0.15);
+        outline: none;
     }
 
     .btn-reset-filters {
-        background: transparent;
-        border: 1px solid rgba(20, 255, 20, 0.3);
-        color: var(--verde-neon);
-        padding: 5px 12px;
-        border-radius: 4px;
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 13px;
+        transition: all 0.2s ease;
+        margin-top: 1.95rem;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 0.5rem;
     }
 
     .btn-reset-filters:hover {
-        background-color: rgba(20, 255, 20, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
         border-color: var(--verde-neon);
-        box-shadow: var(--neon-primary-glow);
+        color: var(--verde-neon);
     }
 
-    /* Estrellas de valoración */
-    .rating-stars i {
-        color: var(--verde-neon);
-        text-shadow: var(--neon-primary-glow);
+    .review-item {
+        background-color: rgba(18, 18, 18, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .review-item:hover {
+        border-color: var(--verde-neon);
+        background-color: rgba(0, 255, 102, 0.05);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .review-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .review-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .review-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .review-author {
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .review-date {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .review-content {
+        color: var(--text-light);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .review-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .rating-stars {
+        color: var(--amarillo-neon);
+        letter-spacing: 2px;
     }
 
     .rating-value {
-        font-weight: bold;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .review-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .review-actions button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+        border-radius: var(--border-radius);
+        transition: all 0.2s ease;
+        color: var(--text-muted);
+    }
+
+    .review-actions button:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .review-actions button.approve {
         color: var(--verde-neon);
     }
 
-    /* Estilo para botones de exportación */
-    .export-btn {
-        background: transparent;
-        border: 1px solid rgba(20, 255, 20, 0.3);
-        color: var(--verde-neon);
-        padding: 8px 15px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
+    .review-actions button.delete {
+        color: var(--rojo-neon);
+    }
+
+    .review-actions button i {
+        margin-right: 0.25rem;
+    }
+
+    .review-movie {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-left: 10px;
+        gap: 1rem;
+    }
+
+    .movie-poster {
+        width: 40px;
+        height: 60px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .movie-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .movie-title {
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .movie-type {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination .page-item {
+        margin: 0;
+    }
+
+    .pagination .page-link,
+    .pagination .page-item span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.5rem;
+        height: 2.5rem;
+        padding: 0.5rem 0.75rem;
+        background-color: var(--bg-darker);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .pagination .page-link:hover {
+        background-color: rgba(0, 255, 102, 0.1);
+        border-color: var(--verde-neon);
+        color: var(--verde-neon);
+        box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+    }
+
+    .pagination .active .page-link,
+    .pagination .page-item.active span,
+    .pagination .page-item.active a {
+        background-color: var(--verde-neon);
+        border-color: var(--verde-neon);
+        color: #000;
+        font-weight: 600;
+        box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+    }
+
+    .pagination .disabled span {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Asegurarnos que los iconos de flechas se vean bien */
+    .pagination .page-link:first-child,
+    .pagination .page-link:last-child {
+        font-weight: bold;
+    }
+
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+        box-shadow: var(--shadow-lg);
+        border-color: var(--verde-neon);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--verde-neon);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .export-btn {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .export-btn:hover {
-        background-color: rgba(20, 255, 20, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
         border-color: var(--verde-neon);
-        box-shadow: var(--neon-primary-glow);
-    }
-
-    /* Estilos para los badges de estado */
-    .status-badge.approved {
-        background-color: rgba(20, 255, 20, 0.15);
         color: var(--verde-neon);
-        border: 1px solid rgba(20, 255, 20, 0.3);
     }
 
-    .status-badge.pending {
-        background-color: rgba(255, 193, 7, 0.15);
-        color: #ffc107;
-        border: 1px solid rgba(255, 193, 7, 0.3);
+    .like-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background-color: rgba(0, 255, 102, 0.15);
+        color: var(--verde-neon);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
     }
 
-    .status-badge.rejected {
+    .dislike-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
         background-color: rgba(220, 53, 69, 0.15);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: var(--rojo-neon);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+
+    .empty-state p {
+        max-width: 500px;
+        margin: 0 auto;
     }
 </style>
 @endpush
 
-@section('title', 'Administración de Valoraciones - CritFlix')
-
 @section('content')
-<div class="admin-container">
-    <!-- Panel lateral de navegación -->
-    <div class="admin-sidebar">
-        <div class="admin-logo">
-            <h1>CritFlix <span>Admin</span></h1>
-        </div>
-        <nav class="admin-nav">
-            <a href="{{ route('admin.dashboard') }}" class="admin-nav-item">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a>
-            <a href="{{ route('admin.users') }}" class="admin-nav-item">
-                <i class="fas fa-users"></i> Usuarios
-            </a>
-            <a href="{{ route('admin.movies') }}" class="admin-nav-item">
-                <i class="fas fa-film"></i> Películas
-            </a>
-            <a href="{{ route('admin.reviews') }}" class="admin-nav-item active">
-                <i class="fas fa-star"></i> <span>Valoraciones</span>
-            </a>
-            <a href="{{ route('admin.comments') }}" class="admin-nav-item">
-                <i class="fas fa-comments"></i> <span>Comentarios</span>
-            </a>
-            <div class="admin-nav-divider"></div>
-            <a href="{{ route('admin.profile') }}" class="admin-nav-item">
-                <i class="fas fa-user-shield"></i> Mi Perfil
-            </a>
-            <a href="#" class="admin-nav-item" id="admin-logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </a>
-        </nav>
+<div class="stats-cards">
+    <div class="stat-card">
+        <div class="stat-value">{{ $stats['total'] ?? 0 }}</div>
+        <div class="stat-label">Total de valoraciones</div>
     </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ $stats['likes'] ?? 0 }}</div>
+        <div class="stat-label">Me gusta</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ $stats['dislikes'] ?? 0 }}</div>
+        <div class="stat-label">No me gusta</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ $stats['hoy'] ?? 0 }}</div>
+        <div class="stat-label">Valoraciones hoy</div>
+    </div>
+</div>
 
-    <!-- Contenido principal -->
-    <div class="admin-content">
-        <!-- Cabecera -->
-        <header class="admin-header">
-            <div class="admin-header-title">
-                <h2>Gestión de Valoraciones</h2>
-                <p>Administra las valoraciones de los usuarios</p>
-            </div>
-            <div class="admin-header-actions">
-                <div class="admin-search">
-                    <input type="text" id="search-reviews" placeholder="Buscar valoraciones...">
-                    <button><i class="fas fa-search"></i></button>
+<div class="card">
+    <div class="card-header">
+        <h3>Listado de valoraciones</h3>
+        <button class="export-btn" id="exportReviews">
+            <i class="fas fa-file-export"></i> Exportar
+        </button>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('admin.reviews') }}" method="GET" id="filterForm">
+            <div class="review-filters">
+                <div class="filter-group">
+                    <label for="user">Usuario</label>
+                    <input type="text" name="user" id="user" class="filter-control" placeholder="Nombre de usuario" value="{{ request('user') }}">
                 </div>
-                <button class="btn-neon export-reviews-btn">
-                    <i class="fas fa-file-export"></i> Exportar
+                <div class="filter-group">
+                    <label for="movie">Película</label>
+                    <input type="text" name="movie" id="movie" class="filter-control" placeholder="Título de película" value="{{ request('movie') }}">
+                </div>
+                <div class="filter-group">
+                    <label for="rating">Valoración</label>
+                    <select name="rating" id="rating" class="filter-control">
+                        <option value="">Todas</option>
+                        <option value="like" {{ request('rating') == 'like' ? 'selected' : '' }}>Me gusta</option>
+                        <option value="dislike" {{ request('rating') == 'dislike' ? 'selected' : '' }}>No me gusta</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="date">Fecha</label>
+                    <select name="date" id="date" class="filter-control">
+                        <option value="">Todas</option>
+                        <option value="today" {{ request('date') == 'today' ? 'selected' : '' }}>Hoy</option>
+                        <option value="week" {{ request('date') == 'week' ? 'selected' : '' }}>Última semana</option>
+                        <option value="month" {{ request('date') == 'month' ? 'selected' : '' }}>Último mes</option>
+                    </select>
+                </div>
+                <button type="button" class="btn-reset-filters" id="resetFilters">
+                    <i class="fas fa-undo"></i> Reiniciar
                 </button>
             </div>
-        </header>
+        </form>
 
-        <!-- Tarjetas de estadísticas -->
-        <div class="stats-grid">
-            <div class="stat-card neon-card">
-                <div class="stat-icon review-icon">
-                    <i class="fas fa-comment"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Total Valoraciones</h3>
-                    <p class="stat-number">{{ $reviews->total() }}</p>
-                </div>
-            </div>
-            <div class="stat-card neon-card">
-                <div class="stat-icon review-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Valoración Media</h3>
-                    <p class="stat-number">
-                        @php
-                            try {
-                                // Usamos valoracion en lugar de puntuacion que ya no existe
-                                $likesCount = DB::table('valoraciones')
-                                    ->where('valoracion', 'like')
-                                    ->count();
-                                $totalCount = DB::table('valoraciones')->count();
-
-                                // Calculamos un puntaje basado en likes/total (5 estrellas máximo)
-                                $avgRating = $totalCount > 0 ? ($likesCount / $totalCount) * 5 : 4.2;
-                            } catch (\Exception $e) {
-                                $avgRating = 4.2; // Valor predeterminado en caso de error
-                            }
-                        @endphp
-                        {{ number_format($avgRating, 1) }}
-                    </p>
-                </div>
-            </div>
-            <div class="stat-card neon-card">
-                <div class="stat-icon review-icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Nuevas Hoy</h3>
-                    <p class="stat-number">
-                        @php
-                            $newReviews = DB::table('valoraciones')
-                                ->whereDate('created_at', now()->toDateString())
-                                ->count();
-                        @endphp
-                        {{ $newReviews }}
-                    </p>
-                </div>
-            </div>
-            <div class="stat-card neon-card">
-                <div class="stat-icon review-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Usuarios Críticos</h3>
-                    <p class="stat-number">
-                        @php
-                            $criticUsers = DB::table('users')
-                                ->where('rol', 'critico')
-                                ->count();
-                        @endphp
-                        {{ $criticUsers }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filtros de valoraciones -->
-        <div class="filters-container neon-card">
-            <div class="filters-header">
-                <h3><i class="fas fa-filter"></i> Filtros</h3>
-                <button class="btn-reset-filters"><i class="fas fa-undo-alt"></i> Restablecer</button>
-            </div>
-            <div class="filters-body">
-                <div class="filter-group">
-                    <label>Calificación</label>
-                    <div class="filter-options">
-                        <button class="filter-btn active" data-filter="all">Todas</button>
-                        <button class="filter-btn" data-filter="5">5 ★</button>
-                        <button class="filter-btn" data-filter="4">4 ★</button>
-                        <button class="filter-btn" data-filter="3">3 ★</button>
-                        <button class="filter-btn" data-filter="2">2 ★</button>
-                        <button class="filter-btn" data-filter="1">1 ★</button>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label>Tipo de usuario</label>
-                    <div class="filter-options">
-                        <button class="filter-btn active" data-filter="all">Todos</button>
-                        <button class="filter-btn" data-filter="verified">Verificados</button>
-                        <button class="filter-btn" data-filter="unverified">No verificados</button>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label>Fecha de creación</label>
-                    <div class="date-range">
-                        <input type="date" id="date-from" class="neon-input">
-                        <span><i class="fas fa-arrow-right"></i></span>
-                        <input type="date" id="date-to" class="neon-input">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de valoraciones -->
-        <div class="admin-table-card neon-card">
-            <div class="table-actions">
-                <div class="table-info">
-                    <span>Mostrando <strong>{{ $reviews->count() }}</strong> de <strong>{{ $reviews->total() }}</strong> valoraciones</span>
-                </div>
-                <div class="bulk-actions">
-                    <select class="neon-input" id="bulk-action">
-                        <option value="">Acciones en masa</option>
-                        <option value="delete">Eliminar seleccionadas</option>
-                        <option value="highlight">Destacar seleccionadas</option>
-                        <option value="unhighlight">Quitar destacadas</option>
-                    </select>
-                    <button class="btn-neon apply-action" disabled>Aplicar</button>
-                </div>
-            </div>
-            <div class="admin-table-container">
-                <table class="admin-table reviews-table">
+        @if(count($reviews ?? []) > 0)
+            <div class="table-responsive">
+                <table class="table table-striped admin-table">
                     <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" id="select-all">
-                            </th>
-                            <th>ID</th>
                             <th>Usuario</th>
                             <th>Película/Serie</th>
-                            <th>Puntuación</th>
-                            <th>Comentario</th>
+                            <th>Valoración</th>
                             <th>Fecha</th>
-                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if($reviews->count() > 0)
-                            @foreach($reviews as $review)
-                            @php
-                                $userType = DB::table('users')->where('id', $review->user_id)->value('rol') ?? 'usuario';
-                            @endphp
-                            <tr data-review-id="{{ $review->id }}" data-rating="{{ $review->valoracion == 'like' ? 5 : 1 }}" data-user-type="{{ $userType }}">
-                                <td>
-                                    <input type="checkbox" class="review-select" data-id="{{ $review->id }}">
-                                </td>
-                                <td>#{{ $review->id }}</td>
-                                <td>
-                                    <div class="user-info">
-                                        <div class="user-avatar">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div class="user-name">
-                                            {{ $review->user_name }}
-                                            <span class="user-badge {{ $userType }}">{{ ucfirst($userType) }}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ $review->movie_title }}</td>
-                                <td>
-                                    <div class="rating">
-                                        <span class="rating-value">{{ $review->valoracion == 'like' ? 5 : 1 }}</span>
-                                        <div class="rating-stars">
-                                            @if($review->valoracion == 'like')
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            @else
-                                                <i class="fas fa-star"></i>
-                                                <i class="far fa-star"></i>
-                                                <i class="far fa-star"></i>
-                                                <i class="far fa-star"></i>
-                                                <i class="far fa-star"></i>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="comment-preview">
-                                        {{ Str::limit($review->comentario, 100) }}
-                                        @if(strlen($review->comentario) > 100)
-                                            <button class="show-more-btn" data-review-id="{{ $review->id }}">Ver más</button>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}</td>
-                                <td>
-                                    <span class="status-badge {{ $review->destacado ? 'destacado' : 'normal' }}">
-                                        {{ $review->destacado ? 'Destacado' : 'Normal' }}
-                                    </span>
-                                </td>
-                                <td class="actions">
-                                    <a href="#" class="action-btn view" title="Ver detalles" data-id="{{ $review->id }}">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="#" class="action-btn highlight {{ $review->destacado ? 'is-highlighted' : '' }}"
-                                       title="{{ $review->destacado ? 'Quitar destacado' : 'Destacar' }}"
-                                       data-id="{{ $review->id }}">
-                                        <i class="fas fa-star"></i>
-                                    </a>
-                                    <a href="#" class="action-btn delete" title="Eliminar" data-id="{{ $review->id }}">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="9" class="text-center">No hay valoraciones disponibles</td>
-                            </tr>
-                        @endif
+                        @forelse ($reviews as $review)
+                        <tr>
+                            <td>
+                                <div class="review-user">
+                                    @if ($review->user_profile_photo)
+                                        <img src="{{ asset('storage/' . $review->user_profile_photo) }}" alt="{{ $review->user_name }}" class="user-avatar">
+                                    @else
+                                        <div class="avatar-placeholder">{{ strtoupper(substr($review->user_name, 0, 1)) }}</div>
+                                    @endif
+                                    <span>{{ $review->user_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="review-movie">
+                                    No disponible
+                                </div>
+                            </td>
+                            <td class="review-rating">
+                                @if($review->valoracion == 'like')
+                                    <i class="fas fa-thumbs-up text-success"></i> Me gusta
+                                @else
+                                    <i class="fas fa-thumbs-down text-danger"></i> No me gusta
+                                @endif
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}</td>
+                            <td class="actions">
+                                <button class="btn-action delete-review" data-id="{{ $review->id }}" title="Eliminar valoración">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No hay valoraciones disponibles</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
             <div class="pagination-container">
-                {{ $reviews->links() }}
-            </div>
-        </div>
+                @if ($reviews->hasPages())
+                    <nav>
+                        <ul class="pagination">
+                            {{-- Botón Anterior --}}
+                            @if ($reviews->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $reviews->appends(request()->except('page'))->previousPageUrl() }}" rel="prev">&laquo;</a>
+                                </li>
+                            @endif
 
-        <!-- Botones de exportación -->
-        <div class="export-actions">
-            <button class="export-btn" id="exportCSV">
-                <i class="fas fa-file-csv"></i> Exportar CSV
-            </button>
-            <button class="export-btn" id="exportExcel">
-                <i class="fas fa-file-excel"></i> Exportar Excel
-            </button>
-            <button class="export-btn" id="exportPDF">
-                <i class="fas fa-file-pdf"></i> Exportar PDF
-            </button>
-        </div>
-    </div>
-</div>
+                            {{-- Enlaces de números de página --}}
+                            @php
+                                $window = 3; // Cuántas páginas mostrar a cada lado de la página actual
+                                $lastPage = $reviews->lastPage();
+                                $currentPage = $reviews->currentPage();
+                                $startPage = max($currentPage - $window, 1);
+                                $endPage = min($currentPage + $window, $lastPage);
+                            @endphp
 
-<!-- Modal para ver detalles de valoración -->
-<div id="review-detail-modal" class="admin-modal-container">
-    <div class="admin-modal neon-card">
-        <div class="modal-header">
-            <h3>Detalles de Valoración</h3>
-            <button class="modal-close"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <div class="review-detail-content">
-                <div class="review-detail-header">
-                    <div class="movie-info">
-                        <h4 id="detail-movie-title"></h4>
-                        <div class="detail-rating">
-                            <div class="rating-stars" id="detail-stars"></div>
-                            <span class="rating-value" id="detail-rating"></span>
-                        </div>
-                    </div>
-                    <div class="user-info">
-                        <p>Por <span id="detail-user-name"></span></p>
-                        <p id="detail-date"></p>
-                    </div>
-                </div>
-                <div class="review-title">
-                    <h5 id="detail-review-title"></h5>
-                </div>
-                <div class="review-text">
-                    <p id="detail-comment"></p>
-                </div>
-                <div class="detail-actions">
-                    <button class="btn-neon highlight-review" id="detail-highlight">
-                        <i class="fas fa-star"></i> <span>Destacar</span>
-                    </button>
-                    <button class="btn-neon delete-review">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </button>
-                </div>
+                            {{-- Primera página si estamos lejos --}}
+                            @if ($startPage > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $reviews->appends(request()->except('page'))->url(1) }}">1</a>
+                                </li>
+                                @if ($startPage > 2)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+                            @endif
+
+                            {{-- Páginas numeradas alrededor de la actual --}}
+                            @for ($i = $startPage; $i <= $endPage; $i++)
+                                <li class="page-item {{ ($currentPage == $i) ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $reviews->appends(request()->except('page'))->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            {{-- Última página si estamos lejos --}}
+                            @if ($endPage < $lastPage)
+                                @if ($endPage < $lastPage - 1)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $reviews->appends(request()->except('page'))->url($lastPage) }}">{{ $lastPage }}</a>
+                                </li>
+                            @endif
+
+                            {{-- Botón Siguiente --}}
+                            @if ($reviews->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $reviews->appends(request()->except('page'))->nextPageUrl() }}" rel="next">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                @endif
             </div>
-        </div>
+        @else
+            <div class="empty-state">
+                <i class="far fa-star"></i>
+                <h4>No hay valoraciones disponibles</h4>
+                <p>No se encontraron valoraciones que coincidan con los criterios de búsqueda o no hay valoraciones en el sistema.</p>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
 
-@section('scripts')
-<script src="{{ asset('admin.js') }}"></script>
-<script src="{{ asset('js/admin/reviews.js') }}"></script>
-@endsection
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Control de formulario de filtros
+    const filterForm = document.getElementById('filterForm');
+    const filterInputs = filterForm.querySelectorAll('input, select');
+
+    filterInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+
+    // Botón de reinicio de filtros
+    const resetButton = document.getElementById('resetFilters');
+    resetButton.addEventListener('click', function() {
+        filterInputs.forEach(input => {
+            input.value = '';
+        });
+        filterForm.submit();
+    });
+
+    // Botones para eliminar valoraciones
+    document.querySelectorAll('.delete-review').forEach(button => {
+        button.addEventListener('click', function() {
+            const reviewId = this.getAttribute('data-id');
+            if (confirm('¿Estás seguro de que deseas eliminar esta valoración? Esta acción no se puede deshacer.')) {
+                deleteReview(reviewId);
+            }
+        });
+    });
+
+    // Función para eliminar una valoración
+    function deleteReview(id) {
+        fetch(`/api/admin/reviews/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al eliminar la valoración');
+            }
+            return response.json();
+        })
+        .then(data => {
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error al eliminar la valoración.');
+        });
+    }
+
+    // Exportar valoraciones
+    document.getElementById('exportReviews').addEventListener('click', function() {
+        // Se podría implementar exportación a CSV o Excel
+        alert('Funcionalidad de exportación en desarrollo');
+    });
+});
+</script>
+@endpush

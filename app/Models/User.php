@@ -21,6 +21,8 @@ class User extends Authenticatable
         'foto_perfil_mime',
         'biografia',
         'rol',
+        'google_id',
+        'avatar',
     ];
 
     protected $hidden = [

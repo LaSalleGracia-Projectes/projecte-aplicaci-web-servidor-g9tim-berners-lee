@@ -68,9 +68,9 @@
         <div class="footer-bottom-content">
             <p>&copy; {{ date('Y') }} CritFlix - Todos los derechos reservados</p>
             <div class="footer-links">
-                <a href="#">Política de Privacidad</a>
-                <a href="#">Términos de Uso</a>
-                <a href="#">Contacto</a>
+                <a href="{{ route('policies.privacy') }}">Política de Privacidad</a>
+                <a href="{{ route('policies.terms') }}">Términos de Uso</a>
+                <a href="{{ route('policies.contact') }}">Contacto</a>
             </div>
         </div>
     </div>

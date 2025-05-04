@@ -1,0 +1,45 @@
+:root {
+    /* Colores neón */
+    --verde-neon: #00ff00;
+    --cyan-neon: #00ffff;
+    --rojo-neon: #ff0044;
+    --amarillo-neon: #ffdd00;
+    --morado-neon: #ff00ff;
+
+    /* Colores de fondo */
+    --bg-dark: #121212;
+    --bg-darker: #0a0a0a;
+    --bg-light: #1e1e1e;
+    --bg-card: rgba(24, 24, 24, 0.8);
+    --bg-hover: rgba(255, 255, 255, 0.05);
+    --bg-sidebar: #141414;
+
+    /* Colores de texto */
+    --text-light: #f0f0f0;
+    --text-muted: #888888;
+
+    /* Bordes y sombras */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-radius: 8px;
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+    /* Dimensiones y espacios */
+    --sidebar-width: 280px;
+    --header-height: 70px;
+    --content-padding: 2rem;
+
+    /* Transiciones */
+    --transition-speed: 0.3s;
+
+    /* Fuentes */
+    --font-sans: 'Poppins', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Responsividad */
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}

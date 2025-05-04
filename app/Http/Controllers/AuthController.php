@@ -161,6 +161,17 @@ class AuthController extends Controller
             // Para solicitudes de formulario, redirigir
             return redirect()->intended('/');
 
+            // Para solicitudes AJAX, devolver error JSON
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'email' => ['Las credenciales no son correctas.'],
+                ]);
+            }
+
+            // Para solicitudes de formulario, redirigir con errores
+            return back()->withErrors([
+                'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            ])->withInput($request->except('password'));
         } catch (\Exception $e) {
             // Para solicitudes AJAX, devolver error JSON
             if ($request->expectsJson()) {

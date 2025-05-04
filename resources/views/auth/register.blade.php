@@ -13,6 +13,17 @@
             </div>
         @endif
 
+        <div class="social-login">
+            <a href="{{ route('auth.google') }}" class="google-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo">
+                Registrarse con Google
+            </a>
+        </div>
+
+        <div class="separator">
+            <span>o</span>
+        </div>
+
         <form method="POST" action="{{ route('register') }}" class="auth-form">
             @csrf
             <div class="form-group">
@@ -154,6 +165,57 @@
     background-color: rgba(255, 0, 0, 0.1);
     border: 1px solid rgba(255, 0, 0, 0.3);
     color: #ff4d4d;
+}
+
+/* Estilos para autenticación con Google */
+.social-login {
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 0;
+    background-color: #fff;
+    color: #757575;
+    border-radius: 4px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.google-btn img {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: #aaa;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #333;
+}
+
+.separator span {
+    padding: 0 10px;
 }
 </style>
 @endsection

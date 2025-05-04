@@ -450,11 +450,38 @@ async function loadTrailer(serieId) {
 }
 
 function showTrailerModal(videoKey) {
+    // Crear el modal sin el iframe primero
     const modal = document.createElement("div");
     modal.className = "trailer-modal";
     modal.innerHTML = `
         <div class="trailer-modal-content">
             <button class="close-modal">&times;</button>
+            <div id="serieTrailerContainer"></div>
+        </div>
+    `;
+
+    // Añadir el modal al DOM
+    document.body.appendChild(modal);
+    document.body.style.overflow = "hidden";
+
+    // Configurar el cierre del modal
+    const closeBtn = modal.querySelector(".close-modal");
+    const closeModal = () => {
+        modal.remove();
+        document.body.style.overflow = "";
+    };
+
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Cargar el iframe después de que el modal esté en el DOM
+    requestAnimationFrame(() => {
+        const trailerContainer = document.getElementById("serieTrailerContainer");
+        trailerContainer.innerHTML = `
             <iframe
                 width="100%"
                 height="100%"
@@ -463,23 +490,7 @@ function showTrailerModal(videoKey) {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
             ></iframe>
-        </div>
     `;
-
-    document.body.appendChild(modal);
-    document.body.style.overflow = "hidden";
-
-    const closeBtn = modal.querySelector(".close-modal");
-    closeBtn.addEventListener("click", () => {
-        modal.remove();
-        document.body.style.overflow = "";
-    });
-
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.remove();
-            document.body.style.overflow = "";
-        }
     });
 }
 

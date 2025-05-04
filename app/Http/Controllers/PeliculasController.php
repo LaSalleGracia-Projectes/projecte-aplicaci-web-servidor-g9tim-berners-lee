@@ -82,7 +82,6 @@ class PeliculasController extends Controller
                     'data' => $pelicula
                 ]);
             }
-
             return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
         } catch (\Exception $e) {
             \Log::error('Error al obtener información de película: ' . $e->getMessage());

@@ -114,16 +114,16 @@ function initRoleDistributionChart() {
                 rolePercentages.usuario.count
             ],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.8)',
-                'rgba(54, 162, 235, 0.8)',
-                'rgba(255, 206, 86, 0.8)',
-                'rgba(75, 192, 192, 0.8)'
+                'rgba(255, 48, 96, 0.8)',     // Rojo para Administradores
+                'rgba(255, 204, 0, 0.8)',     // Amarillo para Premium
+                'rgba(0, 232, 255, 0.8)',     // Cyan para Críticos
+                'rgba(0, 255, 102, 0.8)'      // Verde para Usuarios
             ],
             borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
+                '#ff3060',     // Rojo para Administradores
+                '#ffcc00',     // Amarillo para Premium
+                '#00e8ff',     // Cyan para Críticos
+                '#00ff66'      // Verde para Usuarios
             ],
             borderWidth: 2,
             hoverOffset: 15

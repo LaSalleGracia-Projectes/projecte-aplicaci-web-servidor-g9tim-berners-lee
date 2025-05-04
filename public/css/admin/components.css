@@ -42,11 +42,60 @@
     opacity: 1;
 }
 
+/* Badges de roles */
+.role-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* Colores actualizados para roles */
+.role-admin {
+    background-color: rgba(255, 48, 96, 0.15);
+    color: #ff3060;
+    border: 1px solid rgba(255, 48, 96, 0.3);
+}
+
+.role-premium {
+    background-color: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+}
+
+.role-critico {
+    background-color: rgba(0, 232, 255, 0.15);
+    color: #00e8ff;
+    border: 1px solid rgba(0, 232, 255, 0.3);
+}
+
+.role-usuario {
+    background-color: rgba(0, 255, 102, 0.15);
+    color: #00ff66;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+/* Estado de usuarios */
+.estado-activo {
+    background-color: rgba(0, 255, 102, 0.15);
+    color: #00ff66;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+.estado-pendiente, .estado-inactivo {
+    background-color: rgba(255, 48, 96, 0.15);
+    color: #ff3060;
+    border: 1px solid rgba(255, 48, 96, 0.3);
+}
+
 /* Botones */
 .btn-neon {
-    background-color: rgba(20, 255, 20, 0.1);
-    border: 1px solid rgba(20, 255, 20, 0.3);
-    color: var(--verde-neon);
+    background-color: rgba(0, 255, 102, 0.1);
+    border: 1px solid rgba(0, 255, 102, 0.3);
+    color: #00ff66;
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
@@ -59,9 +108,9 @@
 }
 
 .btn-neon:hover, .btn-neon:focus {
-    background-color: rgba(20, 255, 20, 0.2);
-    border-color: var(--verde-neon);
-    box-shadow: var(--neon-primary-glow);
+    background-color: rgba(0, 255, 102, 0.2);
+    border-color: #00ff66;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
 }
 
 .btn-neon:disabled {
@@ -241,19 +290,19 @@
 
 /* Inputs */
 .neon-input {
-    background-color: rgba(20, 255, 20, 0.05);
-    border: 1px solid rgba(20, 255, 20, 0.3);
-    color: var(--text-primary);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
     padding: 8px 12px;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
+    width: 100%;
     font-size: 14px;
     transition: all 0.3s ease;
-    width: 100%;
 }
 
 .neon-input:focus {
-    border-color: var(--verde-neon);
-    box-shadow: var(--neon-primary-glow);
+    border-color: #00ff66;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
     outline: none;
 }
 
@@ -622,7 +671,7 @@ select.neon-input {
 
 /* Botones de acción */
 .action-btn {
-    color: var(--verde-neon);
+    color: var(--text-light);
     transition: all 0.3s ease;
     width: 32px;
     height: 32px;
@@ -631,49 +680,38 @@ select.neon-input {
     justify-content: center;
     border-radius: 50%;
     margin: 0 2px;
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
 }
 
 .action-btn:hover {
-    color: var(--verde-claro);
-    text-shadow: var(--neon-primary-glow);
-    background-color: rgba(20, 255, 20, 0.1);
+    background-color: rgba(0, 255, 102, 0.1);
+    color: #00ff66;
+    border-color: #00ff66;
 }
 
 .action-btn.view:hover {
-    color: var(--accent-info);
-    text-shadow: var(--neon-info-glow);
+    color: #00e8ff;
+    border-color: #00e8ff;
+    background-color: rgba(0, 232, 255, 0.1);
 }
 
 .action-btn.edit:hover {
-    color: var(--accent-warning);
-    text-shadow: var(--neon-warning-glow);
+    color: #ffcc00;
+    border-color: #ffcc00;
+    background-color: rgba(255, 204, 0, 0.1);
 }
 
 .action-btn.delete:hover {
-    color: var(--accent-danger);
-    text-shadow: var(--neon-danger-glow);
+    color: #ff3060;
+    border-color: #ff3060;
+    background-color: rgba(255, 48, 96, 0.1);
 }
 
-.action-btn.verify {
-    color: var(--accent-danger);
-}
-
-.action-btn.verify.verified {
-    color: var(--accent-success);
-}
-
-.action-btn.verify:hover {
-    color: var(--accent-success);
-    text-shadow: var(--neon-primary-glow);
-}
-
-.action-btn.verify.verified:hover {
-    color: var(--accent-danger);
-    text-shadow: var(--neon-danger-glow);
+.action-btn.make-admin:hover {
+    color: #ff3060;
+    border-color: #ff3060;
+    background-color: rgba(255, 48, 96, 0.1);
 }
 
 .action-link {
@@ -705,12 +743,88 @@ select.neon-input {
     transition: all 0.3s ease;
 }
 
-.action-btn.make-admin:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
 .action-btn.make-admin i {
     font-size: 16px;
+}
+
+/* Card header y acciones */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-header h3 i {
+    color: #00ff66;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Leyenda para gráficos */
+.roles-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.legend-item:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.legend-color.admin {
+    background-color: #ff3060;
+    box-shadow: 0 0 10px rgba(255, 48, 96, 0.5);
+}
+
+.legend-color.premium {
+    background-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+.legend-color.critico {
+    background-color: #00e8ff;
+    box-shadow: 0 0 10px rgba(0, 232, 255, 0.5);
+}
+
+.legend-color.usuario {
+    background-color: #00ff66;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+}
+
+.legend-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
 }
