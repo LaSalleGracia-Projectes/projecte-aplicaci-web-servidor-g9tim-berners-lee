@@ -161,6 +161,19 @@ class AuthController extends Controller
             // Para solicitudes de formulario, redirigir
             return redirect()->intended('/');
 
+            // Para solicitudes AJAX, devolver error JSON
+            if ($request->expectsJson()) {
+                $token = $user->createToken('auth_token')->plainTextToken;
+                return response()->json([
+                    'message' => 'Inicio de sesión exitoso',
+                    'token' => $token,
+                    'user' => $user
+                ], 200);
+            }
+
+            // Para solicitudes de formulario, redirigir
+            return redirect()->intended('/');
+
         } catch (\Exception $e) {
             // Para solicitudes AJAX, devolver error JSON
             if ($request->expectsJson()) {

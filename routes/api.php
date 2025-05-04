@@ -42,13 +42,16 @@ Route::apiResource('solicitudes_critico', SolicitudCriticoController::class);
 Route::apiResource('respuestas_comentarios', RespuestasComentariosController::class);
 
 // Rutas para comentarios
-Route::get('/comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
+Route::get('comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
 // Ruta simplificada para películas
 Route::get('/comentarios-pelicula/{tmdbId}', [ComentariosController::class, 'getComentariosPelicula'])
     ->where('tmdbId', '[0-9]+');
 // Ruta simplificada para series
 Route::get('/comentarios-serie/{tmdbId}', [ComentariosController::class, 'getComentariosSerie'])
     ->where('tmdbId', '[0-9]+');
+// Rutas para likes/dislikes de comentarios
+Route::get('likes_comentarios/status/{comentarioId}/{userId}', [LikesComentariosController::class, 'getLikeStatus']);
+Route::get('likes_comentarios/count/{comentarioId}', [LikesComentariosController::class, 'getLikesCount']);
 
 // Rutas para respuestas a comentarios
 Route::get('/respuestas_comentarios/comentario/{comentarioId}', [RespuestasComentariosController::class, 'getRespuestasByComentarioId']);
@@ -72,5 +75,10 @@ Route::get('/valoraciones/usuario/{userId}', [ValoracionesController::class, 'ge
 Route::get('/valoraciones/check/{userId}/{tmdb_id}', [ValoracionesController::class, 'checkFavoriteStatus']);
 
 // Rutas para solicitudes de crítico
-Route::get('/solicitudes_critico/user/{userId}', [SolicitudCriticoController::class, 'getSolicitudesByUser']);
+Route::get('solicitudes_critico/user/{userId}', [SolicitudCriticoController::class, 'getSolicitudesByUser']);
 
+// Rutas para comentarios
+Route::get('/comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
+Route::apiResource('comentarios', ComentariosController::class);
+
+Route::apiResource('likes_comentarios', LikesComentariosController::class);
