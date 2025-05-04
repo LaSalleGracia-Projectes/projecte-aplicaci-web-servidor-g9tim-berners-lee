@@ -54,27 +54,28 @@ class PeliculasController extends Controller
             // Obtener proveedores de streaming
             $watchProviders = $pelicula['watch/providers']['results']['ES'] ?? [];
 
-        // Obtener películas similares
-        $similarMoviesResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/similar?api_key={$apiKey}&language=es-ES&page=1");
-        $peliculasSimilares = [];
+            // Obtener películas similares
+            $similarMoviesResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/similar?api_key={$apiKey}&language=es-ES&page=1");
+            $peliculasSimilares = [];
 
-        if ($similarMoviesResponse->successful()) {
-            $similarData = $similarMoviesResponse->json();
-            // Limitamos a 6 películas similares máximo
-            $peliculasSimilares = array_slice($similarData['results'] ?? [], 0, 6);
-        }
+            if ($similarMoviesResponse->successful()) {
+                $similarData = $similarMoviesResponse->json();
+                // Limitamos a 6 películas similares máximo
+                $peliculasSimilares = array_slice($similarData['results'] ?? [], 0, 6);
+            }
 
-        // Obtener proveedores de streaming
-        $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
-
-
+            // Obtener proveedores de streaming
+            $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
             if (request()->expectsJson()) {
                 return response()->json([
                     'message' => 'Película obtenida correctamente',
                     'data' => $pelicula
                 ]);
             }
-        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
+            return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
+        } catch (\Exception $e) {
+            abort(404, 'Error al obtener la información de la película');
+        }
     }
 
     /**

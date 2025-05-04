@@ -92,7 +92,7 @@ class AuthController extends Controller
                 ], 201);
             }
 
-           /* // Iniciar sesión automáticamente
+            /* // Iniciar sesión automáticamente
             Auth::login($user);*/
 
             $successMessage = '¡Registro completado con éxito!';
@@ -148,21 +148,6 @@ class AuthController extends Controller
                         'user' => $user
                     ], 200);
                 }
-
-            // Para solicitudes AJAX, devolver respuesta JSON
-            if ($request->expectsJson()) {
-                $token = $user->createToken('auth_token')->plainTextToken;
-
-                return response()->json([
-                    'message' => 'Inicio de sesión exitoso',
-                    'token' => $token,
-                    'user' => $user
-                ], 200);
-            }
-              
-            // Intento de autenticación
-            if (Auth::attempt($credentials, $request->filled('remember'))) {
-                $request->session()->regenerate();
                 // Para solicitudes de formulario, redirigir
                 return redirect()->intended('/');
             }
@@ -178,7 +163,6 @@ class AuthController extends Controller
             return back()->withErrors([
                 'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
             ])->withInput($request->except('password'));
-              
         } catch (\Exception $e) {
             // Para solicitudes AJAX, devolver error JSON
             if ($request->expectsJson()) {
