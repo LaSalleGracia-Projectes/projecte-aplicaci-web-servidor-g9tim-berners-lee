@@ -24,35 +24,47 @@ class RespuestasComentariosController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'comentario_id' => 'required|exists:comentarios,id',
-            'user_id' => 'required|exists:users,id',
-            'respuesta' => 'required|string',
-            'es_spoiler' => 'boolean',
-        ]);
-        
-        $respuesta = RespuestasComentarios::create([
-            'comentario_id' => $request->comentario_id,
-            'user_id' => $request->user_id,
-            'respuesta' => $request->respuesta,
-            'es_spoiler' => $request->es_spoiler ?? false,
-        ]);
-        
-        $comentario = Comentarios::with('usuario')->findOrFail($request->comentario_id);
-        $usuario_que_responde = User::findOrFail($request->user_id);
-        
-        if ($comentario->user_id !== $request->user_id) {
-            Notificaciones::create([
-                'user_id' => $comentario->user_id,
-                'mensaje' => "{$usuario_que_responde->name} ha respondido a tu comentario",
-                'tipo' => 'nueva_respuesta',
-                'leido' => false,
+        try {
+            $request->validate([
+                'comentario_id' => 'required|exists:comentarios,id',
+                'user_id' => 'required|exists:users,id',
+                'respuesta' => 'required|string',
+                'es_spoiler' => 'boolean',
             ]);
+
+            $respuesta = RespuestasComentarios::create([
+                'comentario_id' => $request->comentario_id,
+                'user_id' => $request->user_id,
+                'respuesta' => $request->respuesta,
+                'es_spoiler' => $request->es_spoiler ?? false,
+            ]);
+
+            $comentario = Comentarios::with('usuario')->findOrFail($request->comentario_id);
+            $usuario_que_responde = User::findOrFail($request->user_id);
+
+            if ($comentario->user_id !== $request->user_id) {
+                Notificaciones::create([
+                    'user_id' => $comentario->user_id,
+                    'mensaje' => "{$usuario_que_responde->name} ha respondido a tu comentario",
+                    'tipo' => 'nueva_respuesta',
+                    'leido' => false,
+                ]);
+            }
+
+            $respuesta->load('usuario');
+
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json($respuesta, 201);
+            } else {
+                return redirect()->back()->with('success', 'Respuesta publicada correctamente.');
+            }
+        } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json(['error' => 'Error al guardar la respuesta', 'detalle' => $e->getMessage()], 500);
+            } else {
+                return redirect()->back()->with('error', 'Error al guardar la respuesta: ' . $e->getMessage());
+            }
         }
-        
-        $respuesta->load('usuario');
-        
-        return response()->json($respuesta, 201);
     }
 
     /**
@@ -70,16 +82,16 @@ class RespuestasComentariosController extends Controller
     public function update(Request $request, $id)
     {
         $respuesta = RespuestasComentarios::findOrFail($id);
-        
+
         $request->validate([
             'respuesta' => 'sometimes|string',
             'es_spoiler' => 'sometimes|boolean',
         ]);
-        
+
         $respuesta->update($request->all());
-        
+
         $respuesta->load('usuario');
-        
+
         return response()->json($respuesta);
     }
 
@@ -90,10 +102,10 @@ class RespuestasComentariosController extends Controller
     {
         $respuesta = RespuestasComentarios::findOrFail($id);
         $respuesta->delete();
-        
+
         return response()->json(['message' => 'Respuesta eliminada']);
     }
-    
+
     /**
      * Get all responses for a specific comment.
      */
@@ -103,7 +115,7 @@ class RespuestasComentariosController extends Controller
             ->where('comentario_id', $comentarioId)
             ->orderBy('created_at', 'asc')
             ->get();
-            
+
         return response()->json($respuestas);
     }
 }
