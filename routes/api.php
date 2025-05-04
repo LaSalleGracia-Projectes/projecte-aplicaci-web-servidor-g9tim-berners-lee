@@ -61,5 +61,11 @@ Route::put('notificaciones/read_all/{userId}', [NotificacionesController::class,
 Route::get('valoraciones/usuario/{userId}', [ValoracionesController::class, 'getUserFavorites']);
 Route::get('valoraciones/check/{userId}/{tmdb_id}', [ValoracionesController::class, 'checkFavoriteStatus']);
 
+
 // Rutas para solicitudes de crítico
 Route::get('solicitudes_critico/user/{userId}', [SolicitudCriticoController::class, 'getSolicitudesByUser']);
+
+// Rutas para comentarios
+Route::get('/comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
+Route::apiResource('comentarios', ComentariosController::class);
+Route::apiResource('likes_comentarios', LikesComentariosController::class);
