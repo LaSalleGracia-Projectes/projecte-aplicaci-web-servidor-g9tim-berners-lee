@@ -131,8 +131,8 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http
 });
 
 // Rutas para comentarios
-Route::prefix('api')->group(function () {
+/*Route::prefix('api')->group(function () {
     Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
     Route::post('/comentarios', [ComentariosController::class, 'store']);
     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
-});
+});*/

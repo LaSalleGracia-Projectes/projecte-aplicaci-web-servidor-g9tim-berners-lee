@@ -5,20 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Valoraciones extends Model
+class SolicitudCritico extends Model
 {
     use HasFactory;
 
-    protected $table = 'valoraciones';
-
+    protected $table = 'solicitudes_critico';
+    
     protected $fillable = [
         'user_id',
-        'tmdb_id',
-        'valoracion'
+        'nombre',
+        'apellido',
+        'edad',
+        'motivo',
+        'estado'
     ];
 
-    // Relación con el usuario
-    public function user()
+    public function usuario()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

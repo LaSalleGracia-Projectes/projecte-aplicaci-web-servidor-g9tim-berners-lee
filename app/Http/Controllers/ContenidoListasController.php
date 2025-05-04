@@ -37,7 +37,7 @@ class ContenidoListasController extends Controller
             $validated = $request->validate([
                 'id_lista' => 'required|exists:listas,id',
                 'tmdb_id' => 'required|integer',
-                'tipo' => 'required|string|in:movie,tv'
+                'tipo' => 'required|string|in:movie,tv,serie,pelicula',
             ]);
 
             $contenido = ContenidoListas::create([
@@ -50,6 +50,7 @@ class ContenidoListasController extends Controller
                 'message' => 'Película añadida correctamente',
                 'data' => $contenido
             ], 201);
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al añadir la película',
@@ -87,13 +88,15 @@ class ContenidoListasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ContenidoListas $contenido)
+    public function destroy($id)
     {
         try {
-            $contenido->delete();
+            $contenidoLista = ContenidoListas::findOrFail($id);
+            $contenidoLista->delete();
             return response()->json([
-                'message' => 'Película eliminada correctamente'
+                'message' => 'Contenido eliminado de la lista'
             ], 200);
+
         } catch (\Exception $e) {
             Log::error("Error en ContenidoListasController@destroy: " . $e->getMessage());
             return response()->json([

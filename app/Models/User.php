@@ -55,6 +55,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comentarios::class, 'user_id');
     }
+    
+    // ✅ Relación con Respuestas a Comentarios
+    public function respuestasComentarios()
+    {
+        return $this->hasMany(RespuestasComentarios::class, 'user_id');
+    }
 
     // ✅ Relación con Listas
     public function listas()
@@ -78,5 +84,11 @@ class User extends Authenticatable
     public function seguimientos()
     {
         return $this->hasMany(Seguimiento::class, 'user_id');
+    }
+
+    // ✅ Relación con Solicitudes de Crítico
+    public function solicitudesCritico()
+    {
+        return $this->hasMany(SolicitudCritico::class, 'user_id');
     }
 }
