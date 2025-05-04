@@ -63,6 +63,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <i class="far fa-thumbs-down"></i>
                                     <span class="dislikes-count">${comentario.dislikes_count}</span>
                                 </button>
+                                <button class="btn-reply" data-id="${comentario.id}">
+                                    <i class="far fa-comment"></i> Responder
+                                </button>
+                            </div>
+                            <div class="respuestas-container" id="respuestas-${comentario.id}">
+                                <!-- Las respuestas se cargarán aquí -->
+                            </div>
+                            <div class="respuesta-form" id="respuesta-form-${comentario.id}" style="display: none;">
+                                <textarea placeholder="Escribe tu respuesta..." class="respuesta-text"></textarea>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" id="es_spoiler_respuesta_${comentario.id}">
+                                    <label class="form-check-label" for="es_spoiler_respuesta_${comentario.id}">Esta respuesta contiene spoilers</label>
+                                </div>
+                                <button class="btn-submit-respuesta" data-id="${comentario.id}">Enviar respuesta</button>
                             </div>
                         </div>
                     `;
@@ -105,6 +119,71 @@ document.addEventListener("DOMContentLoaded", function () {
                         warningEl.style.display = 'none';
                         contentEl.style.display = 'block';
                     });
+                });
+
+                // Agregar event listeners para los botones de respuesta
+                document.querySelectorAll('.btn-reply').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const comentarioId = this.dataset.id;
+                        const formRespuesta = document.getElementById(`respuesta-form-${comentarioId}`);
+                        formRespuesta.style.display = formRespuesta.style.display === 'none' ? 'block' : 'none';
+                    });
+                });
+
+                // Agregar event listeners para enviar respuestas
+                document.querySelectorAll('.btn-submit-respuesta').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const comentarioId = this.dataset.id;
+                        const formRespuesta = document.getElementById(`respuesta-form-${comentarioId}`);
+                        const respuestaText = formRespuesta.querySelector('.respuesta-text').value;
+                        const esSpoiler = formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked;
+
+                        if (!respuestaText.trim()) {
+                            return;
+                        }
+
+                        // Obtener el token CSRF
+                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+
+                        fetch('/api/respuestas-comentarios', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                comentario_id: comentarioId,
+                                user_id: userId,
+                                respuesta: respuestaText,
+                                es_spoiler: esSpoiler
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al enviar la respuesta');
+                            }
+                            // Limpiar y ocultar el formulario de respuesta
+                            formRespuesta.querySelector('.respuesta-text').value = '';
+                            formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked = false;
+                            formRespuesta.style.display = 'none';
+                            // Recargar solo las respuestas de ese comentario
+                            cargarRespuestas(comentarioId);
+                        })
+                        .catch(error => {
+                            // También actualiza solo las respuestas aunque haya error
+                            formRespuesta.querySelector('.respuesta-text').value = '';
+                            formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked = false;
+                            formRespuesta.style.display = 'none';
+                            cargarRespuestas(comentarioId);
+                        });
+                    });
+                });
+
+                // Cargar respuestas para cada comentario
+                comentarios.forEach(comentario => {
+                    cargarRespuestas(comentario.id);
                 });
             })
             .catch(error => {
@@ -155,4 +234,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Cargar comentarios al iniciar
     cargarComentarios();
+
+    // Función para cargar respuestas de un comentario
+    function cargarRespuestas(comentarioId) {
+        fetch(`/api/respuestas-comentarios/${comentarioId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar las respuestas');
+                }
+                return response.json();
+            })
+            .then(respuestas => {
+                const container = document.getElementById(`respuestas-${comentarioId}`);
+                container.innerHTML = '';
+
+                if (respuestas.length === 0) {
+                    return;
+                }
+
+                respuestas.forEach(respuesta => {
+                    const respuestaHtml = `
+                        <div class="respuesta ${respuesta.es_spoiler ? 'spoiler' : ''}">
+                            <div class="respuesta-header">
+                                <div class="user-info">
+                                    <img src="${respuesta.usuario.foto_perfil ? '/storage/' + respuesta.usuario.foto_perfil : '/images/default-avatar.png'}"
+                                         alt="${respuesta.usuario.name}"
+                                         class="avatar">
+                                    <div>
+                                        <span class="username">${respuesta.usuario.name}</span>
+                                        <span class="respuesta-date">${new Date(respuesta.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            ${respuesta.es_spoiler ?
+                                `<div class="spoiler-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Esta respuesta contiene spoilers
+                                    <button class="show-spoiler">Mostrar spoiler</button>
+                                </div>` : ''
+                            }
+                            <div class="respuesta-content ${respuesta.es_spoiler ? 'spoiler-content' : ''}">${respuesta.respuesta}</div>
+                        </div>
+                    `;
+                    container.innerHTML += respuestaHtml;
+                });
+
+                // Agregar event listeners para mostrar spoilers en respuestas
+                container.querySelectorAll('.show-spoiler').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const respuestaEl = this.closest('.respuesta');
+                        const warningEl = respuestaEl.querySelector('.spoiler-warning');
+                        const contentEl = respuestaEl.querySelector('.spoiler-content');
+
+                        warningEl.style.display = 'none';
+                        contentEl.style.display = 'block';
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 });

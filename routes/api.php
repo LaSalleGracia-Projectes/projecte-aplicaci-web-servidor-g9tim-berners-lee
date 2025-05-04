@@ -50,7 +50,8 @@ Route::get('likes_comentarios/status/{comentarioId}/{userId}', [LikesComentarios
 Route::get('likes_comentarios/count/{comentarioId}', [LikesComentariosController::class, 'getLikesCount']);
 
 // Rutas para respuestas a comentarios
-Route::get('respuestas_comentarios/comentario/{comentarioId}', [RespuestasComentariosController::class, 'getRespuestasByComentarioId']);
+Route::get('/respuestas-comentarios/{comentarioId}', [RespuestasComentariosController::class, 'getRespuestasByComentarioId']);
+Route::post('/respuestas-comentarios', [RespuestasComentariosController::class, 'store']);
 
 // Rutas para notificaciones
 Route::get('notificaciones/user/{userId}', [NotificacionesController::class, 'getUserNotificaciones']);
