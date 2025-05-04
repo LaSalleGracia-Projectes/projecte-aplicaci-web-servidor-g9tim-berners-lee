@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Función para cargar respuestas de un comentario
     function cargarRespuestas(comentarioId) {
-        fetch(`/api/respuestas-comentarios/${comentarioId}`)
+        fetch(`/api/respuestas_comentarios/comentario/${comentarioId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al cargar las respuestas');
