@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $pelicula['title'] ?? $pelicula->titulo . ' - CrítiFlix')
+@section('title', $pelicula['title'] ?? $pelicula->titulo ?? 'Detalle de película')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('movie-details.css') }}">
@@ -264,65 +264,49 @@
                 <section id="similar" class="tab-panel">
                     <h2>Películas similares</h2>
                     <div class="related-movies-container">
-                        @php
-                            // Obtener películas del mismo año o similares
-                            $relatedMovies = isset($peliculasSimilares) ? $peliculasSimilares : (
-                                App\Models\PeliculasSeries::where('tipo', 'pelicula')
-                                ->where('año_estreno', $pelicula->año_estreno ?? (isset($pelicula['release_date']) ? substr($pelicula['release_date'], 0, 4) : null))
-                                ->where('id', '!=', $pelicula->id ?? null)
-                                ->limit(4)
-                                ->get()
-                            );
-
-                            // Si no hay suficientes, mostrar algunas aleatorias
-                            if (!isset($peliculasSimilares) && $relatedMovies->count() < 4) {
-                                $moreMovies = App\Models\PeliculasSeries::where('tipo', 'pelicula')
-                                            ->where('id', '!=', $pelicula->id ?? null)
-                                            ->whereNotIn('id', $relatedMovies->pluck('id')->toArray())
-                                            ->inRandomOrder()
-                                            ->limit(4 - $relatedMovies->count())
-                                            ->get();
-
-                                $relatedMovies = $relatedMovies->concat($moreMovies);
-                            }
-                        @endphp
-
-                        @if(isset($peliculasSimilares) || $relatedMovies->count() > 0)
-                            @foreach($peliculasSimilares ?? $relatedMovies as $relatedMovie)
+                        @if(isset($peliculasSimilares) && count($peliculasSimilares) > 0)
+                            @foreach($peliculasSimilares as $relatedMovie)
                                 @php
-                                    // Obtener poster de TMDB si es necesario
-                                    $apiKey = env('TMDB_API_KEY');
-                                    $tmdbId = isset($relatedMovie['id']) ? $relatedMovie['id'] : ($relatedMovie->api_id ?? $relatedMovie->id);
+                                    // Obtener datos de la película similar
                                     $posterUrl = isset($relatedMovie['poster_path'])
                                         ? 'https://image.tmdb.org/t/p/w500'.$relatedMovie['poster_path']
                                         : asset('images/no-poster.jpg');
                                     $rating = isset($relatedMovie['vote_average']) ? $relatedMovie['vote_average'] : 0;
-                                    $title = isset($relatedMovie['title']) ? $relatedMovie['title'] : $relatedMovie->titulo;
-
-                                    if (!isset($relatedMovie['poster_path']) && !isset($peliculasSimilares)) {
-                                        try {
-                                            $response = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}?api_key={$apiKey}&language=es-ES");
-                                            if (!$response->failed()) {
-                                                $movieData = $response->json();
-                                                $posterUrl = isset($movieData['poster_path'])
-                                                    ? 'https://image.tmdb.org/t/p/w500'.$movieData['poster_path']
-                                                    : asset('images/no-poster.jpg');
-                                                $rating = $movieData['vote_average'] ?? 0;
-                                            }
-                                        } catch (\Exception $e) {
-                                            // Usar poster predeterminado si hay error
-                                        }
-                                    }
+                                    $title = isset($relatedMovie['title']) ? $relatedMovie['title'] : '';
                                 @endphp
                                 <div class="movie-card">
-                                    <img src="{{ $posterUrl }}" alt="{{ $title }}">
+                                    <div class="movie-poster">
+                                        <img src="{{ $posterUrl }}" alt="{{ $title }}" loading="lazy">
+                                        <div class="movie-overlay">
+                                            <div class="movie-badges">
+                                                @if(isset($relatedMovie['release_date']) && substr($relatedMovie['release_date'], 0, 4) >= date('Y') - 1)
+                                                    <span class="badge new-badge">Nuevo</span>
+                                                @endif
+                                                @if($rating >= 8)
+                                                    <span class="badge top-badge">
+                                                        <i class="fas fa-trophy"></i> {{ number_format($rating, 1) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="movie-actions">
+                                                <button class="action-btn btn-trailer" data-id="{{ $relatedMovie['id'] }}" aria-label="Ver trailer">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="action-btn btn-favorite" data-id="{{ $relatedMovie['id'] }}" aria-label="Añadir a favoritos">
+                                                    <i class="far fa-heart"></i>
+                                                </button>
+                                                <a href="{{ route('pelicula.detail', $relatedMovie['id']) }}" class="action-btn btn-details" aria-label="Ver detalles">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="movie-info">
                                         <h3>{{ $title }}</h3>
-                                        <p class="rating">⭐ {{ number_format($rating, 1) }}/10</p>
-                                        <a href="{{ isset($relatedMovie['id'])
-                                            ? route('pelicula.detail', $relatedMovie['id'])
-                                            : route('pelicula.detail', $relatedMovie->id) }}"
-                                           class="btn-details">Ver Detalles</a>
+                                        <div class="movie-meta">
+                                            <span class="year">{{ isset($relatedMovie['release_date']) ? substr($relatedMovie['release_date'], 0, 4) : 'N/A' }}</span>
+                                            <span class="rating">{{ number_format($rating, 1) }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach

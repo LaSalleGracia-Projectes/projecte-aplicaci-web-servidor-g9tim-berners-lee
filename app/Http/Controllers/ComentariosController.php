@@ -28,7 +28,7 @@ class ComentariosController extends Controller {
             'comentario' => 'required|string',
             'es_spoiler' => 'boolean',
         ]);
-        
+
         $comentario = Comentarios::create([
             'user_id' => $request->user_id,
             'tmdb_id' => $request->tmdb_id,
@@ -37,9 +37,9 @@ class ComentariosController extends Controller {
             'es_spoiler' => $request->es_spoiler ?? false,
             'destacado' => false,
         ]);
-        
+
         $comentario->load('usuario');
-        
+
         return response()->json($comentario, 201);
     }
 
@@ -58,11 +58,11 @@ class ComentariosController extends Controller {
     public function update(Request $request, $id)
     {
         $comentario = Comentarios::findOrFail($id);
-        
+
         $comentario->update($request->all());
-        
+
         $comentario->load('usuario');
-        
+
         return response()->json($comentario);
     }
 
@@ -73,10 +73,10 @@ class ComentariosController extends Controller {
     {
         $comentario = Comentarios::findOrFail($id);
         $comentario->delete();
-        
+
         return response()->json(['message' => 'Comentario eliminado']);
     }
-    
+
     /**
      * Get comments for a specific movie or series.
      */
@@ -87,7 +87,59 @@ class ComentariosController extends Controller {
             ->where('tipo', $tipo)
             ->orderBy('created_at', 'desc')
             ->get();
-        
+
         return response()->json($comentarios);
+    }
+
+    public function getByPelicula($id)
+    {
+        $comentarios = Comentarios::where('pelicula_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Transformar los datos para la respuesta
+        $comentariosFormateados = $comentarios->map(function ($comentario) {
+            $usuario = User::find($comentario->usuario_id);
+            return [
+                'id' => $comentario->id,
+                'texto' => $comentario->texto,
+                'contiene_spoiler' => $comentario->contiene_spoiler,
+                'destacado' => $comentario->destacado,
+                'created_at' => $comentario->created_at,
+                'username' => $usuario ? $usuario->name : 'Usuario eliminado',
+                'avatar' => $usuario && $usuario->foto ? asset('storage/' . $usuario->foto) : asset('images/default-avatar.jpg'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'comentarios' => $comentariosFormateados
+        ]);
+    }
+
+    public function getBySerie($id)
+    {
+        $comentarios = Comentarios::where('serie_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Transformar los datos para la respuesta
+        $comentariosFormateados = $comentarios->map(function ($comentario) {
+            $usuario = User::find($comentario->usuario_id);
+            return [
+                'id' => $comentario->id,
+                'texto' => $comentario->texto,
+                'contiene_spoiler' => $comentario->contiene_spoiler,
+                'destacado' => $comentario->destacado,
+                'created_at' => $comentario->created_at,
+                'username' => $usuario ? $usuario->name : 'Usuario eliminado',
+                'avatar' => $usuario && $usuario->foto ? asset('storage/' . $usuario->foto) : asset('images/default-avatar.jpg'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'comentarios' => $comentariosFormateados
+        ]);
     }
 }

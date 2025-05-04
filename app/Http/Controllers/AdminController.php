@@ -65,13 +65,11 @@ class AdminController extends Controller
                           ->limit(5)
                           ->get();
 
-        // Valoraciones recientes
+        // Valoraciones recientes - Solo mostramos información básica sin columnas problemáticas
         $recentReviews = Valoraciones::join('users', 'valoraciones.user_id', '=', 'users.id')
-                                 ->join('peliculas_series', 'valoraciones.id_pelicula', '=', 'peliculas_series.id')
                                  ->select(
                                     'valoraciones.id',
                                     'users.name as user_name',
-                                    'peliculas_series.titulo as movie_title',
                                     'valoraciones.valoracion',
                                     'valoraciones.created_at'
                                  )
@@ -96,10 +94,51 @@ class AdminController extends Controller
     /**
      * Muestra la vista de gestión de usuarios
      */
-    public function users()
+    public function users(Request $request)
     {
-        // Obtener usuarios con paginación
-        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        // Iniciar la consulta
+        $query = User::query();
+
+        // Aplicar filtros si están presentes
+        // Filtro de búsqueda por nombre o email
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function($q) use ($keyword) {
+                $q->where('name', 'LIKE', "%{$keyword}%")
+                  ->orWhere('email', 'LIKE', "%{$keyword}%");
+            });
+        }
+
+        // Filtro por rol
+        if ($request->filled('role')) {
+            $query->where('rol', $request->role);
+        }
+
+        // Filtro por estado (activo/pendiente)
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->whereNotNull('email_verified_at');
+            } else if ($request->status === 'inactive') {
+                $query->whereNull('email_verified_at');
+            }
+        }
+
+        // Filtro por fecha de registro
+        if ($request->filled('date')) {
+            if ($request->date === 'today') {
+                $query->whereDate('created_at', Carbon::today());
+            } else if ($request->date === 'week') {
+                $query->where('created_at', '>=', Carbon::now()->subDays(7));
+            } else if ($request->date === 'month') {
+                $query->where('created_at', '>=', Carbon::now()->subDays(30));
+            }
+        }
+
+        // Ordenar por fecha de creación descendente
+        $query->orderBy('created_at', 'desc');
+
+        // Paginar resultados
+        $users = $query->paginate(10);
 
         // Calcular estadísticas
         $stats = [
@@ -132,24 +171,71 @@ class AdminController extends Controller
     public function reviews()
     {
         try {
-            $reviews = DB::table('valoraciones')
+            // Consulta base para las valoraciones
+            $query = DB::table('valoraciones')
                 ->join('users', 'valoraciones.user_id', '=', 'users.id')
-                ->join('peliculas_series', 'valoraciones.id_pelicula', '=', 'peliculas_series.id')
                 ->select(
                     'valoraciones.id',
                     'users.name as user_name',
-                    'peliculas_series.titulo as movie_title',
+                    'users.profile_photo as user_profile_photo',
                     'valoraciones.valoracion',
                     'valoraciones.comentario',
                     'valoraciones.created_at'
-                )
-                ->orderBy('valoraciones.created_at', 'desc')
-                ->paginate(10);
+                );
+
+            // Aplicar filtros según parámetros de la URL
+            if (request()->has('user') && !empty(request('user'))) {
+                $query->where('users.name', 'LIKE', '%' . request('user') . '%');
+            }
+
+            if (request()->has('movie') && !empty(request('movie'))) {
+                // Ya no podemos filtrar por película directamente
+                // Podemos quitar este filtro o implementar otra solución
+            }
+
+            if (request()->has('rating') && !empty(request('rating'))) {
+                $query->where('valoraciones.valoracion', request('rating'));
+            }
+
+            if (request()->has('date')) {
+                $date = request('date');
+                if ($date === 'today') {
+                    $query->whereDate('valoraciones.created_at', Carbon::today());
+                } elseif ($date === 'week') {
+                    $query->where('valoraciones.created_at', '>=', Carbon::now()->subDays(7));
+                } elseif ($date === 'month') {
+                    $query->where('valoraciones.created_at', '>=', Carbon::now()->subDays(30));
+                }
+            }
+
+            // Ordenar y paginar directamente desde la consulta
+            $reviews = $query->orderBy('valoraciones.created_at', 'desc')->paginate(10);
+
+            // Estadísticas para el panel
+            $stats = [
+                'total' => DB::table('valoraciones')->count(),
+                'likes' => DB::table('valoraciones')->where('valoracion', 'like')->count(),
+                'dislikes' => DB::table('valoraciones')->where('valoracion', 'dislike')->count(),
+                'hoy' => DB::table('valoraciones')->whereDate('created_at', Carbon::today())->count(),
+            ];
         } catch (\Exception $e) {
-            $reviews = collect([])->paginate(10);
+            // En caso de error, crear una paginación vacía correctamente
+            $reviews = new \Illuminate\Pagination\LengthAwarePaginator(
+                [], // datos vacíos
+                0,  // contar total
+                10, // por página
+                1   // página actual
+            );
+
+            $stats = [
+                'total' => 0,
+                'likes' => 0,
+                'dislikes' => 0,
+                'hoy' => 0,
+            ];
         }
 
-        return view('admin.reviews', compact('reviews'));
+        return view('admin.reviews', compact('reviews', 'stats'));
     }
 
     /**
@@ -159,6 +245,69 @@ class AdminController extends Controller
     {
         $admin = Auth::user();
         return view('admin.profile', compact('admin'));
+    }
+
+    /**
+     * Actualiza la información del perfil del administrador
+     */
+    public function updateProfile(Request $request)
+    {
+        $admin = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$admin->id,
+            'biografia' => 'nullable|string|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $admin->name = $request->name;
+        $admin->email = $request->email;
+        $admin->biografia = $request->biografia;
+        $admin->save();
+
+        return redirect()->route('admin.profile')->with('success', 'Perfil actualizado correctamente');
+    }
+
+    /**
+     * Actualiza la contraseña del administrador
+     */
+    public function updatePassword(Request $request)
+    {
+        $admin = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+            'new_password_confirmation' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if (!Hash::check($request->current_password, $admin->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['current_password' => ['La contraseña actual es incorrecta']]
+            ], 422);
+        }
+
+        $admin->password = Hash::make($request->new_password);
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Contraseña actualizada correctamente'
+        ]);
     }
 
     /**
@@ -262,27 +411,60 @@ class AdminController extends Controller
                 ], 400);
             }
 
-            // Eliminar registros relacionados
-            if ($user->comentarios()->exists()) {
-                $user->comentarios()->delete();
+            // Eliminar registros relacionados de forma segura
+            try {
+                if (method_exists($user, 'comentarios') && $user->comentarios()->exists()) {
+                    $user->comentarios()->delete();
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error al eliminar comentarios del usuario:', [
+                    'user_id' => $id,
+                    'error' => $e->getMessage()
+                ]);
             }
-            if ($user->criticas()->exists()) {
-                $user->criticas()->delete();
+
+            try {
+                if (method_exists($user, 'valoraciones') && $user->valoraciones()->exists()) {
+                    $user->valoraciones()->delete();
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error al eliminar valoraciones del usuario:', [
+                    'user_id' => $id,
+                    'error' => $e->getMessage()
+                ]);
             }
-            if ($user->valoraciones()->exists()) {
-                $user->valoraciones()->delete();
+
+            try {
+                if (method_exists($user, 'listas') && $user->listas()->exists()) {
+                    $user->listas()->delete();
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error al eliminar listas del usuario:', [
+                    'user_id' => $id,
+                    'error' => $e->getMessage()
+                ]);
             }
-            if ($user->listas()->exists()) {
-                $user->listas()->delete();
+
+            try {
+                if (method_exists($user, 'notificaciones') && $user->notificaciones()->exists()) {
+                    $user->notificaciones()->delete();
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error al eliminar notificaciones del usuario:', [
+                    'user_id' => $id,
+                    'error' => $e->getMessage()
+                ]);
             }
-            if ($user->notificaciones()->exists()) {
-                $user->notificaciones()->delete();
-            }
-            if ($user->recomendaciones()->exists()) {
-                $user->recomendaciones()->delete();
-            }
-            if ($user->seguimientos()->exists()) {
-                $user->seguimientos()->delete();
+
+            try {
+                if (method_exists($user, 'seguimientos') && $user->seguimientos()->exists()) {
+                    $user->seguimientos()->delete();
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error al eliminar seguimientos del usuario:', [
+                    'user_id' => $id,
+                    'error' => $e->getMessage()
+                ]);
             }
 
             // Eliminar el usuario
@@ -565,48 +747,44 @@ class AdminController extends Controller
     }
 
     /**
-     * Muestra la lista de comentarios
+     * Muestra la vista de gestión de comentarios
      */
     public function comments()
     {
         try {
-            // Obtener todos los comentarios, uniendo con las tablas de usuarios y películas/series
-            $comments = DB::table('comentarios')
-                ->join('users', 'comentarios.user_id', '=', 'users.id')
-                ->join('peliculas_series', 'comentarios.id_pelicula', '=', 'peliculas_series.id')
-                ->select(
-                    'comentarios.*',
-                    'users.name as user_name',
-                    'users.rol as user_rol',
-                    'peliculas_series.titulo as movie_title'
-                )
-                ->orderBy('comentarios.created_at', 'desc')
+            // Usar el modelo Eloquent en lugar de Query Builder
+            $rawCount = \App\Models\Comentarios::count();
+            \Log::info('Total de comentarios en la BD (Eloquent): ' . $rawCount);
+
+            // Usar el modelo con relaciones cargadas
+            $comments = \App\Models\Comentarios::with(['usuario'])
+                ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
-            // Calcular estadísticas de comentarios
+            // Estadísticas para el panel
             $stats = [
-                'total' => DB::table('comentarios')->count(),
-                'destacados' => DB::table('comentarios')->where('destacado', 1)->count(),
-                'spoilers' => DB::table('comentarios')->where('es_spoiler', 1)->count(),
-                'new_today' => DB::table('comentarios')
-                    ->whereDate('created_at', now()->toDateString())
-                    ->count()
+                'total' => $rawCount,
+                'destacados' => \App\Models\Comentarios::where('destacado', true)->count(),
+                'spoilers' => \App\Models\Comentarios::where('es_spoiler', true)->count(),
+                'hoy' => \App\Models\Comentarios::whereDate('created_at', Carbon::today())->count(),
             ];
+
+            \Log::info('Comentarios cargados (Eloquent): ' . $comments->count());
         } catch (\Exception $e) {
-            // En caso de error, inicializar un paginador vacío y establecer estadísticas en cero
+            // En caso de error, preparar datos vacíos y registrar el error
+            \Log::error('Error al cargar comentarios: ' . $e->getMessage());
+            \Log::error('Traza: ' . $e->getTraceAsString());
+
             $comments = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10, 1);
             $stats = [
                 'total' => 0,
                 'destacados' => 0,
                 'spoilers' => 0,
-                'new_today' => 0
+                'hoy' => 0,
             ];
         }
 
-        return view('admin.comments', [
-            'comments' => $comments,
-            'stats' => $stats
-        ]);
+        return view('admin.comments', compact('comments', 'stats'));
     }
 
     /**
@@ -708,6 +886,36 @@ class AdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al quitar el destacado: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtiene los datos de un usuario específico
+     * @param int $id ID del usuario
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'rol' => $user->rol,
+                    'status' => $user->email_verified_at !== null,
+                    'created_at' => $user->created_at->format('d/m/Y H:i'),
+                    'last_login_at' => $user->last_login_at
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener datos del usuario: ' . $e->getMessage()
             ], 500);
         }
     }

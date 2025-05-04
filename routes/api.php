@@ -70,3 +70,4 @@ Route::get('solicitudes_critico/user/{userId}', [SolicitudCriticoController::cla
 Route::get('/comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
 Route::apiResource('comentarios', ComentariosController::class);
 Route::apiResource('likes_comentarios', LikesComentariosController::class);
+

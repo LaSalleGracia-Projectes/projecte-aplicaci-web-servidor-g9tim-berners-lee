@@ -1,0 +1,1125 @@
+/* Variables CSS */
+:root {
+    --verde-neon: #14ff14;
+    --verde-claro: #00ffdd;
+    --verde-principal: #00ff3c;
+    --negro-fondo: #121212;
+    --negro-componentes: #1a1a1a;
+    --blanco: #FFFFFF;
+    --gris-texto: #cccccc;
+    --gris-claro: #e0e0e0;
+    --rojo: #ff4d4d;
+    --amarillo: #FFD700;
+    --radius-sm: 4px;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --transition: all 0.3s ease;
+}
+
+/* Estilos generales de la página de detalles */
+.pelicula-detalle {
+    min-height: calc(100vh - 80px);
+    background-color: var(--negro-fondo);
+    color: var(--blanco);
+    font-family: 'Montserrat', sans-serif;
+    padding-bottom: 50px;
+}
+
+/* Banner superior */
+.banner {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+}
+
+.titulo-overlay {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 30px 50px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.9));
+}
+
+.titulo-overlay h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.titulo-overlay .tagline {
+    font-size: 1.2rem;
+    color: var(--gris-texto);
+    font-style: italic;
+}
+
+/* Contenedor principal del contenido */
+.movie-content-container {
+    display: flex;
+    max-width: 1200px;
+    margin: -50px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+    gap: 30px;
+}
+
+/* Columna izquierda con poster y servicios */
+.columna-izquierda {
+    flex: 0 0 300px;
+}
+
+.poster {
+    margin-bottom: 20px;
+}
+
+.poster img {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Botones de acción bajo el poster */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.action-buttons button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--negro-componentes);
+    color: var(--blanco);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.95rem;
+}
+
+.action-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.action-buttons .btn-favorite:hover,
+.action-buttons .btn-favorite.active {
+    color: #ff4081;
+    border-color: #ff4081;
+}
+
+.action-buttons .btn-watchlist:hover {
+    color: var(--verde-principal);
+    border-color: var(--verde-principal);
+}
+
+.action-buttons .btn-share:hover {
+    color: var(--verde-claro);
+    border-color: var(--verde-claro);
+}
+
+/* Sección de servicios de streaming */
+.donde-ver {
+    background-color: var(--negro-componentes);
+    border-radius: var(--radius);
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.donde-ver h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--verde-neon);
+}
+
+.donde-ver h4 {
+    font-size: 0.9rem;
+    margin: 10px 0;
+    color: var(--gris-texto);
+}
+
+.plataformas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.plataforma {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(50% - 8px);
+    text-align: center;
+}
+
+.plataforma img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    object-fit: contain;
+    background-color: white;
+    padding: 5px;
+}
+
+.plataforma span {
+    font-size: 0.8rem;
+    color: var(--gris-texto);
+}
+
+/* Columna central con información detallada */
+.columna-central {
+    flex: 1;
+    min-width: 0; /* Evita que el contenido se desborde */
+}
+
+/* Metadatos de la película */
+.movie-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: var(--gris-texto);
+}
+
+.movie-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.movie-meta i {
+    color: var(--verde-neon);
+}
+
+.movie-meta .rating i {
+    color: var(--amarillo);
+}
+
+/* Sinopsis */
+.sinopsis {
+    margin-bottom: 30px;
+}
+
+.sinopsis h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--verde-neon);
+}
+
+.sinopsis p {
+    line-height: 1.6;
+    color: var(--gris-claro);
+}
+
+/* Detalles técnicos */
+.produccion {
+    margin-bottom: 30px;
+}
+
+.produccion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.detail-label {
+    font-size: 0.9rem;
+    color: var(--verde-neon);
+    font-weight: 600;
+}
+
+.detail-value {
+    color: var(--gris-claro);
+}
+
+/* Elenco de actores */
+.elenco {
+    margin-bottom: 30px;
+}
+
+.elenco h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--verde-neon);
+}
+
+.actores-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.actor {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--negro-componentes);
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.actor:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.actor img {
+    width: 100%;
+    aspect-ratio: 1/1.2;
+    object-fit: cover;
+}
+
+.actor-info {
+    padding: 10px;
+}
+
+.actor-nombre {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.actor-personaje {
+    color: var(--gris-texto);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Tabs de navegación */
+.movie-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-button {
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    color: var(--gris-texto);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: var(--transition);
+    position: relative;
+}
+
+.tab-button:hover {
+    color: var(--blanco);
+}
+
+.tab-button.active {
+    color: var(--verde-neon);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--verde-neon);
+}
+
+/* Contenido de los tabs */
+.tab-panel {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.tab-panel h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--verde-neon);
+}
+
+/* Sección de críticas */
+.add-review {
+    background-color: var(--negro-componentes);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.add-review h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--verde-neon);
+}
+
+.rating-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stars {
+    display: flex;
+    gap: 5px;
+}
+
+.stars i {
+    color: var(--gris-texto);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+.stars i:hover, .stars i.fas {
+    color: var(--amarillo);
+}
+
+.add-review textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius);
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--blanco);
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 15px;
+}
+
+.add-review textarea:focus {
+    outline: none;
+    border-color: var(--verde-neon);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.form-check-input {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-submit-review {
+    background-color: var(--verde-neon);
+    color: var(--negro-fondo);
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit-review:hover {
+    background-color: var(--verde-claro);
+    transform: translateY(-2px);
+}
+
+/* Sección de videos/trailers */
+.videos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.video-item {
+    margin-bottom: 20px;
+}
+
+.video-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--gris-claro);
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Botón de volver */
+.back-button {
+    margin-top: 40px;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.back-button .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--negro-componentes);
+    color: var(--blanco);
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-button .btn:hover {
+    background-color: rgba(20, 255, 20, 0.1);
+    color: var(--verde-neon);
+    border-color: var(--verde-neon);
+}
+
+/* Media queries para responsive */
+@media (max-width: 992px) {
+    .movie-content-container {
+        flex-direction: column;
+    }
+
+    .columna-izquierda {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        flex: 1 1 100%;
+    }
+
+    .poster {
+        flex: 0 0 300px;
+        margin-bottom: 0;
+    }
+
+    .action-buttons {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .donde-ver {
+        flex-basis: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .banner {
+        height: 300px;
+    }
+
+    .titulo-overlay {
+        padding: 20px;
+    }
+
+    .titulo-overlay h1 {
+        font-size: 2rem;
+    }
+
+    .columna-izquierda {
+        flex-direction: column;
+    }
+
+    .videos-container {
+        grid-template-columns: 1fr;
+    }
+
+    .produccion-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner {
+        height: 200px;
+    }
+
+    .titulo-overlay h1 {
+        font-size: 1.5rem;
+    }
+
+    .titulo-overlay .tagline {
+        font-size: 1rem;
+    }
+
+    .actores-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tab-button {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Estilos para la sección de películas similares */
+.related-movies-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.related-movies-container .movie-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    background-color: var(--negro-fondo);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.related-movies-container .movie-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+    border-color: var(--verde-neon);
+}
+
+.related-movies-container .movie-poster {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.related-movies-container .movie-poster img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.related-movies-container .movie-card:hover .movie-poster img {
+    transform: scale(1.05);
+}
+
+/* Overlay para películas similares */
+.related-movies-container .movie-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.3) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.related-movies-container .movie-card:hover .movie-overlay {
+    opacity: 1;
+}
+
+/* Badges */
+.related-movies-container .movie-badges {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.related-movies-container .badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.related-movies-container .new-badge {
+    background-color: var(--verde-neon);
+    color: var(--negro-fondo);
+}
+
+.related-movies-container .top-badge {
+    background-color: #FFD700;
+    color: #000;
+}
+
+/* Botones de acción */
+.related-movies-container .movie-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.related-movies-container .action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--blanco);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.related-movies-container .action-btn:hover {
+    transform: scale(1.1);
+}
+
+.related-movies-container .btn-trailer:hover {
+    background-color: #FF0000;
+    border-color: #FF0000;
+}
+
+.related-movies-container .btn-favorite:hover {
+    background-color: #ff4081;
+    border-color: #ff4081;
+}
+
+.related-movies-container .btn-details:hover {
+    background-color: var(--verde-neon);
+    border-color: var(--verde-neon);
+    color: var(--negro-fondo);
+}
+
+/* Favoritos activos */
+.related-movies-container .btn-favorite.active {
+    background-color: #ff4081;
+    border-color: #ff4081;
+}
+
+.related-movies-container .btn-favorite.active i {
+    color: white;
+}
+
+/* Información de la película */
+.related-movies-container .movie-info {
+    padding: 15px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 100%);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.related-movies-container .movie-info h3 {
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+    color: var(--blanco);
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.related-movies-container .movie-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--gris-texto);
+}
+
+.related-movies-container .movie-meta .year {
+    color: var(--gris-texto);
+}
+
+.related-movies-container .movie-meta .rating {
+    display: flex;
+    align-items: center;
+    color: #FFD700;
+    font-weight: 600;
+}
+
+.related-movies-container .movie-meta .rating::before {
+    content: "⭐";
+    margin-right: 5px;
+}
+
+/* Media queries para responsive */
+@media (max-width: 768px) {
+    .related-movies-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+    }
+
+    .related-movies-container .movie-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .related-movies-container .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .related-movies-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .related-movies-container .movie-info {
+        padding: 10px;
+    }
+
+    .related-movies-container .movie-badges {
+        gap: 4px;
+    }
+
+    .related-movies-container .badge {
+        font-size: 0.6rem;
+        padding: 3px 6px;
+    }
+
+    .related-movies-container .action-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+}
+
+/* Estilos para modales en general */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    overflow: auto;
+}
+
+.modal.active,
+.modal.trailer-modal {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #000;
+    margin: auto;
+    width: 90%;
+    max-width: 900px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.modal-close:hover,
+.trailer-close-btn:hover {
+    background-color: #FF0000;
+}
+
+/* Estilos para el trailer */
+.trailer-modal-content {
+    position: relative;
+    width: 85%;
+    max-width: 1000px;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.trailer-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.trailer-container {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    width: 100%;
+    background-color: #000;
+}
+
+.trailer-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: #000;
+}
+
+.trailer-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top: 3px solid #14ff14;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+.trailer-loading span {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.trailer-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.no-trailer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.no-trailer i {
+    font-size: 3rem;
+    color: #14ff14;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.no-trailer p {
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+/* Estilos para las notificaciones */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 350px;
+    min-width: 300px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-left: 4px solid #4caf50;
+    border-radius: 4px;
+    padding: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    z-index: 2100;
+    overflow: hidden;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left-color: #4caf50;
+}
+
+.notification.error {
+    border-left-color: #f44336;
+}
+
+.notification.warning {
+    border-left-color: #ff9800;
+}
+
+.notification.info {
+    border-left-color: #2196f3;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+.notification-content i {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.notification.success i {
+    color: #4caf50;
+}
+
+.notification.error i {
+    color: #f44336;
+}
+
+.notification.warning i {
+    color: #ff9800;
+}
+
+.notification.info i {
+    color: #2196f3;
+}
+
+.notification-content p {
+    color: white;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.notification-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.notification-close:hover {
+    color: white;
+}
+
+/* Spinner global */
+#global-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#global-spinner.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#global-spinner .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid var(--verde-neon);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+body.loading {
+    overflow: hidden;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos para el modal de trailer */
+.trailer-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para el modal de detalles de película */
+.movie-detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}

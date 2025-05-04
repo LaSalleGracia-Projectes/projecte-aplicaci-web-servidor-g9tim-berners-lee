@@ -54,9 +54,19 @@ class PeliculasController extends Controller
             // Obtener proveedores de streaming
             $watchProviders = $pelicula['watch/providers']['results']['ES'] ?? [];
 
-            // Obtener películas similares
-            $similarResponse = Http::get("https://api.themoviedb.org/3/movie/{$id}/similar?api_key={$apiKey}&language=es-ES");
-            $peliculasSimilares = $similarResponse->successful() ? $similarResponse->json()['results'] : [];
+        // Obtener películas similares
+        $similarMoviesResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/similar?api_key={$apiKey}&language=es-ES&page=1");
+        $peliculasSimilares = [];
+
+        if ($similarMoviesResponse->successful()) {
+            $similarData = $similarMoviesResponse->json();
+            // Limitamos a 6 películas similares máximo
+            $peliculasSimilares = array_slice($similarData['results'] ?? [], 0, 6);
+        }
+
+        // Obtener proveedores de streaming
+        $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
+
 
             if (request()->expectsJson()) {
                 return response()->json([
@@ -64,11 +74,7 @@ class PeliculasController extends Controller
                     'data' => $pelicula
                 ]);
             }
-
-            return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
-        } catch (\Exception $e) {
-            abort(404, 'Error al obtener la información de la película');
-        }
+        return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
     }
 
     /**

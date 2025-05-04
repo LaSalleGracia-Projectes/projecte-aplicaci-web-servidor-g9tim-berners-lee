@@ -1,0 +1,153 @@
+/* Estilos simplificados para el modal de detalles de película */
+.movie-detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.movie-detail-content {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    background-color: #121212;
+    border-radius: 8px;
+    overflow: auto;
+    padding: 25px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+.movie-detail-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.movie-detail-close:hover {
+    background-color: #e53935;
+}
+
+/* Indicador de carga */
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #ffffff;
+}
+
+.loading-indicator .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid #14ff14;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mensaje de error */
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.error-message i {
+    font-size: 48px;
+    color: #e53935;
+    margin-bottom: 20px;
+}
+
+/* Contenido principal */
+.movie-detail-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #14ff14;
+}
+
+.movie-main-content {
+    display: flex;
+    gap: 20px;
+}
+
+.movie-poster {
+    width: 200px;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.movie-info {
+    flex: 1;
+}
+
+.movie-info p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: rgba(0, 255, 0, 0.1);
+    color: #14ff14;
+    border: 1px solid #14ff14;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.action-btn:hover {
+    background-color: #14ff14;
+    color: #000000;
+}
+
+/* Optimización para dispositivos móviles */
+@media (max-width: 768px) {
+    .movie-main-content {
+        flex-direction: column;
+    }
+
+    .movie-poster {
+        width: 150px;
+        margin-bottom: 15px;
+    }
+}

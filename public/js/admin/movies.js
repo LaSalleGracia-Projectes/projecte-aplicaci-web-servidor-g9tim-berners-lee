@@ -765,60 +765,56 @@ function openEditMovieModal(movieId) {
     const modal = document.getElementById('edit-movie-modal');
     if (!modal) return;
 
-    // Buscar fila de la película
+    // Buscar la fila para efectos visuales
     const movieRow = document.querySelector(`tr[data-movie-id="${movieId}"]`);
-    if (!movieRow) return;
+    if (movieRow) {
+        movieRow.style.transition = 'background-color 0.3s ease';
+        movieRow.style.backgroundColor = 'rgba(0, 255, 0, 0.15)';
+    }
 
-    // Mostrar efecto de carga en la fila
-    movieRow.style.transition = 'background-color 0.3s ease';
-    movieRow.style.backgroundColor = 'rgba(0, 255, 255, 0.05)';
+    // Hacer petición para obtener los datos completos de la película
+    fetch(`/api/admin/movies/${movieId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Llenar el formulario con los datos de la película
+                document.getElementById('edit-movie-id').value = data.movie.id;
+                document.getElementById('edit-title').value = data.movie.titulo;
+                document.getElementById('edit-type').value = data.movie.tipo;
+                document.getElementById('edit-genre').value = data.movie.genero;
+                document.getElementById('edit-year').value = data.movie.year;
+                document.getElementById('edit-director').value = data.movie.director;
+                document.getElementById('edit-synopsis').value = data.movie.sinopsis;
+                document.getElementById('edit-featured').checked = data.movie.destacado;
 
-    // Solicitar datos detallados de la película a la API
-    fetch(`/admin/api/movies/${movieId}`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Llenar el formulario con los datos de la película
-            document.getElementById('edit-movie-id').value = data.movie.id;
-            document.getElementById('edit-title').value = data.movie.titulo;
-            document.getElementById('edit-type').value = data.movie.tipo;
-            document.getElementById('edit-genre').value = data.movie.genero;
-            document.getElementById('edit-year').value = data.movie.year;
-            document.getElementById('edit-director').value = data.movie.director;
-            document.getElementById('edit-synopsis').value = data.movie.sinopsis;
-            document.getElementById('edit-featured').checked = data.movie.destacado;
-
-            // Mostrar imagen actual si existe
-            const previewContainer = document.getElementById('current-poster-preview');
-            if (previewContainer) {
-                if (data.movie.poster) {
-                    previewContainer.innerHTML = `<img src="/storage/${data.movie.poster}" alt="${data.movie.titulo}">`;
-                } else {
-                    previewContainer.innerHTML = `<i class="fas fa-film"></i>`;
+                // Mostrar imagen actual si existe
+                const previewContainer = document.getElementById('current-poster-preview');
+                if (previewContainer) {
+                    if (data.movie.poster_url) {
+                        previewContainer.innerHTML = `<img src="${data.movie.poster_url}" alt="${data.movie.titulo}">`;
+                    } else if (data.movie.poster) {
+                        previewContainer.innerHTML = `<img src="/storage/${data.movie.poster}" alt="${data.movie.titulo}">`;
+                    } else {
+                        previewContainer.innerHTML = `<i class="fas fa-film"></i>`;
+                    }
                 }
-            }
 
-            // Abrir modal
-            openModal(modal);
-        } else {
-            showNotification(data.message || 'Error al cargar datos de la película', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error al cargar datos de la película', 'error');
-    })
-    .finally(() => {
-        // Restaurar apariencia de la fila
-        setTimeout(() => {
-            movieRow.style.backgroundColor = '';
-        }, 500);
-    });
+                // Abrir modal
+                openModal(modal);
+            } else {
+                showNotification(data.message || 'Error al cargar datos de la película', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al cargar datos de la película', 'error');
+        })
+        .finally(() => {
+            // Restaurar apariencia de la fila
+            setTimeout(() => {
+                movieRow.style.backgroundColor = '';
+            }, 500);
+        });
 }
 
 /**
@@ -968,32 +964,26 @@ function createMovie() {
  * @param {Object} movie - Datos de la película actualizada
  */
 function updateMovieRow(movie) {
+    // Obtener fila de la película
     const row = document.querySelector(`tr[data-movie-id="${movie.id}"]`);
     if (!row) return;
 
     // Actualizar datos básicos
-    row.dataset.type = movie.tipo;
-    row.dataset.genre = movie.genero;
-    row.dataset.year = movie.year;
-
-    // Actualizar título
     row.querySelector('td:nth-child(4)').textContent = movie.titulo;
-
-    // Actualizar tipo
-    const typeCell = row.querySelector('td:nth-child(5) .status-badge');
-    typeCell.className = `status-badge ${movie.tipo}`;
-    typeCell.textContent = movie.tipo.charAt(0).toUpperCase() + movie.tipo.slice(1);
-
-    // Actualizar género
+    row.querySelector('td:nth-child(5) .status-badge').textContent = movie.tipo.charAt(0).toUpperCase() + movie.tipo.slice(1);
+    row.querySelector('td:nth-child(5) .status-badge').className = `status-badge ${movie.tipo}`;
     row.querySelector('td:nth-child(6)').textContent = movie.genero;
-
-    // Actualizar año
     row.querySelector('td:nth-child(7)').textContent = movie.year;
 
-    // Actualizar poster si hay uno nuevo
-    if (movie.poster && movie.poster_updated) {
-        const posterImg = row.querySelector('td:nth-child(3) .movie-poster');
-        posterImg.innerHTML = `<img src="/storage/${movie.poster}" alt="${movie.titulo}">`;
+    // Actualizar poster
+    const posterContainer = row.querySelector('.movie-poster');
+    if (posterContainer) {
+        posterContainer.innerHTML = movie.poster_url ?
+            `<img src="${movie.poster_url}" alt="${movie.titulo}">` :
+            (movie.poster ?
+                `<img src="/storage/${movie.poster}" alt="${movie.titulo}">` :
+                '<i class="fas fa-film"></i>'
+            );
     }
 
     // Actualizar botón de destacado
@@ -1056,9 +1046,12 @@ function addMovieRow(movie) {
         <td>#${movie.id}</td>
         <td>
             <div class="movie-poster">
-                ${movie.poster ?
-                    `<img src="/storage/${movie.poster}" alt="${movie.titulo}">` :
-                    '<i class="fas fa-film"></i>'
+                ${movie.poster_url ?
+                    `<img src="${movie.poster_url}" alt="${movie.titulo}">` :
+                    (movie.poster ?
+                        `<img src="/storage/${movie.poster}" alt="${movie.titulo}">` :
+                        '<i class="fas fa-film"></i>'
+                    )
                 }
             </div>
         </td>

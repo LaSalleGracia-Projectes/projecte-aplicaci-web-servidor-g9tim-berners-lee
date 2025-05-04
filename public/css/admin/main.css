@@ -3,44 +3,8 @@
  * de administración y agrega estilos globales
  */
 
-/* Importar variables */
-@import url('variables.css');
-
-/* Importar estilos de layout */
-@import url('layout.css');
-
-/* Importar componentes */
-@import url('components.css');
-
-/* Importar tablas */
-@import url('tables.css');
-
-/* Importar dashboard */
-@import url('dashboard.css');
-
-/* Variables */
-:root {
-    --verde-neon: #14ff14;
-    --cyan-neon: #00ffdd;
-    --rojo-neon: #ff4444;
-    --amarillo-neon: #ffd700;
-    --rosa-neon: #ff00ff;
-    --azul-neon: #4d4dff;
-    --purpura-neon: #bc13fe;
-
-    --bg-dark: #0a0a0a;
-    --bg-darker: #050505;
-    --bg-card: #121212;
-    --bg-sidebar: #0f0f0f;
-
-    --text-light: #f5f5f5;
-    --text-muted: #8a8a8a;
-    --border-color: #2a2a2a;
-    --hover-bg: #1e1e1e;
-    --sidebar-width: 250px;
-    --header-height: 70px;
-    --glow-intensity: 0.5;
-}
+/* Importar variables globales */
+@import url('../variables.css');
 
 /* Ajustes globales */
 body {
@@ -49,13 +13,18 @@ body {
     color: var(--text-light);
     margin: 0;
     padding: 0;
-    padding-top: 0;
     min-height: 100vh;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
+/* Importar estilos en orden específico */
+@import url('layout.css');
+@import url('components.css');
+@import url('tables.css');
+@import url('dashboard.css');
+
 /* Contenedor principal del admin */
-.admin-container {
+.admin-wrapper {
     display: flex;
     min-height: 100vh;
     width: 100%;
@@ -69,8 +38,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 60px;
-    position: relative;
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    backdrop-filter: blur(10px);
 }
 
 .admin-header-title h2 {
@@ -78,12 +50,13 @@ body {
     margin: 0;
     font-weight: 700;
     color: var(--text-light);
+    text-shadow: 0 0 10px rgba(20, 255, 20, 0.3);
 }
 
 .admin-header-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .admin-search {
@@ -94,12 +67,12 @@ body {
 .admin-search input {
     width: 100%;
     padding: 0.6rem 1rem 0.6rem 2.5rem;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     background-color: var(--bg-darker);
     color: var(--text-light);
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .admin-search button {
@@ -111,12 +84,17 @@ body {
     border: none;
     color: var(--text-muted);
     cursor: pointer;
+    transition: all var(--transition-speed) ease;
 }
 
 .admin-search input:focus {
     border-color: var(--verde-neon);
     box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
     outline: none;
+}
+
+.admin-search button:hover {
+    color: var(--verde-neon);
 }
 
 .admin-notifications {
@@ -129,16 +107,16 @@ body {
     color: var(--text-light);
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .admin-notifications button:hover {
-    background-color: var(--hover-bg);
+    background-color: var(--bg-hover);
     border-color: var(--verde-neon);
     color: var(--verde-neon);
     box-shadow: 0 0 10px rgba(20, 255, 20, 0.15);
@@ -163,21 +141,21 @@ body {
 /* Área principal */
 .admin-main {
     flex: 1;
-    margin-left: 250px;
+    margin-left: var(--sidebar-width);
     min-height: 100vh;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 /* Barra lateral */
 .admin-sidebar {
-    width: 250px;
+    width: var(--sidebar-width);
     background: linear-gradient(to bottom, var(--bg-sidebar), var(--bg-darker));
     border-right: 1px solid var(--border-color);
     position: fixed;
     height: 100vh;
     padding: 1.5rem 0;
     z-index: 100;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .admin-logo {
@@ -202,50 +180,48 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0 0.75rem;
+    padding: 0 1rem;
 }
 
 .admin-nav-item {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem;
-    color: var(--text-light);
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--border-radius);
+    color: var(--text-muted);
     text-decoration: none;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .admin-nav-item i {
-    margin-right: 0.75rem;
-    font-size: 1.1rem;
-    width: 20px;
+    font-size: 1.2rem;
+    width: 24px;
     text-align: center;
 }
 
 .admin-nav-item:hover {
-    background-color: var(--hover-bg);
-    color: var(--verde-neon);
-    box-shadow: 0 0 15px rgba(20, 255, 20, 0.1);
+    background-color: var(--bg-hover);
+    color: var(--text-light);
 }
 
 .admin-nav-item.active {
-    background-color: var(--hover-bg);
+    background-color: rgba(20, 255, 20, 0.1);
     color: var(--verde-neon);
-    box-shadow: 0 0 15px rgba(20, 255, 20, 0.15);
+    border-left: 3px solid var(--verde-neon);
 }
 
 .admin-nav-item.active i {
     color: var(--verde-neon);
-    text-shadow: 0 0 10px var(--verde-neon);
 }
 
 .admin-nav-divider {
     height: 1px;
     background-color: var(--border-color);
-    margin: 0.75rem 0;
+    margin: 1rem 0;
 }
 
-/* Contenido principal */
+/* Contenido */
 .admin-content {
     padding: 2rem;
 }
@@ -437,23 +413,23 @@ body {
 }
 
 .legend-color.admin {
-    background-color: var(--rojo-neon);
-    box-shadow: 0 0 10px var(--rojo-neon);
+    background-color: #ff3060;
+    box-shadow: 0 0 10px rgba(255, 48, 96, 0.5);
 }
 
 .legend-color.premium {
-    background-color: var(--amarillo-neon);
-    box-shadow: 0 0 10px var(--amarillo-neon);
+    background-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
 }
 
 .legend-color.critico {
-    background-color: var(--cyan-neon);
-    box-shadow: 0 0 10px var(--cyan-neon);
+    background-color: #00e8ff;
+    box-shadow: 0 0 10px rgba(0, 232, 255, 0.5);
 }
 
 .legend-color.usuario {
-    background-color: var(--verde-neon);
-    box-shadow: 0 0 10px var(--verde-neon);
+    background-color: #00ff66;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
 }
 
 .legend-label {
@@ -468,19 +444,23 @@ body {
 }
 
 .legend-value.admin {
-    color: var(--rojo-neon);
+    color: #ff3060;
+    text-shadow: 0 0 5px rgba(255, 48, 96, 0.3);
 }
 
 .legend-value.premium {
-    color: var(--amarillo-neon);
+    color: #ffcc00;
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
 }
 
 .legend-value.critico {
-    color: var(--cyan-neon);
+    color: #00e8ff;
+    text-shadow: 0 0 5px rgba(0, 232, 255, 0.3);
 }
 
 .legend-value.usuario {
-    color: var(--verde-neon);
+    color: #00ff66;
+    text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
 }
 
 .roles-total {
@@ -573,35 +553,51 @@ body {
 }
 
 /* Badges */
-.badge {
+.badge, .status-badge {
     padding: 0.3rem 0.75rem;
-    border-radius: 6px;
+    border-radius: 50px;
     font-size: 0.75rem;
     font-weight: 600;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
 }
 
-.role-admin {
-    background-color: rgba(255, 68, 68, 0.15);
-    color: var(--rojo-neon);
-    border: 1px solid var(--rojo-neon);
+.role-admin, .status-badge.admin {
+    background-color: rgba(255, 48, 96, 0.15);
+    color: #ff3060;
+    border: 1px solid rgba(255, 48, 96, 0.3);
 }
 
-.role-premium {
-    background-color: rgba(255, 215, 0, 0.15);
-    color: var(--amarillo-neon);
-    border: 1px solid var(--amarillo-neon);
+.role-premium, .status-badge.premium {
+    background-color: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+    border: 1px solid rgba(255, 204, 0, 0.3);
 }
 
-.role-critico {
-    background-color: rgba(0, 255, 221, 0.15);
-    color: var(--cyan-neon);
-    border: 1px solid var(--cyan-neon);
+.role-critico, .status-badge.critico {
+    background-color: rgba(0, 232, 255, 0.15);
+    color: #00e8ff;
+    border: 1px solid rgba(0, 232, 255, 0.3);
 }
 
-.role-usuario {
-    background-color: rgba(20, 255, 20, 0.15);
-    color: var(--verde-neon);
-    border: 1px solid var(--verde-neon);
+.role-usuario, .status-badge.usuario {
+    background-color: rgba(0, 255, 102, 0.15);
+    color: #00ff66;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+/* Estilos para estados */
+.status-badge.activo {
+    background-color: rgba(0, 255, 102, 0.15);
+    color: #00ff66;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+.status-badge.inactivo, .status-badge.pendiente {
+    background-color: rgba(255, 48, 96, 0.15);
+    color: #ff3060;
+    border: 1px solid rgba(255, 48, 96, 0.3);
 }
 
 /* Botones de acción */
@@ -659,17 +655,19 @@ body {
         border-top: 1px solid var(--border-color);
         padding-top: 1.5rem;
     }
+
+    .admin-search {
+        width: 250px;
+    }
 }
 
 @media (max-width: 991px) {
     .admin-sidebar {
-        width: 80px;
-        padding: 1rem 0;
+        width: 70px;
     }
 
     .admin-logo {
-        padding: 0 0.5rem 1rem;
-        text-align: center;
+        padding: 0 1rem 1rem;
     }
 
     .admin-logo h1 {
@@ -685,21 +683,16 @@ body {
     }
 
     .admin-nav-item {
-        padding: 0.75rem;
+        padding: 0.8rem;
         justify-content: center;
     }
 
     .admin-nav-item i {
-        margin-right: 0;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 
     .admin-main {
-        margin-left: 80px;
-    }
-
-    .admin-search {
-        width: 200px;
+        margin-left: 70px;
     }
 }
 
@@ -709,10 +702,15 @@ body {
     }
 
     .admin-header {
+        padding: 1rem;
         flex-direction: column;
         height: auto;
-        padding: 1rem;
         gap: 1rem;
+    }
+
+    .admin-header-actions {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .admin-search {
@@ -737,5 +735,32 @@ body {
     .legend-item {
         padding: 0.5rem;
     }
+}
+
+/* Leyenda */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* Estrellas de valoración */
+.rating-stars i {
+    color: #ffcc00;
 }
 

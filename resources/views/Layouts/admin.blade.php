@@ -3,133 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - CritFlix</title>
+    <title>@yield('title', 'Panel de Administración - CritFlix')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Estilos -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fuentes y librerías externas -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos base -->
+    <link href="{{ asset('css/variables.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('css/admin/main.css') }}" rel="stylesheet">
 
+    <!-- Estilos adicionales -->
     @stack('styles')
 </head>
-<body>
-    <div id="wrapper">
+<body class="admin-body">
+    <div class="admin-wrapper">
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.dashboard') }}">
-                <div class="sidebar-brand-icon">
-                    <i class="fas fa-film"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">CritFlix Admin</div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Nav Item - Users -->
-            <li class="nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.users') }}">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Usuarios</span>
-                </a>
-            </li>
-
-            <!-- Nav Item - Movies -->
-            <li class="nav-item {{ request()->routeIs('admin.movies') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.movies') }}">
-                    <i class="fas fa-fw fa-film"></i>
-                    <span>Películas</span>
-                </a>
-            </li>
-
-            <!-- Nav Item - Reviews -->
-            <li class="nav-item {{ request()->routeIs('admin.reviews') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.reviews') }}">
-                    <i class="fas fa-fw fa-star"></i>
-                    <span>Valoraciones</span>
-                </a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Nav Item - Profile -->
-            <li class="nav-item {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.profile') }}">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Mi Perfil</span>
-                </a>
-            </li>
-
-            <!-- Nav Item - Logout -->
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-fw fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                </a>
-            </li>
-        </ul>
-        <!-- End of Sidebar -->
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-            <!-- Main Content -->
-            <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
-                                <i class="fas fa-user-circle fa-2x text-gray-300"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                @yield('content')
-                <!-- End Page Content -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h1>CritFlix <span>Admin</span></h1>
             </div>
-            <!-- End of Main Content -->
+            <nav class="admin-nav">
+                <a href="{{ route('admin.dashboard') }}" class="admin-nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                </a>
+                <a href="{{ route('admin.users') }}" class="admin-nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i> <span>Usuarios</span>
+                </a>
+                <a href="{{ route('admin.movies') }}" class="admin-nav-item {{ request()->routeIs('admin.movies') ? 'active' : '' }}">
+                    <i class="fas fa-film"></i> <span>Películas</span>
+                </a>
+                <a href="{{ route('admin.reviews') }}" class="admin-nav-item {{ request()->routeIs('admin.reviews') ? 'active' : '' }}">
+                    <i class="fas fa-star"></i> <span>Valoraciones</span>
+                </a>
+                <a href="{{ route('admin.comments') }}" class="admin-nav-item {{ request()->routeIs('admin.comments') ? 'active' : '' }}">
+                    <i class="fas fa-comments"></i> <span>Comentarios</span>
+                </a>
+                <div class="admin-nav-divider"></div>
+                <a href="{{ route('admin.profile') }}" class="admin-nav-item {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> <span>Mi Perfil</span>
+                </a>
+                <a href="#" class="admin-nav-item" id="admin-logout">
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                </a>
+            </nav>
+        </aside>
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; CritFlix 2025</span>
+        <!-- Contenido Principal -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <!-- Botón de menú para móvil -->
+                <button type="button" class="menu-toggle d-md-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="admin-header-title">
+                    <h2>@yield('header-title', 'Panel de Administración')</h2>
+                </div>
+                <div class="admin-header-actions">
+                    <div class="admin-search">
+                        <input type="text" placeholder="Buscar..." class="form-control">
+                        <button type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                    <button type="button" class="dark-mode-toggle" id="darkModeToggle" title="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="admin-notifications">
+                        <button type="button">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    <div class="admin-user">
+                        <span>{{ Auth::user()->name }}</span>
+                        <img src="{{ Auth::user()->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&color=7F9CF5&background=EBF4FF' }}" alt="{{ Auth::user()->name }}" class="admin-avatar">
                     </div>
                 </div>
-            </footer>
-            <!-- End of Footer -->
-        </div>
-        <!-- End of Content Wrapper -->
+            </header>
+
+            <!-- Contenido -->
+            <div class="admin-content-wrapper">
+                @yield('content')
+            </div>
+        </main>
     </div>
-    <!-- End of Page Wrapper -->
+
+    <!-- Contenedor de notificaciones toast -->
+    <div class="toast-container"></div>
 
     <!-- Formulario de logout -->
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -137,8 +101,8 @@
     </form>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/admin/main.js') }}"></script>
 
     @stack('scripts')

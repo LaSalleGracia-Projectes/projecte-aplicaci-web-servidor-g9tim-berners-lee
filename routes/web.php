@@ -12,8 +12,10 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentariosController;
+use App\Http\Controllers\EmailTestController;
 use App\Http\Controllers\ListasController;
 use App\Http\Controllers\PeliculasSeriesController;
+
 
 // Rutas de perfil - protegidas por autenticación
     Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
@@ -103,6 +105,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
         Route::get('/reviews', [AdminController::class, 'reviews'])->name('admin.reviews');
         Route::get('/comments', [AdminController::class, 'comments'])->name('admin.comments');
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::put('/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+        Route::post('/profile/password', [AdminController::class, 'updatePassword'])->name('admin.profile.password');
     });
 });
 
@@ -110,6 +114,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http\Middleware\AdminMiddleware::class]], function () {
     // Usuarios
     Route::get('/users', [AdminController::class, 'getUsers']);
+    Route::get('/users/{id}', [AdminController::class, 'getUser']);
     Route::post('/users', [AdminController::class, 'createUser']);
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
@@ -130,9 +135,29 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http
     Route::get('/stats', [AdminController::class, 'getStats']);
 });
 
-// Rutas para comentarios
-/*Route::prefix('api')->group(function () {
-    Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
-    Route::post('/comentarios', [ComentariosController::class, 'store']);
-    Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
-});*/
+
+// Rutas para prueba de correos - solo accesibles para administradores
+Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth', \App\Http\Middleware\AdminMiddleware::class]], function () {
+    Route::get('/email-test', [EmailTestController::class, 'showTestForm'])->name('admin.email.test.form');
+    Route::post('/email-test', [EmailTestController::class, 'sendTestEmail'])->name('admin.email.test');
+});
+
+// Ruta directa para prueba de correo (para desarrolladores)
+Route::get('/test-email/{email}', [AuthController::class, 'testEmail'])->name('test.email');
+
+// Rutas de autenticación con Google
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+// Rutas de políticas y contacto
+Route::get('/politicas/privacidad', function () {
+    return view('policies.privacy');
+})->name('policies.privacy');
+
+Route::get('/politicas/terminos', function () {
+    return view('policies.terms');
+})->name('policies.terms');
+
+Route::get('/contacto', function () {
+    return view('policies.contact');
+})->name('policies.contact');

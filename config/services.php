@@ -40,4 +40,10 @@ return [
         'base_url' => 'https://api.themoviedb.org/3',
     ],
 
+    'google' => [
+        'client_id' => '441732599909-ei5fh300mub7nbgobd1fujthn535c084.apps.googleusercontent.com',
+        'client_secret' => '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',
+        'redirect' => 'http://127.0.0.1:8000/auth/google/callback',
+    ],
+
 ];
