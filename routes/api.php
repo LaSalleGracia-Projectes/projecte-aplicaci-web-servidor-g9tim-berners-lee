@@ -15,6 +15,7 @@ use App\Http\Controllers\SeguimientoController;
 use App\Http\Controllers\AdministradoresController;
 use App\Http\Controllers\SolicitudCriticoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RespuestasComentariosController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -35,6 +36,7 @@ Route::apiResource('recomendaciones', RecomendacionesController::class);
 Route::apiResource('seguimientos', SeguimientoController::class);
 Route::apiResource('administradores', AdministradoresController::class);
 Route::apiResource('solicitudes_critico', SolicitudCriticoController::class);
+Route::apiResource('respuestas_comentarios', RespuestasComentariosController::class);
 
 // Rutas adicionales para listas
 Route::get('listas/user/{userId}', [ListasController::class, 'getListasByUsuario']);
@@ -46,6 +48,9 @@ Route::get('comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'g
 // Rutas para likes/dislikes de comentarios
 Route::get('likes_comentarios/status/{comentarioId}/{userId}', [LikesComentariosController::class, 'getLikeStatus']);
 Route::get('likes_comentarios/count/{comentarioId}', [LikesComentariosController::class, 'getLikesCount']);
+
+// Rutas para respuestas a comentarios
+Route::get('respuestas_comentarios/comentario/{comentarioId}', [RespuestasComentariosController::class, 'getRespuestasByComentarioId']);
 
 // Rutas para notificaciones
 Route::get('notificaciones/user/{userId}', [NotificacionesController::class, 'getUserNotificaciones']);
