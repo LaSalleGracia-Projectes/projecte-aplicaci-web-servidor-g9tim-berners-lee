@@ -7,6 +7,99 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 /**
+ * Muestra una notificación al usuario
+ * @param {string} message - Mensaje a mostrar
+ * @param {string} type - Tipo de notificación (success, error, warning, info)
+ */
+function showNotification(message, type = 'info') {
+    // Verificar si existe el contenedor de notificaciones, sino crearlo
+    let notificationContainer = document.getElementById('notifications-container');
+
+    if (!notificationContainer) {
+        notificationContainer = document.createElement('div');
+        notificationContainer.id = 'notifications-container';
+        notificationContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+        document.body.appendChild(notificationContainer);
+    }
+
+    // Crear notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+        margin-bottom: 10px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+        animation: fadeIn 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 280px;
+        max-width: 400px;
+    `;
+
+    // Configurar color según tipo
+    switch (type) {
+        case 'success':
+            notification.style.backgroundColor = '#14ff14';
+            notification.style.color = '#000';
+            break;
+        case 'error':
+            notification.style.backgroundColor = '#ff4d4d';
+            break;
+        case 'warning':
+            notification.style.backgroundColor = '#ffbb33';
+            notification.style.color = '#000';
+            break;
+        default: // info
+            notification.style.backgroundColor = '#33b5e5';
+            break;
+    }
+
+    // Contenido de la notificación
+    const content = document.createElement('div');
+    content.style.flex = '1';
+    content.textContent = message;
+
+    // Botón de cierre
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = `
+        background: none;
+        border: none;
+        color: inherit;
+        font-size: 20px;
+        margin-left: 10px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    `;
+    closeBtn.addEventListener('mouseover', () => closeBtn.style.opacity = '1');
+    closeBtn.addEventListener('mouseout', () => closeBtn.style.opacity = '0.7');
+    closeBtn.addEventListener('click', () => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+    });
+
+    // Añadir elementos a la notificación
+    notification.appendChild(content);
+    notification.appendChild(closeBtn);
+
+    // Añadir notificación al contenedor
+    notificationContainer.appendChild(notification);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+}
+
+/**
  * Inicializa todos los componentes de la página de detalles de película
  */
 function initializeMovieDetails() {
@@ -16,20 +109,20 @@ function initializeMovieDetails() {
     // Configurar películas similares
     setupSimilarMovies();
 
-    // Sistema de comentarios
-    setupReviews();
-
     // Cargar estado de favoritos
     loadFavoriteStatus();
 
     // Configurar botones principales de acción
     setupMainActionButtons();
 
-    // Inicializar el sistema de comentarios legacy
+    // Inicializar el sistema de comentarios
     initComentarios();
 
     // Configurar botón volver arriba
     setupBackToTop();
+
+    // Configurar botón de depuración
+    setupDebugButton();
 }
 
 /**
@@ -128,185 +221,105 @@ function shareMovie(movieId) {
     }
 }
 
-    // Función para cargar comentarios/críticas
-    function cargarComentarios() {
-        const tmdbId = document.querySelector('input[name="id_pelicula"]').value;
-        fetch(`/api/comentarios/tmdb/${tmdbId}/pelicula`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar los comentarios');
-                }
-                return response.json();
-            })
-            .then(comentarios => {
-                const container = document.querySelector('.reviews-list');
-                container.innerHTML = '';
+/**
+ * Inicializa el sistema de comentarios
+ */
+function initComentarios() {
+    // Cargar comentarios al iniciar
+    cargarComentarios();
 
-                if (comentarios.length === 0) {
-                    container.innerHTML = '<p class="no-reviews">No hay críticas aún. ¡Sé el primero en escribir una!</p>';
-                    return;
-                }
+    // Configurar el formulario de comentarios
+    const comentarioForm = document.getElementById('comentarioForm');
 
-                comentarios.forEach(comentario => {
-                    const comentarioHtml = `
-                        <div class="review ${comentario.es_spoiler ? 'spoiler' : ''}">
-                            <div class="review-header">
-                                <div class="user-info">
-                                    <img src="${comentario.usuario.foto_perfil ? '/storage/' + comentario.usuario.foto_perfil : '/images/default-avatar.png'}"
-                                         alt="${comentario.usuario.name}"
-                                         class="avatar">
-                                    <div>
-                                        <span class="username">${comentario.usuario.name}</span>
-                                        <span class="review-date">${new Date(comentario.created_at).toLocaleDateString()}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            ${comentario.es_spoiler ?
-                                `<div class="spoiler-warning">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Esta crítica contiene spoilers
-                                    <button class="show-spoiler">Mostrar spoiler</button>
-                                </div>` : ''
-                            }
-                            <div class="review-content ${comentario.es_spoiler ? 'spoiler-content' : ''}">${comentario.comentario}</div>
-                            <div class="review-actions">
-                                <button class="btn-like" data-id="${comentario.id}">
-                                    <i class="far fa-thumbs-up"></i>
-                                    <span class="likes-count">${comentario.likes_count}</span>
-                                </button>
-                                <button class="btn-dislike" data-id="${comentario.id}">
-                                    <i class="far fa-thumbs-down"></i>
-                                    <span class="dislikes-count">${comentario.dislikes_count}</span>
-                                </button>
-                                <button class="btn-reply" data-id="${comentario.id}">
-                                    <i class="far fa-comment"></i> Responder
-                                </button>
-                            </div>
-                            <div class="respuestas-container" id="respuestas-${comentario.id}">
-                                <!-- Las respuestas se cargarán aquí -->
-                            </div>
-                            <div class="respuesta-form" id="respuesta-form-${comentario.id}" style="display: none;">
-                                <textarea placeholder="Escribe tu respuesta..." class="respuesta-text"></textarea>
-                                <div class="form-check mb-2">
-                                    <input type="checkbox" class="form-check-input" id="es_spoiler_respuesta_${comentario.id}">
-                                    <label class="form-check-label" for="es_spoiler_respuesta_${comentario.id}">Esta respuesta contiene spoilers</label>
-                                </div>
-                                <button class="btn-submit-respuesta" data-id="${comentario.id}">Enviar respuesta</button>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += comentarioHtml;
-                });
-
-                // Agregar event listeners para los botones de like/dislike
-                document.querySelectorAll('.btn-like, .btn-dislike').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const comentarioId = this.dataset.id;
-                        const tipo = this.classList.contains('btn-like') ? 'like' : 'dislike';
-
-                        fetch('/api/likes_comentarios', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            },
-                            body: JSON.stringify({
-                                user_id: document.querySelector('meta[name="user-id"]').content,
-                                id_comentario: comentarioId,
-                                tipo: tipo
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            cargarComentarios();
-                        })
-                        .catch(error => console.error('Error:', error));
-                    });
-                });
-
-                // Agregar event listeners para mostrar spoilers
-                document.querySelectorAll('.show-spoiler').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const reviewEl = this.closest('.review');
-                        const warningEl = reviewEl.querySelector('.spoiler-warning');
-                        const contentEl = reviewEl.querySelector('.spoiler-content');
-
-                        warningEl.style.display = 'none';
-                        contentEl.style.display = 'block';
-                    });
-                });
-
-                // Agregar event listeners para los botones de respuesta
-                document.querySelectorAll('.btn-reply').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const comentarioId = this.dataset.id;
-                        const formRespuesta = document.getElementById(`respuesta-form-${comentarioId}`);
-                        formRespuesta.style.display = formRespuesta.style.display === 'none' ? 'block' : 'none';
-                    });
-                });
-
-                // Agregar event listeners para enviar respuestas
-                document.querySelectorAll('.btn-submit-respuesta').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const comentarioId = this.dataset.id;
-                        const formRespuesta = document.getElementById(`respuesta-form-${comentarioId}`);
-                        const respuestaText = formRespuesta.querySelector('.respuesta-text').value;
-                        const esSpoiler = formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked;
-
-                        if (!respuestaText.trim()) {
-                            return;
-                        }
-
-                        // Obtener el token CSRF
-                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                        const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
-
-                        fetch('/api/respuestas-comentarios', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                comentario_id: comentarioId,
-                                user_id: userId,
-                                respuesta: respuestaText,
-                                es_spoiler: esSpoiler
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Error al enviar la respuesta');
-                            }
-                            // Limpiar y ocultar el formulario de respuesta
-                            formRespuesta.querySelector('.respuesta-text').value = '';
-                            formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked = false;
-                            formRespuesta.style.display = 'none';
-                            // Recargar solo las respuestas de ese comentario
-                            cargarRespuestas(comentarioId);
-                        })
-                        .catch(error => {
-                            // También actualiza solo las respuestas aunque haya error
-                            formRespuesta.querySelector('.respuesta-text').value = '';
-                            formRespuesta.querySelector(`#es_spoiler_respuesta_${comentarioId}`).checked = false;
-                            formRespuesta.style.display = 'none';
-                            cargarRespuestas(comentarioId);
-                        });
-                    });
-                });
-
-                // Cargar respuestas para cada comentario
-                comentarios.forEach(comentario => {
-                    cargarRespuestas(comentario.id);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const container = document.querySelector('.reviews-list');
-                container.innerHTML = '<p class="no-reviews">Error al cargar las críticas. Por favor, intenta de nuevo más tarde.</p>';
-            });
+    if (!comentarioForm) {
+        console.error('Error: No se encontró el formulario de comentarios');
+        return;
     }
+
+    comentarioForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Obtener token CSRF y user ID de manera segura
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const userIdMeta = document.querySelector('meta[name="user-id"]');
+
+        if (!csrfTokenMeta || !userIdMeta) {
+            showNotification('Error: Falta información de autenticación. Por favor, inicia sesión de nuevo.', 'error');
+            console.error('Error: No se encontraron los meta tags necesarios (csrf-token o user-id)');
+            return;
+        }
+
+        const csrfToken = csrfTokenMeta.content;
+        const userId = userIdMeta.content;
+
+        if (!csrfToken || !userId) {
+            showNotification('Debes iniciar sesión para publicar comentarios', 'error');
+            return;
+        }
+
+        const idPeliculaInput = document.querySelector('input[name="id_pelicula"]');
+        const comentarioTextarea = document.querySelector('textarea[name="comentario"]');
+        const esSpoilerCheckbox = document.getElementById('es_spoiler');
+
+        if (!idPeliculaInput || !comentarioTextarea || !esSpoilerCheckbox) {
+            showNotification('Error: Formulario incompleto', 'error');
+            console.error('Error: No se encontraron todos los campos del formulario');
+            return;
+        }
+
+        const tmdbId = idPeliculaInput.value;
+        const comentario = comentarioTextarea.value;
+        const esSpoiler = esSpoilerCheckbox.checked;
+
+        if (!tmdbId) {
+            showNotification('Error: ID de película no válido', 'error');
+            return;
+        }
+
+        if (!comentario.trim()) {
+            showNotification('El comentario no puede estar vacío', 'error');
+            return;
+        }
+
+        // Mostrar indicador de carga
+        showNotification('Enviando comentario...', 'info');
+
+        // Construir URL absoluta para eviar problemas de rutas
+        const baseUrl = window.location.origin;
+        const postComentarioUrl = `${baseUrl}/api/comentarios`;
+        console.log("Enviando comentario a:", postComentarioUrl);
+
+        fetch(postComentarioUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                tmdb_id: tmdbId,
+                tipo: 'pelicula',
+                comentario: comentario,
+                es_spoiler: esSpoiler
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al enviar el comentario');
+            }
+            return response.json();
+        })
+        .then(data => {
+            comentarioTextarea.value = '';
+            esSpoilerCheckbox.checked = false;
+            showNotification('Comentario publicado correctamente', 'success');
+            cargarComentarios();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al publicar el comentario', 'error');
+        });
+    });
 }
 
 /**
@@ -540,48 +553,8 @@ async function toggleFavorite(button, movieId) {
             button.disabled = false;
             button.innerHTML = `<i class="${button.classList.contains('active') ? 'fas' : 'far'} fa-heart"></i>`;
         }
-
-    // Manejar envío del formulario de crítica
-    const comentarioForm = document.getElementById('comentarioForm');
-    if (comentarioForm) {
-        comentarioForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const data = {
-                user_id: document.querySelector('meta[name="user-id"]').content,
-                tmdb_id: document.querySelector('input[name="id_pelicula"]').value,
-                tipo: 'pelicula',
-                comentario: formData.get('comentario'),
-                es_spoiler: formData.get('es_spoiler') === 'on'
-            };
-
-            fetch('/api/comentarios', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al publicar la crítica');
-                }
-                return response.json();
-            })
-            .then(data => {
-                this.reset();
-                cargarComentarios();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-
     }
 }
-
 
 /**
  * Carga el estado de favoritos del usuario
@@ -620,68 +593,674 @@ async function loadFavoriteStatus() {
     }
 }
 
+/**
+ * Configura el botón de depuración para ayudar a identificar problemas con los comentarios
+ */
+function setupDebugButton() {
+    const debugBtn = document.getElementById('debug-comentarios');
+    if (debugBtn) {
+        debugBtn.addEventListener('click', function() {
+            console.log('=== DEPURACIÓN DE COMENTARIOS ===');
 
-    // Cargar comentarios al iniciar
-    cargarComentarios();
+            // Información general
+            console.log('URL actual:', window.location.href);
+            console.log('Origin:', window.location.origin);
 
-    // Función para cargar respuestas de un comentario
-    function cargarRespuestas(comentarioId) {
-        fetch(`/api/respuestas_comentarios/comentario/${comentarioId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar las respuestas');
-                }
-                return response.json();
-            })
-            .then(respuestas => {
-                const container = document.getElementById(`respuestas-${comentarioId}`);
-                container.innerHTML = '';
+            // Verificar tokens
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            const userId = document.querySelector('meta[name="user-id"]')?.content;
+            console.log('CSRF Token:', csrfToken ? 'Presente' : 'No encontrado');
+            console.log('User ID:', userId || 'No encontrado');
 
-                if (respuestas.length === 0) {
+            // Verificar ID de película
+            const idPeliculaInput = document.querySelector('input[name="id_pelicula"]');
+            console.log('Input ID película:', idPeliculaInput ? 'Presente' : 'No encontrado');
+            if (idPeliculaInput) {
+                console.log('Valor ID película:', idPeliculaInput.value);
+            }
+
+            // Verificar contenedor de comentarios
+            const reviewsContainer = document.querySelector('.reviews-list');
+            console.log('Contenedor de comentarios:', reviewsContainer ? 'Presente' : 'No encontrado');
+
+            // Intentar cargar comentarios de nuevo
+            console.log('Intentando cargar comentarios de nuevo...');
+            cargarComentarios();
+
+            showNotification('Información de depuración en la consola', 'info');
+        });
+    }
+}
+
+function cargarComentarios() {
+    console.log("Iniciando carga de comentarios...");
+
+    // Verificar primero si hay un elemento de id_pelicula en el formulario
+    const idPeliculaInput = document.querySelector('input[name="id_pelicula"]');
+
+    if (!idPeliculaInput) {
+        console.error('Error: No se encontró el input con el ID de la película');
+        const container = document.querySelector('.reviews-list');
+        if (container) {
+            container.innerHTML = '<p class="no-reviews">Error al cargar comentarios: falta información de la película</p>';
+        }
+        return;
+    }
+
+    const tmdbId = idPeliculaInput.value;
+    console.log("ID de película encontrado:", tmdbId);
+
+    if (!tmdbId) {
+        console.error('Error: ID de película vacío');
+        return;
+    }
+
+    // Mostrar estado de carga
+    const container = document.querySelector('.reviews-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="loading-comentarios">
+                <div class="spinner"></div>
+                <p>Cargando comentarios...</p>
+            </div>
+        `;
+    }
+
+    // Construir URL absoluta con la ruta correcta para obtener comentarios
+    const baseUrl = window.location.origin;
+    const comentariosUrl = `${baseUrl}/api/comentarios/tmdb/${tmdbId}/pelicula`;
+    console.log("URL de comentarios:", comentariosUrl);
+
+    fetch(comentariosUrl)
+        .then(response => {
+            console.log("Respuesta del servidor:", response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error(`Error al cargar los comentarios. Estado: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Datos recibidos del servidor:", data);
+
+            // Asegurarnos de que trabajamos con un array de comentarios
+            // La respuesta puede ser un array directamente o un objeto con una propiedad que contiene el array
+            let comentarios = Array.isArray(data) ? data :
+                             (data.comentarios ? data.comentarios :
+                             (data.data ? data.data : []));
+
+            console.log("Comentarios procesados:", comentarios);
+
+            const container = document.querySelector('.reviews-list');
+            if (!container) {
+                console.error('Error: No se encontró el contenedor para las críticas');
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(comentarios) || comentarios.length === 0) {
+                console.log("No hay comentarios disponibles");
+                container.innerHTML = '<p class="no-reviews">No hay críticas aún. ¡Sé el primero en escribir una!</p>';
+                return;
+            }
+
+            comentarios.forEach(comentario => {
+                // Verificar que el comentario tiene una estructura válida
+                if (!comentario || !comentario.id) {
+                    console.warn('Comentario inválido omitido:', comentario);
                     return;
                 }
 
-                respuestas.forEach(respuesta => {
-                    const respuestaHtml = `
-                        <div class="respuesta ${respuesta.es_spoiler ? 'spoiler' : ''}">
-                            <div class="respuesta-header">
-                                <div class="user-info">
-                                    <img src="${respuesta.usuario.foto_perfil ? '/storage/' + respuesta.usuario.foto_perfil : '/images/default-avatar.png'}"
-                                         alt="${respuesta.usuario.name}"
-                                         class="avatar">
-                                    <div>
-                                        <span class="username">${respuesta.usuario.name}</span>
-                                        <span class="respuesta-date">${new Date(respuesta.created_at).toLocaleDateString()}</span>
-                                    </div>
+                // Asegurarse de que todos los campos necesarios están presentes
+                const usuario = comentario.usuario || {};
+                const esSpoiler = comentario.es_spoiler || false;
+                const likes = comentario.likes_count || 0;
+                const dislikes = comentario.dislikes_count || 0;
+
+                // Estado del like del usuario actual
+                const userLikeStatus = comentario.user_like_status || 'none';
+
+                // Determinar las clases e iconos para los botones de like/dislike
+                const likeActiveClass = userLikeStatus === 'like' ? 'active' : '';
+                const dislikeActiveClass = userLikeStatus === 'dislike' ? 'active' : '';
+                const likeIcon = userLikeStatus === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up';
+                const dislikeIcon = userLikeStatus === 'dislike' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down';
+
+                const comentarioHtml = `
+                    <div class="review ${esSpoiler ? 'spoiler' : ''}">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                     alt="${usuario.name}"
+                                     class="avatar">
+                                <div>
+                                    <span class="username">${usuario.name}</span>
+                                    <span class="review-date">${new Date(comentario.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
-                            ${respuesta.es_spoiler ?
-                                `<div class="spoiler-warning">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Esta respuesta contiene spoilers
-                                    <button class="show-spoiler">Mostrar spoiler</button>
-                                </div>` : ''
-                            }
-                            <div class="respuesta-content ${respuesta.es_spoiler ? 'spoiler-content' : ''}">${respuesta.respuesta}</div>
                         </div>
-                    `;
-                    container.innerHTML += respuestaHtml;
+                        ${esSpoiler ?
+                            `<div class="spoiler-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Esta crítica contiene spoilers
+                                <button class="show-spoiler">Mostrar spoiler</button>
+                            </div>` : ''
+                        }
+                        <div class="review-content ${esSpoiler ? 'spoiler-content' : ''}">${comentario.comentario}</div>
+                        <div class="review-actions">
+                            <button class="btn-like ${likeActiveClass}" data-id="${comentario.id}">
+                                <i class="${likeIcon}"></i>
+                                <span class="likes-count">${likes}</span>
+                            </button>
+                            <button class="btn-dislike ${dislikeActiveClass}" data-id="${comentario.id}">
+                                <i class="${dislikeIcon}"></i>
+                                <span class="dislikes-count">${dislikes}</span>
+                            </button>
+                            <button class="btn-reply" data-id="${comentario.id}">
+                                <i class="far fa-comment"></i> Responder
+                            </button>
+                        </div>
+                        <div class="respuestas-container" id="respuestas-${comentario.id}">
+                            <!-- Las respuestas se cargarán aquí -->
+                        </div>
+                        <div class="respuesta-form" id="respuesta-form-${comentario.id}" style="display: none;">
+                            <textarea placeholder="Escribe tu respuesta..." class="respuesta-text"></textarea>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="es_spoiler_respuesta_${comentario.id}">
+                                <label class="form-check-label" for="es_spoiler_respuesta_${comentario.id}">Esta respuesta contiene spoilers</label>
+                            </div>
+                            <button class="btn-submit-respuesta" data-id="${comentario.id}">Enviar respuesta</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += comentarioHtml;
+            });
+
+            // Agregar event listeners para los botones de like/dislike
+            document.querySelectorAll('.btn-like, .btn-dislike').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tipo = this.classList.contains('btn-like') ? 'like' : 'dislike';
+                    handleLikeDislike(this, tipo);
                 });
+            });
 
-                // Agregar event listeners para mostrar spoilers en respuestas
-                container.querySelectorAll('.show-spoiler').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const respuestaEl = this.closest('.respuesta');
-                        const warningEl = respuestaEl.querySelector('.spoiler-warning');
-                        const contentEl = respuestaEl.querySelector('.spoiler-content');
+            // Agregar event listeners para mostrar spoilers
+            document.querySelectorAll('.show-spoiler').forEach(button => {
+                button.addEventListener('click', function() {
+                    const reviewEl = this.closest('.review');
+                    const warningEl = reviewEl.querySelector('.spoiler-warning');
+                    const contentEl = reviewEl.querySelector('.spoiler-content');
 
-                        warningEl.style.display = 'none';
-                        contentEl.style.display = 'block';
+                    warningEl.style.display = 'none';
+                    contentEl.style.display = 'block';
+                });
+            });
+
+            // Procesar respuestas a comentarios
+            procesarRespuestas();
+        })
+        .catch(error => {
+            console.error('Error al cargar comentarios:', error);
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error al cargar los comentarios. Por favor, intenta de nuevo más tarde.</p>
+                    </div>
+                `;
+            }
+        });
+}
+
+// Función para cargar respuestas de un comentario
+function cargarRespuestas(comentarioId) {
+    if (!comentarioId) {
+        console.error('Error: ID de comentario no válido para cargar respuestas');
+        return;
+    }
+
+    console.log("Cargando respuestas para comentario ID:", comentarioId);
+
+    // Construir URL absoluta para evitar problemas de rutas relativas
+    const baseUrl = window.location.origin;
+    const respuestasUrl = `${baseUrl}/api/respuestas_comentarios/comentario/${comentarioId}`;
+    console.log("URL respuestas:", respuestasUrl);
+
+    fetch(respuestasUrl)
+        .then(response => {
+            console.log("Respuesta para respuestas:", response.status);
+            if (!response.ok) {
+                throw new Error(`Error al cargar las respuestas: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(respuestas => {
+            console.log("Respuestas recibidas:", respuestas);
+            const container = document.getElementById(`respuestas-${comentarioId}`);
+
+            if (!container) {
+                console.error(`Error: No se encontró el contenedor para las respuestas del comentario ${comentarioId}`);
+                return;
+            }
+
+            container.innerHTML = '';
+
+            // Asegurarnos de que trabajamos con un array de respuestas
+            const respuestasArray = Array.isArray(respuestas) ? respuestas : [];
+
+            if (respuestasArray.length === 0) {
+                console.log(`No hay respuestas para el comentario ${comentarioId}`);
+                return;
+            }
+
+            respuestasArray.forEach(respuesta => {
+                // Verificar que la respuesta tenga la información mínima necesaria
+                if (!respuesta || !respuesta.id || !respuesta.respuesta) {
+                    console.warn('Advertencia: respuesta inválida omitida', respuesta);
+                    return;
+                }
+
+                // Obtener usuario de manera segura
+                const usuario = respuesta.usuario || {};
+                const esSpoiler = respuesta.es_spoiler || false;
+
+                const respuestaHtml = `
+                    <div class="respuesta ${esSpoiler ? 'spoiler' : ''}">
+                        <div class="respuesta-header">
+                            <div class="user-info">
+                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                     alt="${usuario.name || 'Usuario'}"
+                                     class="avatar">
+                                <div>
+                                    <span class="username">${usuario.name || 'Usuario'}</span>
+                                    <span class="respuesta-date">${new Date(respuesta.created_at).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ${esSpoiler ?
+                            `<div class="spoiler-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Esta respuesta contiene spoilers
+                                <button class="show-spoiler">Mostrar spoiler</button>
+                            </div>` : ''
+                        }
+                        <div class="respuesta-content ${esSpoiler ? 'spoiler-content' : ''}">${respuesta.respuesta}</div>
+                    </div>
+                `;
+                container.innerHTML += respuestaHtml;
+            });
+
+            // Agregar event listeners para mostrar spoilers en respuestas
+            container.querySelectorAll('.show-spoiler').forEach(button => {
+                button.addEventListener('click', function() {
+                    const respuestaEl = this.closest('.respuesta');
+                    const warningEl = respuestaEl.querySelector('.spoiler-warning');
+                    const contentEl = respuestaEl.querySelector('.spoiler-content');
+
+                    warningEl.style.display = 'none';
+                    contentEl.style.display = 'block';
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar respuestas:', error);
+            const container = document.getElementById(`respuestas-${comentarioId}`);
+            if (container) {
+                container.innerHTML = '<p class="error-message">Error al cargar las respuestas</p>';
+            }
+        });
+}
+
+// Función para manejar los likes y dislikes
+function handleLikeDislike(button, tipo) {
+    // Verificar si el usuario está autenticado
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const userId = document.querySelector('meta[name="user-id"]')?.content;
+
+    if (!csrfToken || !userId) {
+        showNotification('Debes iniciar sesión para valorar comentarios', 'error');
+        return;
+    }
+
+    const comentarioId = button.dataset.id;
+
+    // Mostrar indicador de carga
+    button.disabled = true;
+    const iconElement = button.querySelector('i');
+    const originalIcon = iconElement.className;
+    iconElement.className = 'fas fa-spinner fa-spin';
+
+    // Construir URL absoluta
+    const baseUrl = window.location.origin;
+    const likesUrl = `${baseUrl}/api/likes_comentarios`;
+    console.log("Enviando like/dislike a:", likesUrl);
+
+    fetch(likesUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            id_comentario: comentarioId,
+            tipo: tipo
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al procesar la valoración');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Respuesta de like/dislike:', data);
+
+        // Habilitar el botón de nuevo
+        button.disabled = false;
+
+        // Actualizar contadores en la interfaz
+        if (data.comentario) {
+            const review = button.closest('.review');
+
+            const likesCountEl = review.querySelector('.btn-like .likes-count');
+            if (likesCountEl) {
+                likesCountEl.textContent = data.comentario.likes_count || 0;
+            }
+
+            const dislikesCountEl = review.querySelector('.btn-dislike .dislikes-count');
+            if (dislikesCountEl) {
+                dislikesCountEl.textContent = data.comentario.dislikes_count || 0;
+            }
+
+            // Actualizar clases activas de los botones
+            const likeBtn = review.querySelector('.btn-like');
+            const dislikeBtn = review.querySelector('.btn-dislike');
+            const likeBtnIcon = likeBtn.querySelector('i');
+            const dislikeBtnIcon = dislikeBtn.querySelector('i');
+
+            likeBtn.classList.remove('active');
+            dislikeBtn.classList.remove('active');
+            likeBtnIcon.className = 'far fa-thumbs-up';
+            dislikeBtnIcon.className = 'far fa-thumbs-down';
+
+            // Actualizar el botón correspondiente según la respuesta
+            if (data.message.includes('creado') || data.message.includes('actualizado')) {
+                if (tipo === 'like') {
+                    likeBtn.classList.add('active');
+                    likeBtnIcon.className = 'fas fa-thumbs-up';
+                } else {
+                    dislikeBtn.classList.add('active');
+                    dislikeBtnIcon.className = 'fas fa-thumbs-down';
+                }
+            }
+
+            // Mostrar notificación
+            const accionTexto = data.message.includes('creado') ? 'añadido' :
+                                (data.message.includes('actualizado') ? 'actualizado' : 'eliminado');
+            showNotification(`Se ha ${accionTexto} tu ${tipo}`, 'success');
+
+            // Actualizar notificaciones en tiempo real si se ha creado o actualizado un like
+            if (data.message.includes('creado') || data.message.includes('actualizado')) {
+                actualizarNotificaciones();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Restaurar icono original y habilitar el botón
+        button.disabled = false;
+        iconElement.className = originalIcon;
+        showNotification('Error al procesar tu valoración', 'error');
+    });
+}
+
+// Función para actualizar las notificaciones en tiempo real
+function actualizarNotificaciones() {
+    // Verificar si existe el elemento de notificaciones
+    const notificacionesList = document.getElementById('notificaciones-list');
+    const notificacionesCounter = document.getElementById('notificaciones-counter');
+    const notificacionesContent = document.getElementById('notificaciones-content');
+
+    // Si no existe el panel de notificaciones, salir de la función
+    if (!notificacionesCounter || !notificacionesList) {
+        return;
+    }
+
+    // Obtener ID del usuario
+    const userId = document.querySelector('meta[name="user-id"]')?.content;
+    if (!userId) {
+        return;
+    }
+
+    // Construir URL absoluta
+    const baseUrl = window.location.origin;
+    const notificacionesUrl = `${baseUrl}/api/notificaciones/user/${userId}`;
+    console.log("Obteniendo notificaciones de:", notificacionesUrl);
+
+    fetch(notificacionesUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Obtener elementos de notificaciones
+
+            // Contar notificaciones no leídas
+            const noLeidas = data.filter(n => !n.leido).length;
+
+            // Actualizar contador
+            if (noLeidas > 0) {
+                notificacionesCounter.textContent = noLeidas > 9 ? '9+' : noLeidas;
+                notificacionesCounter.style.display = 'block';
+            } else {
+                notificacionesCounter.style.display = 'none';
+            }
+
+            // Actualizar la lista de notificaciones si está visible
+            if (notificacionesList && notificacionesContent.classList.contains('show')) {
+                // Renderizar las notificaciones (esta función debe estar definida en el blade)
+                if (typeof renderizarNotificaciones === 'function') {
+                    renderizarNotificaciones(data);
+                } else {
+                    // Implementación alternativa si la función no está disponible
+                    let html = '';
+
+                    if (!data || data.length === 0) {
+                        html = `
+                            <div class="sin-notificaciones">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        `;
+                    } else {
+                        data.forEach(notificacion => {
+                            const fecha = new Date(notificacion.created_at);
+                            const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+
+                            // Analizar el mensaje para determinar mejor el tipo
+                            const mensaje = notificacion.mensaje || '';
+                            let tipoReal = notificacion.tipo || 'nuevo_comentario';
+                            let icono = 'fa-bell';
+
+                            // Determinar icono basado en el tipo o el contenido del mensaje
+                            if (tipoReal === 'nuevo_like' || mensaje.includes('like') || mensaje.includes('ha dado like')) {
+                                icono = 'fa-thumbs-up';
+                                tipoReal = 'nuevo_like';
+                            } else if (mensaje.includes('respuesta') || mensaje.includes('ha respondido')) {
+                                // Si el mensaje contiene palabras relativas a respuestas, usar el icono de respuesta
+                                icono = 'fa-reply';
+                            } else if (tipoReal === 'nuevo_comentario' || mensaje.includes('comentario') || mensaje.includes('ha comentado')) {
+                                icono = 'fa-comment';
+                            }
+
+                            html += `
+                                <div class="notificacion-item ${notificacion.leido ? '' : 'no-leida'}" data-id="${notificacion.id}" data-tipo="${tipoReal}">
+                                    <div class="notificacion-icono">
+                                        <i class="fas ${icono}"></i>
+                                    </div>
+                                    <div class="notificacion-contenido">
+                                        <p>${notificacion.mensaje}</p>
+                                        <span class="notificacion-fecha">${fechaFormateada}</span>
+                                    </div>
+                                    <button class="marcar-leida-btn" title="Marcar como leída">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    notificacionesList.innerHTML = html;
+
+                    // Añadir evento de marcar como leída
+                    document.querySelectorAll('.marcar-leida-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const notificacionEl = this.closest('.notificacion-item');
+                            const id = notificacionEl.dataset.id;
+
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                            // Construir URL absoluta para marcar notificación como leída
+                            const markReadUrl = `${baseUrl}/api/notificaciones/read/${id}`;
+                            console.log("Marcando notificación como leída:", markReadUrl);
+
+                            fetch(markReadUrl, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(() => {
+                                notificacionEl.classList.remove('no-leida');
+                                actualizarNotificaciones();
+                            })
+                            .catch(error => console.error('Error al marcar notificación:', error));
+                        });
                     });
-                });
+                }
+            }
+        })
+        .catch(error => console.error('Error al actualizar notificaciones:', error));
+}
+
+// Función para manejar las respuestas a comentarios
+function procesarRespuestas() {
+    // Añadir event listeners para los botones de respuesta
+    document.querySelectorAll('.btn-reply').forEach(button => {
+        button.addEventListener('click', function() {
+            const comentarioId = this.getAttribute('data-id');
+            const respuestaForm = document.getElementById(`respuesta-form-${comentarioId}`);
+
+            if (!respuestaForm) {
+                console.error(`No se encontró el formulario para el comentario #${comentarioId}`);
+                return;
+            }
+
+            // Toggle visibilidad del formulario de respuesta
+            respuestaForm.style.display = respuestaForm.style.display === 'none' ? 'block' : 'none';
+
+            // Cargar las respuestas existentes
+            const respuestasContainer = document.getElementById(`respuestas-${comentarioId}`);
+            if (respuestasContainer && respuestasContainer.innerHTML === '') {
+                cargarRespuestas(comentarioId);
+            }
+        });
+    });
+
+    // Añadir event listeners para enviar respuestas
+    document.querySelectorAll('.btn-submit-respuesta').forEach(button => {
+        button.addEventListener('click', function() {
+            const comentarioId = this.getAttribute('data-id');
+            const formContainer = document.getElementById(`respuesta-form-${comentarioId}`);
+            if (!formContainer) {
+                console.error(`No se encontró el contenedor del formulario para el comentario #${comentarioId}`);
+                return;
+            }
+
+            const textareaEl = formContainer.querySelector('.respuesta-text');
+            const esSpoilerEl = document.getElementById(`es_spoiler_respuesta_${comentarioId}`);
+
+            if (!textareaEl || !esSpoilerEl) {
+                console.error('No se encontraron los elementos del formulario');
+                return;
+            }
+
+            const respuesta = textareaEl.value.trim();
+            const esSpoiler = esSpoilerEl.checked;
+
+            if (!respuesta) {
+                showNotification('La respuesta no puede estar vacía', 'error');
+                return;
+            }
+
+            // Verificar si el usuario está autenticado
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            const userId = document.querySelector('meta[name="user-id"]')?.content;
+
+            if (!csrfToken || !userId) {
+                showNotification('Debes iniciar sesión para responder comentarios', 'error');
+                return;
+            }
+
+            // Mostrar indicador de carga
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+
+            // Construir URL absoluta
+            const baseUrl = window.location.origin;
+            const respuestasUrl = `${baseUrl}/api/respuestas_comentarios`;
+            console.log("URL para enviar respuesta:", respuestasUrl);
+
+            // Enviar respuesta
+            fetch(respuestasUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    comentario_id: comentarioId,
+                    user_id: userId,
+                    respuesta: respuesta,
+                    es_spoiler: esSpoiler
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al enviar la respuesta');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Limpiar el formulario y mostrar notificación
+                textareaEl.value = '';
+                esSpoilerEl.checked = false;
+                formContainer.style.display = 'none';
+
+                // Actualizar las respuestas
+                cargarRespuestas(comentarioId);
+
+                // Mostrar notificación
+                showNotification('Respuesta enviada correctamente', 'success');
+
+                // También actualizar notificaciones
+                actualizarNotificaciones();
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error al enviar respuesta:', error);
+                showNotification('Error al enviar la respuesta', 'error');
+            })
+            .finally(() => {
+                // Restaurar botón
+                button.disabled = false;
+                button.textContent = originalText;
             });
-    }
-});
+        });
+    });
+}

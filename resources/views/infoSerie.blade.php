@@ -2,9 +2,59 @@
 
 @section('title', $serie->name ?? $serie->titulo ?? 'Detalle de serie')
 
+@section('head')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="user-id" content="{{ auth()->id() }}">
+<meta name="tmdb-api-key" content="{{ env('TMDB_API_KEY') }}">
+@endsection
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/movie-details.css') }}">
     <style>
+        /* Estilos para el sistema de notificaciones */
+        #notifications-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            max-width: 400px;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 280px;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            background-color: #14ff14;
+            color: #000;
+        }
+
+        .notification.error {
+            background-color: #ff4d4d;
+        }
+
+        .notification.warning {
+            background-color: #ffbb33;
+            color: #000;
+        }
+
+        .notification.info {
+            background-color: #33b5e5;
+        }
+
         .comentarios-section {
             margin-top: 2rem;
             padding: 1rem;
@@ -181,6 +231,353 @@
         .status-pending {
             background: rgba(241, 196, 15, 0.2);
             color: #f1c40f;
+        }
+
+        /* Estilos para respuestas a comentarios */
+        .respuestas-container {
+            margin-left: 2rem;
+            margin-top: 1rem;
+            border-left: 3px solid #14ff14;
+            padding-left: 1.5rem;
+            background: rgba(20,255,20,0.03);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .respuesta {
+            background: linear-gradient(90deg, #23272a 80%, #14ff14 100%);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,255,60,0.08);
+            border: 1px solid #14ff14;
+            color: #e6ffe6;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+
+        .respuesta-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .respuesta .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .respuesta .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #14ff14;
+            background: #181818;
+        }
+
+        .respuesta .username {
+            font-weight: 700;
+            color: #14ff14;
+            font-size: 1rem;
+        }
+
+        .respuesta-date {
+            font-size: 0.85rem;
+            color: #b2ffb2;
+            margin-left: 0.7rem;
+        }
+
+        .respuesta-content {
+            margin-top: 0.5rem;
+            line-height: 1.6;
+            color: #e6ffe6;
+            font-size: 1.05rem;
+            word-break: break-word;
+        }
+
+        /* Estilos para formularios de respuesta */
+        .respuesta-form {
+            margin-top: 1rem;
+            margin-left: 2rem;
+            background: #181f18;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #14ff14;
+        }
+
+        .respuesta-form textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.5rem;
+            border: 1px solid #2ecc40;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            resize: vertical;
+            background: #23272a;
+            color: #e6ffe6;
+        }
+
+        .btn-reply {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .btn-reply:hover {
+            color: #14ff14;
+        }
+
+        .btn-submit-respuesta {
+            background-color: #14ff14;
+            color: #000000;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,255,60,0.08);
+            transition: background 0.2s;
+        }
+
+        .btn-submit-respuesta:hover {
+            background-color: #00ffdd;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .notification.hide {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        /* Estilos para el sistema de comentarios */
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review {
+            background-color: #121212;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #14ff14;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #14ff14;
+        }
+
+        .username {
+            color: #00ffdd;
+            font-weight: bold;
+        }
+
+        .review-date {
+            color: #FFFFFF;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .review-rating {
+            color: #FFC107;
+        }
+
+        .review-content {
+            color: #FFFFFF;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Estilos para el modal de trailer */
+        #trailerModalStatic {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            height: 90%;
+            max-height: 600px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #trailerContainerStatic {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        #closeTrailerBtn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .trailer-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background-color: #000;
+        }
+
+        .trailer-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #14ff14;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .trailer-loading span {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .no-trailer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .no-trailer i {
+            font-size: 3rem;
+            color: #14ff14;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-trailer p {
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 20px;
+        }
+
+        .btn-like, .btn-dislike {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            margin-right: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #aaa;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-like:hover {
+            color: #14ff14;
+            background-color: rgba(20, 255, 20, 0.1);
+        }
+
+        .btn-dislike:hover {
+            color: #ff4d4d;
+            background-color: rgba(255, 77, 77, 0.1);
+        }
+
+        .btn-like.active {
+            color: #14ff14;
+        }
+
+        .btn-dislike.active {
+            color: #ff4d4d;
+        }
+
+        .likes-count, .dislikes-count {
+            margin-left: 5px;
+            font-size: 14px;
         }
     </style>
 @endpush
@@ -514,8 +911,8 @@
                     <h2>Críticas de usuarios</h2>
                     <div class="add-review">
                         <h3>¿Ya la viste? Deja tu crítica</h3>
-                        <form id="review-form">
-                            <input type="hidden" name="id_serie" value="{{ $serie->id ?? '' }}">
+                        <form id="comentarioForm">
+                            <input type="hidden" name="id_serie" value="{{ $serie->id ?? $serie->tmdb_id ?? '' }}">
                             <div class="rating-selector">
                                 <span>Tu puntuación:</span>
                                 <div class="stars" role="radiogroup" aria-label="Puntuación">
@@ -540,7 +937,9 @@
 
                 <!-- Series similares -->
                 <section id="similar" class="tab-panel">
-                    <h2>Series similares</h2>
+                    <h2 class="section-title">
+                        <i class="fas fa-tv"></i> Series similares
+                    </h2>
                     <div class="related-movies-container">
                         @if(isset($seriesSimilares) && is_array($seriesSimilares) && count($seriesSimilares) > 0)
                             @foreach($seriesSimilares as $relatedSerie)
@@ -558,7 +957,7 @@
                                         <div class="movie-overlay">
                                             <div class="movie-badges">
                                                 @if(isset($relatedSerie['first_air_date']) && substr($relatedSerie['first_air_date'], 0, 4) >= date('Y') - 1)
-                                                    <span class="badge new-badge">Nueva</span>
+                                                    <span class="badge new-badge">Nuevo</span>
                                                 @endif
                                                 @if($rating >= 8)
                                                     <span class="badge top-badge">
@@ -567,13 +966,13 @@
                                                 @endif
                                             </div>
                                             <div class="movie-actions">
-                                                <button class="action-btn btn-trailer" data-id="{{ $relatedSerie['id'] ?? '' }}" aria-label="Ver trailer">
+                                                <button class="action-btn btn-trailer" data-id="{{ $relatedSerie['id'] }}" aria-label="Ver trailer">
                                                     <i class="fas fa-play"></i>
                                                 </button>
-                                                <button class="action-btn btn-favorite" data-id="{{ $relatedSerie['id'] ?? '' }}" aria-label="Añadir a favoritos">
+                                                <button class="action-btn btn-favorite" data-id="{{ $relatedSerie['id'] }}" aria-label="Añadir a favoritos">
                                                     <i class="far fa-heart"></i>
                                                 </button>
-                                                <a href="{{ route('serie.detail', $relatedSerie['id'] ?? '') }}" class="action-btn btn-details" aria-label="Ver detalles">
+                                                <a href="{{ route('serie.detail', $relatedSerie['id']) }}" class="action-btn btn-details" aria-label="Ver detalles">
                                                     <i class="fas fa-info-circle"></i>
                                                 </a>
                                             </div>
@@ -589,7 +988,11 @@
                                 </div>
                             @endforeach
                         @else
-                            <p>No se encontraron series similares.</p>
+                            <div class="empty-content">
+                                <i class="fas fa-tv"></i>
+                                <p>No se encontraron series similares para esta serie.</p>
+                                <span>Puedes explorar nuestro catálogo para descubrir más series.</span>
+                            </div>
                         @endif
                     </div>
                 </section>
@@ -633,5 +1036,101 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="{{ asset('serie-details.js') }}"></script>
+<style>
+/* Estilos adicionales para comentarios y respuestas */
+.respuestas-container {
+    margin-top: 10px;
+    margin-left: 30px;
+    border-left: 2px solid var(--verde-neon);
+    padding-left: 15px;
+}
+
+.respuesta {
+    background-color: rgba(0, 255, 135, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.respuesta-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.respuesta-content {
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.respuesta-form {
+    margin-top: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.respuesta-form textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--verde-neon);
+    color: var(--blanco);
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.respuesta-form button {
+    background: var(--verde-neon);
+    color: var(--negro);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.respuesta-form button:hover {
+    background: var(--verde-claro);
+    transform: translateY(-2px);
+}
+
+.respuesta-text {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--verde-neon);
+    color: var(--blanco);
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.respuesta-form-container {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-reply {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-reply i {
+    font-size: 0.9em;
+}
+</style>
 @endpush
+
+<!-- Modal para trailers -->
+<div id="trailerModalStatic">
+    <div class="modal-content">
+        <button id="closeTrailerBtn"><i class="fas fa-times"></i></button>
+        <div id="trailerContainerStatic"></div>
+    </div>
+</div>

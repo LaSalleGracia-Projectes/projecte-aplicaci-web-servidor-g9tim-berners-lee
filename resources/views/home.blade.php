@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio - CritFlix')
+@section('title', __('messages.home') . ' - CritFlix')
 
 @section('content')
 <main>
@@ -30,7 +30,7 @@
 
   <!-- TENDENCIAS -->
   <section class="trending">
-    <h2>Tendencias</h2>
+    <h2>{{ __('messages.trends') }}</h2>
     <div class="trending-container" id="trendingContainer">
       @foreach($trendingMovies as $movie)
         <div class="movie">
@@ -42,9 +42,9 @@
     <button class="nav-btn" id="trendingPrev">&#10094;</button>
     <button class="nav-btn" id="trendingNext">&#10095;</button>
     <div class="filter-platform">
-      <label for="platformFilter">Filtrar por Plataforma:</label>
+      <label for="platformFilter">{{ __('messages.filter_by_platform') }}:</label>
       <select id="platformFilter">
-        <option value="">Todas</option>
+        <option value="">{{ __('messages.all_platforms') }}</option>
         <option value="netflix">Netflix</option>
         <option value="prime">Prime Video</option>
         <option value="cine">Cine</option>
@@ -54,8 +54,8 @@
 
   <!-- CRÍTICOS DESTACADOS -->
   <section class="criticos">
-    <h2>Críticos Destacados</h2>
-    <button id="spoilerBtn" class="spoiler-btn">Aviso Spoilers</button>
+    <h2>{{ __('messages.featured_critics') }}</h2>
+    <button id="spoilerBtn" class="spoiler-btn">{{ __('messages.spoiler_warning') }}</button>
     <div class="criticos-container" id="criticosContainer">
       @foreach($criticos as $critico)
         <div class="critico">
@@ -69,14 +69,14 @@
         </div>
       @endforeach
     </div>
-    <button id="hazteCritico" class="action-btn">Hazte Crítico</button>
+    <button id="hazteCritico" class="action-btn">{{ __('messages.become_critic') }}</button>
   </section>
 
   <!-- MI LISTA (FAVORITOS) -->
   <section class="mi-lista">
-    <h2>Mis Favoritos</h2>
+    <h2>{{ __('messages.my_favorites') }}</h2>
     <div class="lista-content" id="miListaContent">
-      <p>Agrega tus películas favoritas para verlas luego.</p>
+      <p>{{ __('messages.add_favorites') }}.</p>
       <div id="favoritesContainer">
         @if(isset($favoritos) && count($favoritos) > 0)
           @foreach($favoritos as $favorito)
@@ -85,7 +85,7 @@
             </div>
           @endforeach
         @else
-          <p>No tienes favoritos aún.</p>
+          <p>{{ __('messages.no_favorites') }}.</p>
         @endif
       </div>
     </div>
@@ -93,37 +93,37 @@
 
   <!-- CINE RANDOMIZER -->
   <section class="cine-randomizer">
-    <h2>Cine Randomizer</h2>
+    <h2>{{ __('messages.randomizer') }}</h2>
     <form action="{{ route('random.generate') }}" method="GET">
       <div class="randomizer-filters">
-        <label for="tipoContenido">Tipo de Contenido:</label>
+        <label for="tipoContenido">{{ __('messages.content_type') }}:</label>
         <select id="tipoContenido" name="tipoContenido">
-          <option value="movie">Película</option>
-          <option value="tv">Serie</option>
+          <option value="movie">{{ __('messages.movies') }}</option>
+          <option value="tv">{{ __('messages.series') }}</option>
         </select>
-        <label for="genero">Género:</label>
+        <label for="genero">{{ __('messages.genre') }}:</label>
         <select id="genero" name="genero">
-          <option value="">Todos</option>
+          <option value="">{{ __('messages.all_genres') }}</option>
         </select>
-        <label for="duracion">Duración:</label>
+        <label for="duracion">{{ __('messages.duration') }}:</label>
         <select id="duracion" name="duracion">
-          <option value="">Cualquiera</option>
-          <option value="short">Corta (&lt;90 min)</option>
-          <option value="long">Larga (&gt;90 min)</option>
+          <option value="">{{ __('messages.any') }}</option>
+          <option value="short">{{ __('messages.short') }}</option>
+          <option value="long">{{ __('messages.long') }}</option>
         </select>
-        <label for="anio">Año de Lanzamiento:</label>
+        <label for="anio">{{ __('messages.release_year') }}:</label>
         <select id="anio" name="anio">
-          <option value="">Todos</option>
+          <option value="">{{ __('messages.all') }}</option>
         </select>
-        <label for="plataforma">Plataforma:</label>
+        <label for="plataforma">{{ __('messages.platform') }}:</label>
         <select id="plataforma" name="plataforma">
-          <option value="">Todas</option>
+          <option value="">{{ __('messages.all_platforms') }}</option>
           <option value="netflix">Netflix</option>
           <option value="hbo">HBO</option>
           <option value="disney">Disney+</option>
         </select>
       </div>
-      <button type="submit" id="generarRandom" class="action-btn">🎲 Generar</button>
+      <button type="submit" id="generarRandom" class="action-btn">🎲 {{ __('messages.generate') }}</button>
     </form>
     <div class="random-container" id="randomContainer">
       @if(isset($randomMovie))

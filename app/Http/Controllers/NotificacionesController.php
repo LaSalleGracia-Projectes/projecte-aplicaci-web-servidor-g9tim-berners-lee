@@ -29,7 +29,7 @@ class NotificacionesController extends Controller
                 $notificacion->leido = (bool)$notificacion->leido;
                 return $notificacion;
             });
-            
+
         return response()->json($notificaciones);
     }
 
@@ -71,11 +71,11 @@ class NotificacionesController extends Controller
     public function markAsRead($id)
     {
         $notificacion = Notificaciones::findOrFail($id);
-        
+
         $notificacion->leido = true;
         $notificacion->updated_at = now();
         $notificacion->save();
-        
+
         return response()->json($notificacion);
     }
 
@@ -90,7 +90,7 @@ class NotificacionesController extends Controller
                 'leido' => true,
                 'updated_at' => now()
             ]);
-            
+
         return response()->json(['message' => 'Todas las notificaciones marcadas como leídas']);
     }
 
