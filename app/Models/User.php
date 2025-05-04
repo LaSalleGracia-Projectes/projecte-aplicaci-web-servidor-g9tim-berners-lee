@@ -55,6 +55,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comentarios::class, 'user_id');
     }
+    
+    // ✅ Relación con Respuestas a Comentarios
+    public function respuestasComentarios()
+    {
+        return $this->hasMany(RespuestasComentarios::class, 'user_id');
+    }
 
     // ✅ Relación con Listas
     public function listas()

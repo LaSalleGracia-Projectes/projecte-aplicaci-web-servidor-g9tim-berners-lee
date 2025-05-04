@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\LikesComentarios;
+use App\Models\RespuestasComentarios;
 
 class Comentarios extends Model
 {
@@ -22,7 +23,7 @@ class Comentarios extends Model
         'destacado',
     ];
     
-    protected $appends = ['likes_count', 'dislikes_count'];
+    protected $appends = ['likes_count', 'dislikes_count', 'respuestas_count'];
     
     public $timestamps = true;
     
@@ -36,6 +37,11 @@ class Comentarios extends Model
         return $this->hasMany(LikesComentarios::class, 'id_comentario');
     }
     
+    public function respuestas()
+    {
+        return $this->hasMany(RespuestasComentarios::class, 'comentario_id');
+    }
+    
     public function getLikesCountAttribute()
     {
         return $this->likesComentarios()->where('tipo', 'like')->count();
@@ -44,5 +50,10 @@ class Comentarios extends Model
     public function getDislikesCountAttribute()
     {
         return $this->likesComentarios()->where('tipo', 'dislike')->count();
+    }
+    
+    public function getRespuestasCountAttribute()
+    {
+        return $this->respuestas()->count();
     }
 }
