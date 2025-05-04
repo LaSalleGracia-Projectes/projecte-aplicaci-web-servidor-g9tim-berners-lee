@@ -9,9 +9,11 @@ class Valoraciones extends Model
 {
     use HasFactory;
 
+    protected $table = 'valoraciones';
+
     protected $fillable = [
         'user_id',
-        'id_pelicula', // ID de TMDB, ahora sin referencia a peliculas_series
+        'tmdb_id',
         'valoracion'
     ];
 

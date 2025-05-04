@@ -13,7 +13,7 @@ class ContenidoListasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class ContenidoListasPolicy
      */
     public function view(User $user, ContenidoListas $contenidoListas): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class ContenidoListasPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class ContenidoListasPolicy
      */
     public function update(User $user, ContenidoListas $contenidoListas): bool
     {
-        return false;
+        return $user->id === $contenidoListas->lista->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class ContenidoListasPolicy
      */
     public function delete(User $user, ContenidoListas $contenidoListas): bool
     {
-        return false;
+        return $user->id === $contenidoListas->lista->user_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class ContenidoListasPolicy
      */
     public function restore(User $user, ContenidoListas $contenidoListas): bool
     {
-        return false;
+        return $user->id === $contenidoListas->lista->user_id;
     }
 
     /**
@@ -61,6 +61,6 @@ class ContenidoListasPolicy
      */
     public function forceDelete(User $user, ContenidoListas $contenidoListas): bool
     {
-        return false;
+        return $user->id === $contenidoListas->lista->user_id;
     }
 }

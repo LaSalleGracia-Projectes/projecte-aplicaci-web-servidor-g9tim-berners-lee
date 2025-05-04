@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('valoraciones', function (Blueprint $table) {
-            $table->id('id');
-            $table->integer('tmdb_id');
+        Schema::create('respuestas_comentarios', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('comentario_id')->constrained('comentarios')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('valoracion', ['like', 'dislike']);
+            $table->text('respuesta');
+            $table->boolean('es_spoiler')->default(false);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('valoraciones');
+        Schema::dropIfExists('respuestas_comentarios');
     }
 };

@@ -36,51 +36,23 @@ class PeliculasController extends Controller
 
     public function show($id)
     {
-        $pelicula = PeliculasSeries::where('id', $id)
-            ->where('tipo', 'pelicula')
-            ->first();
-
-        if (!$pelicula) {
+        try {
             $apiKey = env('TMDB_API_KEY');
-            $response = Http::get("https://api.themoviedb.org/3/movie/{$id}?api_key={$apiKey}&language=es-ES");
+            $response = Http::get("https://api.themoviedb.org/3/movie/{$id}?api_key={$apiKey}&language=es-ES&append_to_response=credits,videos,watch/providers");
 
             if ($response->failed()) {
                 abort(404, 'La película no se encontró');
             }
 
-            $peliculaData = $response->json();
+            $pelicula = $response->json();
 
-            $pelicula = new PeliculasSeries();
-            $pelicula->id = $peliculaData['id'];
-            $pelicula->titulo = $peliculaData['title'];
-            $pelicula->sinopsis = $peliculaData['overview'] ?? '';
-            $pelicula->año_estreno = substr($peliculaData['release_date'] ?? date('Y-m-d'), 0, 4);
-            $pelicula->duracion = $peliculaData['runtime'] ?? null;
-            $pelicula->api_id = $peliculaData['id'];
-            $pelicula->tipo = 'pelicula';
-            $pelicula->save();
-        }
+            // Obtener elenco y director
+            $casting = $this->getActorsList($id, $apiKey);
+            $elenco = $casting['elenco'];
+            $director = $casting['director'];
 
-        // Obtener información adicional desde la API de TMDB
-        $apiKey = env('TMDB_API_KEY');
-        $tmdbId = $pelicula->api_id ?? $pelicula->id;
-
-        $response = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}?api_key={$apiKey}&language=es-ES");
-        if (!$response->failed()) {
-            $movieData = $response->json();
-            $pelicula->poster_url = 'https://image.tmdb.org/t/p/w500' . ($movieData['poster_path'] ?? '');
-            $pelicula->tmdb_rating = $movieData['vote_average'] ?? 0;
-            $pelicula->backdrop_url = isset($movieData['backdrop_path']) ? 'https://image.tmdb.org/t/p/original' . $movieData['backdrop_path'] : null;
-        } else {
-            $pelicula->poster_url = asset('images/no-poster.jpg');
-            $pelicula->tmdb_rating = 0;
-            $pelicula->backdrop_url = null;
-        }
-
-        // Obtener elenco y director
-        $casting = $this->getActorsList($tmdbId, $apiKey);
-        $elenco = $casting['elenco'];
-        $director = $casting['director'];
+            // Obtener proveedores de streaming
+            $watchProviders = $pelicula['watch/providers']['results']['ES'] ?? [];
 
         // Obtener películas similares
         $similarMoviesResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/similar?api_key={$apiKey}&language=es-ES&page=1");
@@ -95,12 +67,13 @@ class PeliculasController extends Controller
         // Obtener proveedores de streaming
         $watchProvidersResponse = Http::get("https://api.themoviedb.org/3/movie/{$tmdbId}/watch/providers?api_key={$apiKey}");
 
-        $watchProviders = [];
-        if (!$watchProvidersResponse->failed()) {
-            $watchProvidersData = $watchProvidersResponse->json();
-            $watchProviders = $watchProvidersData['results']['ES'] ?? [];
-        }
 
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'message' => 'Película obtenida correctamente',
+                    'data' => $pelicula
+                ]);
+            }
         return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
     }
 

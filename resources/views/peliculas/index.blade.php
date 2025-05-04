@@ -9,9 +9,8 @@
             @foreach($peliculas as $pelicula)
                 <div class="movie-card">
                     <div class="card-image">
-                        <img src="https://image.tmdb.org/t/p/w500{{ $pelicula['poster_path'] }}"
-                             alt="{{ $pelicula['title'] }}"
-                             onerror="this.src='{{ asset('images/default-poster.jpg') }}'">
+                        <img src="https://image.tmdb.org/t/p/w500{{ $pelicula->poster_path }}"
+                             alt="{{ $pelicula->title }}">
                     </div>
                     <div class="card-info">
                         <h3>{{ $pelicula['title'] }}</h3>

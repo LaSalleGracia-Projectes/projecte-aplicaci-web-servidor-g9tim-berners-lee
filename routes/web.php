@@ -13,6 +13,9 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentariosController;
 use App\Http\Controllers\EmailTestController;
+use App\Http\Controllers\ListasController;
+use App\Http\Controllers\PeliculasSeriesController;
+
 
 // Rutas de perfil - protegidas por autenticación
     Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
@@ -29,12 +32,19 @@ Route::post('/api/contenido-listas', [App\Http\Controllers\ContenidoListasContro
 Route::delete('/api/contenido-listas/{id}', [App\Http\Controllers\ContenidoListasController::class, 'destroy'])
     ->name('contenido-listas.destroy');
 
+// Rutas para las vistas de listas
+Route::get('/listas/create', [ListasController::class, 'create'])->name('listas.create');
+Route::get('/listas/{id}', [ListasController::class, 'show'])->name('listas.show');
+Route::get('/listas/{lista}/edit', [ListasController::class, 'edit'])->name('listas.edit');
+Route::get('/listas/redirect/destroy/{userId}', [ListasController::class, 'redirectAfterDestroy'])->name('listas.redirect.destroy');
+Route::get('/listas/redirect/store/{listaId}', [ListasController::class, 'redirectAfterStore'])->name('listas.redirect.store');
+Route::get('/listas/redirect/update/{listaId}', [ListasController::class, 'redirectAfterUpdate'])->name('listas.redirect.update');
+
 Route::get('/criticos', [CriticosController::class, 'index'])->name('criticos');
 Route::get('/haztecritico', [CriticosController::class, 'index'])->name('haztecritico');
 
 Route::get('/peliculas', [PeliculasController::class, 'index'])->name('peliculas');
 Route::get('/pelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.detail');
-
 Route::get('/infoPelicula/{id}', [PeliculasController::class, 'show'])->name('pelicula.show');
 
 Route::get('/series', [SeriesController::class, 'index'])->name('series');
@@ -125,12 +135,6 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http
     Route::get('/stats', [AdminController::class, 'getStats']);
 });
 
-// Rutas para comentarios
-// Route::prefix('api')->group(function () {
-//     Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
-//     Route::post('/comentarios', [ComentariosController::class, 'store']);
-//     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
-// });
 
 // Rutas para prueba de correos - solo accesibles para administradores
 Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth', \App\Http\Middleware\AdminMiddleware::class]], function () {

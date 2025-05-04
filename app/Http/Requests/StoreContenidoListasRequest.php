@@ -11,7 +11,7 @@ class StoreContenidoListasRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreContenidoListasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id_lista' => 'required|exists:listas,id',
+            'tmdb_id' => 'required|integer',
+            'tipo' => 'required|string|in:movie,tv'
         ];
     }
 }

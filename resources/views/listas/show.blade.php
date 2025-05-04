@@ -7,8 +7,8 @@
 @section('content')
 <div class="list-detail-container">
     <div class="back-button">
-        <a href="javascript:history.back()" class="btn-neon">
-            <i class="fas fa-arrow-left"></i> Volver
+        <a href="{{ route('profile.show', $lista->user_id) }}" class="btn-neon">
+            <i class="fas fa-arrow-left"></i> Volver al Perfil
         </a>
     </div>
 
@@ -50,8 +50,7 @@
                 <div class="movie-card">
                     <div class="movie-poster">
                         <img src="https://image.tmdb.org/t/p/w500{{ $contenido->pelicula['poster_path'] }}"
-                             alt="{{ $contenido->pelicula['title'] }}"
-                             onerror="this.onerror=null; this.src='{{ asset('images/default-poster.jpg') }}'">
+                             alt="{{ $contenido->pelicula['title'] }}">
                         @if(Auth::id() == $lista->user_id)
                         <div class="movie-actions">
                             <button type="button" class="remove-movie" data-id="{{ $contenido->id }}">
