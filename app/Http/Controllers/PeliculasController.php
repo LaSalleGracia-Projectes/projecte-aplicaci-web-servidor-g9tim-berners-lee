@@ -37,16 +37,27 @@ class PeliculasController extends Controller
     public function show($id)
     {
         try {
+            // Validar que $id sea un número válido
+            if (!is_numeric($id)) {
+                abort(404, 'El ID de la película no es válido');
+            }
+
             $apiKey = env('TMDB_API_KEY');
+
+            if (!$apiKey) {
+                abort(500, 'Error: No se ha configurado la API key de TMDB');
+            }
+
+            // Usar el ID recibido en el parámetro para la consulta a la API
             $response = Http::get("https://api.themoviedb.org/3/movie/{$id}?api_key={$apiKey}&language=es-ES&append_to_response=credits,videos,watch/providers");
 
             if ($response->failed()) {
-                abort(404, 'La película no se encontró');
+                abort(404, 'La película no se encontró en TMDB');
             }
 
             $pelicula = $response->json();
 
-            // Obtener elenco y director
+            // Obtener elenco y director usando el mismo ID
             $casting = $this->getActorsList($id, $apiKey);
             $elenco = $casting['elenco'];
             $director = $casting['director'];
@@ -54,10 +65,17 @@ class PeliculasController extends Controller
             // Obtener proveedores de streaming
             $watchProviders = $pelicula['watch/providers']['results']['ES'] ?? [];
 
-            // Obtener películas similares
-            $similarResponse = Http::get("https://api.themoviedb.org/3/movie/{$id}/similar?api_key={$apiKey}&language=es-ES");
-            $peliculasSimilares = $similarResponse->successful() ? $similarResponse->json()['results'] : [];
+            // Obtener películas similares usando el mismo ID
+            $similarMoviesResponse = Http::get("https://api.themoviedb.org/3/movie/{$id}/similar?api_key={$apiKey}&language=es-ES&page=1");
+            $peliculasSimilares = [];
 
+            if ($similarMoviesResponse->successful()) {
+                $similarData = $similarMoviesResponse->json();
+                // Limitamos a 6 películas similares máximo
+                $peliculasSimilares = array_slice($similarData['results'] ?? [], 0, 6);
+            }
+
+            // Responder según el tipo de solicitud
             if (request()->expectsJson()) {
                 return response()->json([
                     'message' => 'Película obtenida correctamente',
@@ -67,6 +85,7 @@ class PeliculasController extends Controller
 
             return view('infoPelicula', compact('pelicula', 'elenco', 'director', 'watchProviders', 'peliculasSimilares'));
         } catch (\Exception $e) {
+            \Log::error('Error al obtener información de película: ' . $e->getMessage());
             abort(404, 'Error al obtener la información de la película');
         }
     }

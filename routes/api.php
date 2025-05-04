@@ -45,6 +45,13 @@ Route::get('contenido_listas/lista/{id_lista}', [ContenidoListasController::clas
 // Rutas para comentarios
 Route::get('comentarios/tmdb/{tmdbId}/{tipo}', [ComentariosController::class, 'getComentariosByTmdbId']);
 
+// Ruta simplificada para películas
+Route::get('/comentarios-pelicula/{tmdbId}', [ComentariosController::class, 'getComentariosPelicula'])
+    ->where('tmdbId', '[0-9]+');
+// Ruta simplificada para series
+Route::get('/comentarios-serie/{tmdbId}', [ComentariosController::class, 'getComentariosSerie'])
+    ->where('tmdbId', '[0-9]+');
+
 // Rutas para likes/dislikes de comentarios
 Route::get('likes_comentarios/status/{comentarioId}/{userId}', [LikesComentariosController::class, 'getLikeStatus']);
 Route::get('likes_comentarios/count/{comentarioId}', [LikesComentariosController::class, 'getLikesCount']);
