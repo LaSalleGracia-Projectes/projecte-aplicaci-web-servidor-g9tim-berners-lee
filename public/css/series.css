@@ -1232,6 +1232,9 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    will-change: opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .trailer-modal-content {
@@ -1242,6 +1245,8 @@
     background: var(--negro);
     border-radius: 12px;
     overflow: hidden;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .close-modal {
@@ -1261,6 +1266,7 @@
     font-size: 1.2em;
     z-index: 2;
     transition: all 0.3s ease;
+    will-change: transform, background-color;
 }
 
 .close-modal:hover {

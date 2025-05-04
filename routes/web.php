@@ -12,6 +12,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentariosController;
+use App\Http\Controllers\EmailTestController;
 
 // Rutas de perfil - protegidas por autenticación
     Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
@@ -125,8 +126,21 @@ Route::group(['prefix' => 'api/admin', 'middleware' => ['web', 'auth', \App\Http
 });
 
 // Rutas para comentarios
-Route::prefix('api')->group(function () {
-    Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
-    Route::post('/comentarios', [ComentariosController::class, 'store']);
-    Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
+// Route::prefix('api')->group(function () {
+//     Route::get('/comentarios/pelicula/{id}', [ComentariosController::class, 'getByPelicula']);
+//     Route::post('/comentarios', [ComentariosController::class, 'store']);
+//     Route::delete('/comentarios/{id}', [ComentariosController::class, 'destroy']);
+// });
+
+// Rutas para prueba de correos - solo accesibles para administradores
+Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth', \App\Http\Middleware\AdminMiddleware::class]], function () {
+    Route::get('/email-test', [EmailTestController::class, 'showTestForm'])->name('admin.email.test.form');
+    Route::post('/email-test', [EmailTestController::class, 'sendTestEmail'])->name('admin.email.test');
 });
+
+// Ruta directa para prueba de correo (para desarrolladores)
+Route::get('/test-email/{email}', [AuthController::class, 'testEmail'])->name('test.email');
+
+// Rutas de autenticación con Google
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);

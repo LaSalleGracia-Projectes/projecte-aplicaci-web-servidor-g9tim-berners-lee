@@ -65,13 +65,11 @@ class AdminController extends Controller
                           ->limit(5)
                           ->get();
 
-        // Valoraciones recientes
+        // Valoraciones recientes - Solo mostramos información básica sin columnas problemáticas
         $recentReviews = Valoraciones::join('users', 'valoraciones.user_id', '=', 'users.id')
-                                 ->join('peliculas_series', 'valoraciones.id_pelicula', '=', 'peliculas_series.id')
                                  ->select(
                                     'valoraciones.id',
                                     'users.name as user_name',
-                                    'peliculas_series.titulo as movie_title',
                                     'valoraciones.valoracion',
                                     'valoraciones.created_at'
                                  )
@@ -176,13 +174,10 @@ class AdminController extends Controller
             // Consulta base para las valoraciones
             $query = DB::table('valoraciones')
                 ->join('users', 'valoraciones.user_id', '=', 'users.id')
-                ->join('peliculas_series', 'valoraciones.id_pelicula', '=', 'peliculas_series.id')
                 ->select(
                     'valoraciones.id',
                     'users.name as user_name',
                     'users.profile_photo as user_profile_photo',
-                    'peliculas_series.titulo as movie_title',
-                    'peliculas_series.poster as poster_path',
                     'valoraciones.valoracion',
                     'valoraciones.comentario',
                     'valoraciones.created_at'
@@ -194,7 +189,8 @@ class AdminController extends Controller
             }
 
             if (request()->has('movie') && !empty(request('movie'))) {
-                $query->where('peliculas_series.titulo', 'LIKE', '%' . request('movie') . '%');
+                // Ya no podemos filtrar por película directamente
+                // Podemos quitar este filtro o implementar otra solución
             }
 
             if (request()->has('rating') && !empty(request('rating'))) {
@@ -212,7 +208,7 @@ class AdminController extends Controller
                 }
             }
 
-            // Ordenar y paginar
+            // Ordenar y paginar directamente desde la consulta
             $reviews = $query->orderBy('valoraciones.created_at', 'desc')->paginate(10);
 
             // Estadísticas para el panel
@@ -223,7 +219,14 @@ class AdminController extends Controller
                 'hoy' => DB::table('valoraciones')->whereDate('created_at', Carbon::today())->count(),
             ];
         } catch (\Exception $e) {
-            $reviews = collect([])->paginate(10);
+            // En caso de error, crear una paginación vacía correctamente
+            $reviews = new \Illuminate\Pagination\LengthAwarePaginator(
+                [], // datos vacíos
+                0,  // contar total
+                10, // por página
+                1   // página actual
+            );
+
             $stats = [
                 'total' => 0,
                 'likes' => 0,

@@ -464,59 +464,57 @@
         </form>
 
         @if(count($reviews ?? []) > 0)
-            @foreach($reviews as $review)
-            <div class="review-item">
-                <div class="review-header">
-                    <div class="review-meta">
-                        <div class="review-avatar">
-                            @if(isset($review->user_profile_photo) && $review->user_profile_photo)
-                                <img src="{{ asset('storage/' . $review->user_profile_photo) }}" alt="{{ $review->user_name }}">
-                            @else
-                                <i class="fas fa-user"></i>
-                            @endif
-                        </div>
-                        <div>
-                            <div class="review-author">
-                                {{ $review->user_name ?? 'Usuario desconocido' }}
+            <div class="table-responsive">
+                <table class="table table-striped admin-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Película/Serie</th>
+                            <th>Valoración</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($reviews as $review)
+                        <tr>
+                            <td>
+                                <div class="review-user">
+                                    @if ($review->user_profile_photo)
+                                        <img src="{{ asset('storage/' . $review->user_profile_photo) }}" alt="{{ $review->user_name }}" class="user-avatar">
+                                    @else
+                                        <div class="avatar-placeholder">{{ strtoupper(substr($review->user_name, 0, 1)) }}</div>
+                                    @endif
+                                    <span>{{ $review->user_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="review-movie">
+                                    No disponible
+                                </div>
+                            </td>
+                            <td class="review-rating">
                                 @if($review->valoracion == 'like')
-                                    <span class="like-badge"><i class="fas fa-thumbs-up"></i> Me gusta</span>
+                                    <i class="fas fa-thumbs-up text-success"></i> Me gusta
                                 @else
-                                    <span class="dislike-badge"><i class="fas fa-thumbs-down"></i> No me gusta</span>
+                                    <i class="fas fa-thumbs-down text-danger"></i> No me gusta
                                 @endif
-                            </div>
-                            <div class="review-date">
-                                <i class="far fa-clock"></i> {{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="review-actions">
-                        <button class="delete delete-btn" data-id="{{ $review->id }}">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
-                    </div>
-                </div>
-
-                @if(isset($review->comentario) && $review->comentario)
-                <div class="review-content">
-                    {{ $review->comentario }}
-                </div>
-                @endif
-
-                <div class="review-movie">
-                    <div class="movie-poster">
-                        @if(isset($review->poster_path) && $review->poster_path)
-                            <img src="https://image.tmdb.org/t/p/w92{{ $review->poster_path }}" alt="{{ $review->movie_title ?? 'Título desconocido' }}">
-                        @else
-                            <i class="fas fa-film"></i>
-                        @endif
-                    </div>
-                    <div>
-                        <div class="movie-title">{{ $review->movie_title ?? 'Título desconocido' }}</div>
-                        <div class="movie-type">Película</div>
-                    </div>
-                </div>
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}</td>
+                            <td class="actions">
+                                <button class="btn-action delete-review" data-id="{{ $review->id }}" title="Eliminar valoración">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No hay valoraciones disponibles</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-            @endforeach
 
             <div class="pagination-container">
                 @if ($reviews->hasPages())
@@ -621,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Botones para eliminar valoraciones
-    document.querySelectorAll('.delete-btn').forEach(button => {
+    document.querySelectorAll('.delete-review').forEach(button => {
         button.addEventListener('click', function() {
             const reviewId = this.getAttribute('data-id');
             if (confirm('¿Estás seguro de que deseas eliminar esta valoración? Esta acción no se puede deshacer.')) {

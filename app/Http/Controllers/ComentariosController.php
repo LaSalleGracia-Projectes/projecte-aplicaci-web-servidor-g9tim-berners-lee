@@ -90,4 +90,56 @@ class ComentariosController extends Controller {
 
         return response()->json($comentarios);
     }
+
+    public function getByPelicula($id)
+    {
+        $comentarios = Comentarios::where('pelicula_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Transformar los datos para la respuesta
+        $comentariosFormateados = $comentarios->map(function ($comentario) {
+            $usuario = User::find($comentario->usuario_id);
+            return [
+                'id' => $comentario->id,
+                'texto' => $comentario->texto,
+                'contiene_spoiler' => $comentario->contiene_spoiler,
+                'destacado' => $comentario->destacado,
+                'created_at' => $comentario->created_at,
+                'username' => $usuario ? $usuario->name : 'Usuario eliminado',
+                'avatar' => $usuario && $usuario->foto ? asset('storage/' . $usuario->foto) : asset('images/default-avatar.jpg'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'comentarios' => $comentariosFormateados
+        ]);
+    }
+
+    public function getBySerie($id)
+    {
+        $comentarios = Comentarios::where('serie_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Transformar los datos para la respuesta
+        $comentariosFormateados = $comentarios->map(function ($comentario) {
+            $usuario = User::find($comentario->usuario_id);
+            return [
+                'id' => $comentario->id,
+                'texto' => $comentario->texto,
+                'contiene_spoiler' => $comentario->contiene_spoiler,
+                'destacado' => $comentario->destacado,
+                'created_at' => $comentario->created_at,
+                'username' => $usuario ? $usuario->name : 'Usuario eliminado',
+                'avatar' => $usuario && $usuario->foto ? asset('storage/' . $usuario->foto) : asset('images/default-avatar.jpg'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'comentarios' => $comentariosFormateados
+        ]);
+    }
 }

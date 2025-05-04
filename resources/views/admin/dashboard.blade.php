@@ -439,16 +439,13 @@
                             @forelse($recentReviews as $review)
                             <tr>
                                 <td>{{ $review->user_name }}</td>
-                                <td>{{ $review->movie_title }}</td>
+                                <td>No disponible</td>
                                 <td>
-                                    <div class="rating-stars">
-                                        @for($i = 0; $i < $review->valoracion; $i++)
-                                            <i class="fas fa-star"></i>
-                                        @endfor
-                                        @for($i = $review->valoracion; $i < 5; $i++)
-                                            <i class="far fa-star"></i>
-                                        @endfor
-                                    </div>
+                                    @if($review->valoracion == 'like')
+                                        <i class="fas fa-thumbs-up text-success"></i> Me gusta
+                                    @else
+                                        <i class="fas fa-thumbs-down text-danger"></i> No me gusta
+                                    @endif
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d/m/Y H:i') }}</td>
                             </tr>
