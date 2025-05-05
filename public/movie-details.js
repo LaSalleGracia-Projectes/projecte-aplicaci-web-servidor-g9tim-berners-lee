@@ -774,6 +774,10 @@ function cargarComentarios() {
                     </div>
                 `;
                 container.innerHTML += comentarioHtml;
+
+                // Cargar las respuestas para este comentario
+                console.log("Cargando respuestas para comentario:", comentario.id);
+                cargarRespuestas(comentario.id);
             });
 
             // Agregar event listeners para los botones de like/dislike
@@ -819,7 +823,7 @@ function cargarRespuestas(comentarioId) {
         return;
     }
 
-    console.log("Cargando respuestas para comentario ID:", comentarioId);
+    console.log("Iniciando carga de respuestas para comentario ID:", comentarioId);
 
     // Construir URL absoluta para evitar problemas de rutas relativas
     const baseUrl = window.location.origin;
@@ -828,14 +832,14 @@ function cargarRespuestas(comentarioId) {
 
     fetch(respuestasUrl)
         .then(response => {
-            console.log("Respuesta para respuestas:", response.status);
+            console.log("Respuesta del servidor para respuestas:", response.status, response.statusText);
             if (!response.ok) {
                 throw new Error(`Error al cargar las respuestas: ${response.status}`);
             }
             return response.json();
         })
         .then(respuestas => {
-            console.log("Respuestas recibidas:", respuestas);
+            console.log("Respuestas recibidas para comentario", comentarioId, ":", respuestas);
             const container = document.getElementById(`respuestas-${comentarioId}`);
 
             if (!container) {
@@ -895,7 +899,7 @@ function cargarRespuestas(comentarioId) {
                 button.addEventListener('click', function() {
                     const respuestaEl = this.closest('.respuesta');
                     const warningEl = respuestaEl.querySelector('.spoiler-warning');
-                    const contentEl = respuestaEl.querySelector('.spoiler-content');
+                    const contentEl = respuestaEl.querySelector('.respuesta-content');
 
                     warningEl.style.display = 'none';
                     contentEl.style.display = 'block';
@@ -903,7 +907,7 @@ function cargarRespuestas(comentarioId) {
             });
         })
         .catch(error => {
-            console.error('Error al cargar respuestas:', error);
+            console.error('Error al cargar respuestas para comentario', comentarioId, ':', error);
             const container = document.getElementById(`respuestas-${comentarioId}`);
             if (container) {
                 container.innerHTML = '<p class="error-message">Error al cargar las respuestas</p>';
