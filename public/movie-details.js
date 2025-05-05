@@ -103,26 +103,21 @@ function showNotification(message, type = 'info') {
  * Inicializa todos los componentes de la página de detalles de película
  */
 function initializeMovieDetails() {
-    // Sistema de tabs
-    setupTabs();
-
-    // Configurar películas similares
-    setupSimilarMovies();
+    const movieId = document.querySelector('meta[name="movie-id"]')?.content;
+    if (!movieId) {
+        console.error('No se encontró el ID de la película');
+        return;
+    }
 
     // Cargar estado de favoritos
-    loadFavoriteStatus();
+    loadFavoriteStatus(movieId);
 
-    // Configurar botones principales de acción
-    setupMainActionButtons();
+    // Cargar comentarios
+    cargarComentarios();
 
-    // Inicializar el sistema de comentarios
-    initComentarios();
-
-    // Configurar botón volver arriba
-    setupBackToTop();
-
-    // Configurar botón de depuración
-    setupDebugButton();
+    // Inicializar otros elementos
+    initializeTrailerButtons();
+    initializeTabs();
 }
 
 /**
@@ -559,7 +554,7 @@ async function toggleFavorite(button, movieId) {
 /**
  * Carga el estado de favoritos del usuario
  */
-async function loadFavoriteStatus() {
+async function loadFavoriteStatus(movieId) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
@@ -730,7 +725,7 @@ function cargarComentarios() {
                     <div class="review ${esSpoiler ? 'spoiler' : ''}">
                         <div class="review-header">
                             <div class="user-info">
-                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                <img src="${usuario.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name)}&background=random&color=fff&size=40&rounded=true&bold=true&format=png`}"
                                      alt="${usuario.name}"
                                      class="avatar">
                                 <div>
@@ -872,7 +867,7 @@ function cargarRespuestas(comentarioId) {
                     <div class="respuesta ${esSpoiler ? 'spoiler' : ''}">
                         <div class="respuesta-header">
                             <div class="user-info">
-                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                <img src="${usuario.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name || 'Usuario')}&background=random&color=fff&size=40&rounded=true&bold=true&format=png`}"
                                      alt="${usuario.name || 'Usuario'}"
                                      class="avatar">
                                 <div>
