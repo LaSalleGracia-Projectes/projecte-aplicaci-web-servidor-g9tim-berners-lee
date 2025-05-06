@@ -112,8 +112,8 @@ function initializeMovieDetails() {
     // Cargar estado de favoritos
     loadFavoriteStatus(movieId);
 
-    // Cargar comentarios
-    cargarComentarios();
+    // Inicializar sistema de comentarios
+    initComentarios();
 
     // Inicializar otros elementos
     initializeTrailerButtons();
