@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -46,6 +48,43 @@ class User extends Authenticatable
         return null;
     }
 
+    /**
+     * Obtiene la URL del avatar del usuario usando UI Avatars
+     * Genera un avatar con las iniciales del nombre del usuario
+     */
+    public function getAvatarUrlAttribute()
+    {
+        // Generar avatar con UI Avatars usando las iniciales del nombre
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&background=random&color=fff&size=128&rounded=true&bold=true&format=png";
+    }
+
+    /**
+     * Guarda el avatar generado por UI Avatars
+     */
+    protected function guardarAvatarGenerado($avatarUrl)
+    {
+        try {
+            // Obtener el contenido de la imagen
+            $imageContent = file_get_contents($avatarUrl);
+
+            if ($imageContent) {
+                // Generar un nombre único para el archivo
+                $fileName = 'perfiles/avatar_' . $this->id . '_' . time() . '.png';
+
+                // Guardar la imagen en el storage
+                Storage::disk('public')->put($fileName, $imageContent);
+
+                // Actualizar el modelo
+                $this->foto_perfil = $fileName;
+                $this->foto_perfil_mime = 'image/png';
+                $this->save();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error al guardar avatar generado: ' . $e->getMessage());
+        }
+    }
+
     // ✅ Relación con Valoraciones
     public function valoraciones()
     {
@@ -57,7 +96,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comentarios::class, 'user_id');
     }
-    
+
     // ✅ Relación con Respuestas a Comentarios
     public function respuestasComentarios()
     {

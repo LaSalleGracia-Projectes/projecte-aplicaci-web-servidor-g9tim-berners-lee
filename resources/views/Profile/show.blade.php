@@ -21,13 +21,7 @@
     <!-- Cabecera del perfil -->
     <div class="profile-header">
         <div class="profile-avatar">
-            @if($user->foto_perfil)
-            <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil">
-            @else
-            <div class="profile-avatar-placeholder">
-                <i class="fas fa-user"></i>
-            </div>
-            @endif
+            <img src="{{ $user->avatar_url }}" alt="Foto de perfil">
         </div>
         <div class="profile-info">
             <h1>{{ $user->name }}</h1>

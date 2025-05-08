@@ -44,13 +44,7 @@
             <div class="form-group profile-photo-upload">
                 <label>Foto de Perfil</label>
                 <div class="current-photo">
-                    @if ($user->foto_perfil)
-                    <img src="{{ asset('storage/' . $user->foto_perfil) }}" alt="Foto de perfil" width="150">
-                    @else
-                    <div class="photo-placeholder">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    @endif
+                    <img src="{{ $user->avatar_url }}" alt="Foto de perfil" width="150">
                 </div>
 
                 <div class="file-upload">
