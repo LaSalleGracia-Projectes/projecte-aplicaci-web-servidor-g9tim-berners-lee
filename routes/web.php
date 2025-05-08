@@ -65,7 +65,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/random/generate', [RandomController::class, 'generate'])->name('random.generate');
+Route::match(['get', 'post'], '/random/generate', [RandomController::class, 'generate'])->name('random.generate');
 
 // Ruta temporal para crear admin (¡ELIMINAR EN PRODUCCIÓN!)
 Route::get('/create-admin', function () {

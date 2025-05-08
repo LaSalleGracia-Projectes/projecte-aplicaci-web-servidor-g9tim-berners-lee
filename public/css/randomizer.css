@@ -1,0 +1,696 @@
+/* Estilos para el randomizer de películas y series */
+
+/* Contenedor principal */
+.cine-randomizer {
+    position: relative;
+    margin-bottom: 3rem;
+    background-color: var(--negro-suave);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--verde-neon);
+}
+
+.cine-randomizer h2 {
+    color: var(--verde-neon);
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Selector de tipo de contenido */
+.content-type-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.content-type-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--verde-neon);
+    border-radius: 50px;
+    background-color: transparent;
+    color: var(--verde-neon);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.content-type-btn i {
+    font-size: 1.1rem;
+}
+
+.content-type-btn.active {
+    background-color: var(--verde-neon);
+    box-shadow: 0 4px 12px rgba(20, 255, 20, 0.5);
+    transform: translateY(-2px);
+    color: var(--negro);
+}
+
+.content-type-btn:hover:not(.active) {
+    background-color: rgba(20, 255, 20, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Formulario de filtros */
+.randomizer-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    color: var(--verde-neon);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.filter-group label i {
+    color: var(--verde-neon);
+}
+
+.filter-group select {
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--verde-neon);
+    background-color: var(--negro);
+    color: var(--blanco);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+.filter-group select:focus {
+    border-color: var(--verde-claro);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 255, 20, 0.25);
+}
+
+/* Botón para generar recomendación */
+.cine-randomizer .action-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 2rem;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    background-color: var(--verde-neon);
+    color: var(--negro);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    box-shadow: 0 4px 12px rgba(20, 255, 20, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cine-randomizer .action-btn i {
+    font-size: 1.2rem;
+}
+
+.cine-randomizer .action-btn:hover {
+    background-color: var(--verde-principal);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(20, 255, 20, 0.5);
+}
+
+/* Contenedor para la película/serie recomendada */
+.random-container {
+    min-height: 200px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.loading {
+    color: var(--blanco);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.loading i {
+    color: var(--verde-neon);
+    font-size: 1.5rem;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tarjeta de película */
+.random-movie {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    background: linear-gradient(135deg, var(--negro-suave) 0%, var(--negro) 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    position: relative;
+    width: 100%;
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(20, 255, 20, 0.2);
+}
+
+.random-movie:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border-color: var(--verde-neon);
+}
+
+.random-movie img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px 0 0 12px;
+    transition: all 0.3s ease;
+    box-shadow: 10px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.random-movie-info {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.random-movie-info h3 {
+    color: var(--blanco);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.original-title {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.movie-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.movie-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    padding: 0.4rem 0.8rem;
+    background-color: rgba(20, 255, 20, 0.1);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.movie-meta span:hover {
+    background-color: rgba(20, 255, 20, 0.2);
+    transform: translateY(-2px);
+}
+
+.movie-meta span i {
+    color: var(--verde-neon);
+}
+
+.movie-genres {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(20, 255, 20, 0.1);
+    font-style: italic;
+}
+
+.movie-countries {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+}
+
+.movie-countries i {
+    color: var(--verde-neon);
+}
+
+.movie-description {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 200px;
+    padding-right: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--verde-neon) var(--negro-suave);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.movie-description::-webkit-scrollbar {
+    width: 5px;
+}
+
+.movie-description::-webkit-scrollbar-track {
+    background: var(--negro-suave);
+    border-radius: 10px;
+}
+
+.movie-description::-webkit-scrollbar-thumb {
+    background: var(--verde-neon);
+    border-radius: 10px;
+}
+
+/* Reparto */
+.movie-cast {
+    margin-bottom: 1.5rem;
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.movie-cast h4,
+.movie-companies h4 {
+    color: var(--blanco);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border-left: 3px solid var(--verde-neon);
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.movie-cast h4 i,
+.movie-companies h4 i {
+    color: var(--verde-neon);
+}
+
+.cast-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.cast-member {
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.cast-member:hover {
+    transform: translateY(-3px);
+    background-color: rgba(20, 255, 20, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-color: var(--verde-neon);
+}
+
+.cast-photo {
+    height: 150px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cast-info {
+    padding: 0.7rem;
+}
+
+.cast-name {
+    display: block;
+    color: var(--blanco);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cast-character {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Compañías de producción */
+.movie-companies {
+    margin-bottom: 2rem;
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.companies-list {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.company {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 100px;
+    min-height: 60px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.company:hover {
+    transform: translateY(-3px);
+    background-color: rgba(20, 255, 20, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-color: var(--verde-neon);
+}
+
+.company img {
+    max-height: 40px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.company-name-only {
+    color: var(--blanco);
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.movie-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    flex: 1;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.movie-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: transform 0.5s ease;
+    transform: skewX(-15deg);
+    z-index: 1;
+}
+
+.movie-btn:hover:before {
+    transform: translateX(50%) skewX(-15deg);
+}
+
+.movie-btn i {
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+.movie-btn span {
+    position: relative;
+    z-index: 2;
+}
+
+.movie-btn:hover i {
+    transform: scale(1.2);
+}
+
+.movie-btn.primary {
+    background-color: var(--verde-neon);
+    color: var(--negro);
+}
+
+.movie-btn.primary:hover {
+    background-color: var(--verde-principal);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(20, 255, 20, 0.4);
+}
+
+.movie-btn.secondary {
+    background-color: transparent;
+    border: 2px solid var(--verde-neon);
+    color: var(--verde-neon);
+}
+
+.movie-btn.secondary:hover {
+    background-color: rgba(20, 255, 20, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(20, 255, 20, 0.2);
+}
+
+/* Mensaje de error */
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 12px;
+    border: 1px dashed var(--verde-neon);
+    color: var(--text-light);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.error-message i {
+    color: var(--verde-neon);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.error-message p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+    .cast-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .random-movie {
+        grid-template-columns: 1fr;
+    }
+
+    .random-movie img {
+        height: 350px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .movie-actions {
+        flex-direction: column;
+    }
+
+    .cast-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .content-type-selector {
+        flex-direction: column;
+    }
+
+    .content-type-btn {
+        width: 100%;
+    }
+
+    .randomizer-filters {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sección de plataformas de streaming */
+.movie-streaming {
+    margin-bottom: 1.5rem;
+    background-color: rgba(20, 255, 20, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(20, 255, 20, 0.1);
+}
+
+.movie-streaming h4 {
+    color: var(--blanco);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border-left: 3px solid var(--verde-neon);
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.movie-streaming h4 i {
+    color: var(--verde-neon);
+}
+
+.providers-section {
+    margin-bottom: 1rem;
+}
+
+.providers-section h5 {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.providers-section h5 i {
+    color: var(--verde-neon);
+}
+
+.providers-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.provider-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--negro);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(20, 255, 20, 0.1);
+    cursor: pointer;
+}
+
+.provider-item:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-color: var(--verde-neon);
+}
+
+.provider-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.providers-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--verde-neon);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    background-color: rgba(20, 255, 20, 0.1);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.providers-link:hover {
+    background-color: rgba(20, 255, 20, 0.2);
+    transform: translateY(-2px);
+}

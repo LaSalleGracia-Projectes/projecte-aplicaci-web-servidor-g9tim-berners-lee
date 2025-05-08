@@ -94,44 +94,143 @@
   <!-- CINE RANDOMIZER -->
   <section class="cine-randomizer">
     <h2>{{ __('messages.randomizer') }}</h2>
-    <form action="{{ route('random.generate') }}" method="GET">
-      <div class="randomizer-filters">
-        <label for="tipoContenido">{{ __('messages.content_type') }}:</label>
-        <select id="tipoContenido" name="tipoContenido">
-          <option value="movie">{{ __('messages.movies') }}</option>
-          <option value="tv">{{ __('messages.series') }}</option>
-        </select>
-        <label for="genero">{{ __('messages.genre') }}:</label>
-        <select id="genero" name="genero">
-          <option value="">{{ __('messages.all_genres') }}</option>
-        </select>
-        <label for="duracion">{{ __('messages.duration') }}:</label>
-        <select id="duracion" name="duracion">
-          <option value="">{{ __('messages.any') }}</option>
-          <option value="short">{{ __('messages.short') }}</option>
-          <option value="long">{{ __('messages.long') }}</option>
-        </select>
-        <label for="anio">{{ __('messages.release_year') }}:</label>
-        <select id="anio" name="anio">
-          <option value="">{{ __('messages.all') }}</option>
-        </select>
-        <label for="plataforma">{{ __('messages.platform') }}:</label>
-        <select id="plataforma" name="plataforma">
-          <option value="">{{ __('messages.all_platforms') }}</option>
-          <option value="netflix">Netflix</option>
-          <option value="hbo">HBO</option>
-          <option value="disney">Disney+</option>
-        </select>
-      </div>
-      <button type="submit" id="generarRandom" class="action-btn">🎲 {{ __('messages.generate') }}</button>
-    </form>
-    <div class="random-container" id="randomContainer">
-      @if(isset($randomMovie))
-        <div class="random-movie">
-          <h3>{{ $randomMovie->titulo }}</h3>
-          <p>{{ $randomMovie->sinopsis }}</p>
+
+    <!-- Selector de tipo de contenido -->
+    <div class="content-type-selector">
+        <button type="button" class="content-type-btn active" data-type="movie">
+            <i class="fas fa-film"></i> {{ __('messages.movies') }}
+        </button>
+        <button type="button" class="content-type-btn" data-type="tv">
+            <i class="fas fa-tv"></i> {{ __('messages.series') }}
+        </button>
+    </div>
+
+    <form id="randomizerForm" action="{{ route('random.generate') }}" method="GET">
+        <input type="hidden" name="tipoContenido" id="tipoContenido" value="movie">
+
+        <!-- Filtros para películas -->
+        <div class="randomizer-filters movie-filters">
+            <div class="filter-group">
+                <label for="genero"><i class="fas fa-theater-masks"></i> {{ __('messages.genre') }}</label>
+                <select id="genero" name="genero">
+                    <option value="">{{ __('messages.all_genres') }}</option>
+                    <option value="accion">Acción</option>
+                    <option value="aventura">Aventura</option>
+                    <option value="animacion">Animación</option>
+                    <option value="comedia">Comedia</option>
+                    <option value="crimen">Crimen</option>
+                    <option value="documental">Documental</option>
+                    <option value="drama">Drama</option>
+                    <option value="familiar">Familiar</option>
+                    <option value="fantasia">Fantasía</option>
+                    <option value="historia">Historia</option>
+                    <option value="terror">Terror</option>
+                    <option value="musica">Música</option>
+                    <option value="misterio">Misterio</option>
+                    <option value="romance">Romance</option>
+                    <option value="ciencia ficcion">Ciencia ficción</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="belica">Bélica</option>
+                    <option value="western">Western</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="duracion"><i class="fas fa-clock"></i> {{ __('messages.duration') }}</label>
+                <select id="duracion" name="duracion">
+                    <option value="">{{ __('messages.any') }}</option>
+                    <option value="short">{{ __('messages.short') }} (< 90 min)</option>
+                    <option value="medium">{{ __('messages.medium') }} (90-120 min)</option>
+                    <option value="long">{{ __('messages.long') }} (> 120 min)</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="anio"><i class="fas fa-calendar"></i> {{ __('messages.release_year') }}</label>
+                <select id="anio" name="anio">
+                    <option value="">{{ __('messages.all') }}</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="plataforma"><i class="fas fa-play-circle"></i> {{ __('messages.platform') }}</label>
+                <select id="plataforma" name="plataforma">
+                    <option value="">{{ __('messages.all_platforms') }}</option>
+                    <option value="netflix">Netflix</option>
+                    <option value="hbo">HBO</option>
+                    <option value="disney">Disney+</option>
+                    <option value="prime">Prime Video</option>
+                </select>
+            </div>
         </div>
-      @endif
+
+        <!-- Filtros para series -->
+        <div class="randomizer-filters series-filters" style="display: none;">
+            <div class="filter-group">
+                <label for="generoSerie"><i class="fas fa-theater-masks"></i> {{ __('messages.genre') }}</label>
+                <select id="generoSerie" name="genero">
+                    <option value="">{{ __('messages.all_genres') }}</option>
+                    <option value="accion">Acción y Aventura</option>
+                    <option value="animacion">Animación</option>
+                    <option value="comedia">Comedia</option>
+                    <option value="crimen">Crimen</option>
+                    <option value="documental">Documental</option>
+                    <option value="drama">Drama</option>
+                    <option value="familiar">Familiar</option>
+                    <option value="infantil">Infantil</option>
+                    <option value="misterio">Misterio</option>
+                    <option value="noticias">Noticias</option>
+                    <option value="reality">Reality</option>
+                    <option value="ciencia ficcion">Ciencia ficción y Fantasía</option>
+                    <option value="soap">Soap</option>
+                    <option value="talk">Talk</option>
+                    <option value="guerra">Guerra y Política</option>
+                    <option value="western">Western</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="temporadas"><i class="fas fa-layer-group"></i> {{ __('messages.seasons') }}</label>
+                <select id="temporadas" name="temporadas">
+                    <option value="">{{ __('messages.any') }}</option>
+                    <option value="1">1 {{ __('messages.season') }}</option>
+                    <option value="2-3">2-3 {{ __('messages.seasons') }}</option>
+                    <option value="4-6">4-6 {{ __('messages.seasons') }}</option>
+                    <option value="7+">7+ {{ __('messages.seasons') }}</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="anioSerie"><i class="fas fa-calendar"></i> {{ __('messages.release_year') }}</label>
+                <select id="anioSerie" name="anio">
+                    <option value="">{{ __('messages.all') }}</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="plataformaSerie"><i class="fas fa-play-circle"></i> {{ __('messages.platform') }}</label>
+                <select id="plataformaSerie" name="plataforma">
+                    <option value="">{{ __('messages.all_platforms') }}</option>
+                    <option value="netflix">Netflix</option>
+                    <option value="hbo">HBO</option>
+                    <option value="disney">Disney+</option>
+                    <option value="prime">Prime Video</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" id="generarRandom" class="action-btn">
+            <i class="fas fa-dice"></i> {{ __('messages.generate') }}
+        </button>
+    </form>
+
+    <div class="random-container" id="randomContainer">
+        @if(isset($randomMovie))
+            <div class="random-movie">
+                <h3>{{ $randomMovie->titulo }}</h3>
+                <p>{{ $randomMovie->sinopsis }}</p>
+            </div>
+        @endif
     </div>
   </section>
 </main>
