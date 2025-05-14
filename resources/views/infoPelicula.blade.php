@@ -6,6 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="user-id" content="{{ auth()->id() }}">
 <meta name="tmdb-api-key" content="{{ env('TMDB_API_KEY') }}">
+<meta name="movie-id" content="{{ $pelicula['id'] ?? $pelicula->tmdb_id ?? '' }}">
 @endsection
 
 @push('styles')

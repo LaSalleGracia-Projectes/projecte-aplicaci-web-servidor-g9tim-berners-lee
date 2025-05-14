@@ -371,7 +371,7 @@ function createComentarioHTML(comentario) {
                 <div class="respuesta" data-respuesta-id="${respuesta.id}">
                     <div class="respuesta-header">
                         <div class="user-info">
-                            <img src="${respuesta.usuario.avatar_url || '/img/perfil-default.jpg'}" alt="Avatar" class="avatar">
+                            <img src="${respuesta.usuario.avatar_url || '/images/default-avatar.png'}" alt="Avatar" class="avatar">
                             <span class="username">${respuesta.usuario.name || 'Usuario'}</span>
                         </div>
                         <span class="respuesta-date">${fechaRespuestaFormateada}</span>

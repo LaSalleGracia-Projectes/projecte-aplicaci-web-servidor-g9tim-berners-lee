@@ -103,26 +103,21 @@ function showNotification(message, type = 'info') {
  * Inicializa todos los componentes de la página de detalles de película
  */
 function initializeMovieDetails() {
-    // Sistema de tabs
-    setupTabs();
-
-    // Configurar películas similares
-    setupSimilarMovies();
+    const movieId = document.querySelector('meta[name="movie-id"]')?.content;
+    if (!movieId) {
+        console.error('No se encontró el ID de la película');
+        return;
+    }
 
     // Cargar estado de favoritos
-    loadFavoriteStatus();
+    loadFavoriteStatus(movieId);
 
-    // Configurar botones principales de acción
-    setupMainActionButtons();
-
-    // Inicializar el sistema de comentarios
+    // Inicializar sistema de comentarios
     initComentarios();
 
-    // Configurar botón volver arriba
-    setupBackToTop();
-
-    // Configurar botón de depuración
-    setupDebugButton();
+    // Inicializar otros elementos
+    initializeTrailerButtons();
+    initializeTabs();
 }
 
 /**
@@ -559,7 +554,7 @@ async function toggleFavorite(button, movieId) {
 /**
  * Carga el estado de favoritos del usuario
  */
-async function loadFavoriteStatus() {
+async function loadFavoriteStatus(movieId) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
@@ -730,7 +725,7 @@ function cargarComentarios() {
                     <div class="review ${esSpoiler ? 'spoiler' : ''}">
                         <div class="review-header">
                             <div class="user-info">
-                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                <img src="${usuario.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name)}&background=random&color=fff&size=40&rounded=true&bold=true&format=png`}"
                                      alt="${usuario.name}"
                                      class="avatar">
                                 <div>
@@ -774,6 +769,10 @@ function cargarComentarios() {
                     </div>
                 `;
                 container.innerHTML += comentarioHtml;
+
+                // Cargar las respuestas para este comentario
+                console.log("Cargando respuestas para comentario:", comentario.id);
+                cargarRespuestas(comentario.id);
             });
 
             // Agregar event listeners para los botones de like/dislike
@@ -819,7 +818,7 @@ function cargarRespuestas(comentarioId) {
         return;
     }
 
-    console.log("Cargando respuestas para comentario ID:", comentarioId);
+    console.log("Iniciando carga de respuestas para comentario ID:", comentarioId);
 
     // Construir URL absoluta para evitar problemas de rutas relativas
     const baseUrl = window.location.origin;
@@ -828,14 +827,14 @@ function cargarRespuestas(comentarioId) {
 
     fetch(respuestasUrl)
         .then(response => {
-            console.log("Respuesta para respuestas:", response.status);
+            console.log("Respuesta del servidor para respuestas:", response.status, response.statusText);
             if (!response.ok) {
                 throw new Error(`Error al cargar las respuestas: ${response.status}`);
             }
             return response.json();
         })
         .then(respuestas => {
-            console.log("Respuestas recibidas:", respuestas);
+            console.log("Respuestas recibidas para comentario", comentarioId, ":", respuestas);
             const container = document.getElementById(`respuestas-${comentarioId}`);
 
             if (!container) {
@@ -868,7 +867,7 @@ function cargarRespuestas(comentarioId) {
                     <div class="respuesta ${esSpoiler ? 'spoiler' : ''}">
                         <div class="respuesta-header">
                             <div class="user-info">
-                                <img src="${usuario.foto_perfil ? '/storage/' + usuario.foto_perfil : '/images/default-avatar.png'}"
+                                <img src="${usuario.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name || 'Usuario')}&background=random&color=fff&size=40&rounded=true&bold=true&format=png`}"
                                      alt="${usuario.name || 'Usuario'}"
                                      class="avatar">
                                 <div>
@@ -895,7 +894,7 @@ function cargarRespuestas(comentarioId) {
                 button.addEventListener('click', function() {
                     const respuestaEl = this.closest('.respuesta');
                     const warningEl = respuestaEl.querySelector('.spoiler-warning');
-                    const contentEl = respuestaEl.querySelector('.spoiler-content');
+                    const contentEl = respuestaEl.querySelector('.respuesta-content');
 
                     warningEl.style.display = 'none';
                     contentEl.style.display = 'block';
@@ -903,7 +902,7 @@ function cargarRespuestas(comentarioId) {
             });
         })
         .catch(error => {
-            console.error('Error al cargar respuestas:', error);
+            console.error('Error al cargar respuestas para comentario', comentarioId, ':', error);
             const container = document.getElementById(`respuestas-${comentarioId}`);
             if (container) {
                 container.innerHTML = '<p class="error-message">Error al cargar las respuestas</p>';
