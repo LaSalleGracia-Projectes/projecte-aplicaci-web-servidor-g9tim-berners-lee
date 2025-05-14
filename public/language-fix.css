@@ -1,0 +1,10 @@
+/* Fix para el menú desplegable de idiomas */
+.language-dropdown:hover .language-dropdown-content {
+    display: none !important;
+}
+
+/* Solo se mostrará cuando tenga la clase active (al hacer clic) */
+.language-dropdown.active .language-dropdown-content {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}

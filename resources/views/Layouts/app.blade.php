@@ -1,19 +1,33 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="auth-token" content="{{ session('auth_token') }}">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   @yield('head')
   <title>@yield('title', 'CritFlix')</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="{{ asset('styles.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/randomizer.css') }}">
+  <link rel="stylesheet" href="{{ asset('styles.css') }}?{{ time() }}">
+  <link rel="stylesheet" href="{{ asset('css/randomizer.css') }}?{{ time() }}">
+  <link rel="stylesheet" href="{{ asset('language-fix.css') }}?{{ time() }}">
   @stack('styles')
   <script>
+    // Información sobre el idioma actual
+    window.APP_INFO = {
+      currentLocale: "{{ app()->getLocale() }}",
+      defaultLocale: "es"
+    };
+
     window.TMDB_CONFIG = {
       API_KEY: "{{ config('tmdb.api_key') }}",
       BASE_URL: "{{ config('tmdb.base_url') }}",
@@ -57,35 +71,40 @@
       lang_ca: "{{ __('messages.lang_ca') }}"
     };
   </script>
-  <script type="module" src="{{ asset('js/main.js') }}"></script>
+  <script type="module" src="{{ asset('js/main.js') }}?{{ time() }}"></script>
 </head>
 <body>
-  @include('partials.header')
-  @include('partials.modals')
+  <div class="page-wrapper">
+    @include('partials.header')
+    @include('partials.modals')
 
-  <!-- Notificaciones flash -->
-  @if(session('success'))
-  <div id="flash-message" class="toast toast-success show">
-    <i class="fas fa-check-circle"></i> {{ session('success') }}
+    <!-- Notificaciones flash -->
+    @if(session('success'))
+    <div id="flash-message" class="toast toast-success show">
+      <i class="fas fa-check-circle"></i> {{ session('success') }}
+    </div>
+    <script>
+      // Auto-cerrar el mensaje después de 3 segundos
+      setTimeout(function() {
+        const flashMessage = document.getElementById('flash-message');
+        if (flashMessage) {
+          flashMessage.classList.remove('show');
+          setTimeout(function() {
+            flashMessage.remove();
+          }, 300);
+        }
+      }, 3000);
+    </script>
+    @endif
+
+    <main class="main-content">
+      @yield('content')
+    </main>
+
+    @include('partials.back-to-top')
+    @include('partials.footer')
   </div>
-  <script>
-    // Auto-cerrar el mensaje después de 3 segundos
-    setTimeout(function() {
-      const flashMessage = document.getElementById('flash-message');
-      if (flashMessage) {
-        flashMessage.classList.remove('show');
-        setTimeout(function() {
-          flashMessage.remove();
-        }, 300);
-      }
-    }, 3000);
-  </script>
-  @endif
 
-  @yield('content')
-
-  @include('partials.back-to-top')
-  @include('partials.footer')
   @stack('scripts')
 
   <!-- Yield para scripts específicos de cada página -->

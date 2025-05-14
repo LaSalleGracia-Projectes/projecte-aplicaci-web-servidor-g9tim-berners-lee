@@ -3,17 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Test de Idioma - CritFlix</title>
     <style>
         :root {
-            --verde-neon: #39ff14;
+            --negro: #0a0a0a;
+            --blanco: #ffffff;
+            --gris-oscuro: #222222;
+            --gris-medio: #666666;
+            --verde-neon: #00ff87;
+            --verde-claro: #7affbe;
+            --verde-principal: #00cc6a;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--negro);
+            color: var(--blanco);
+            line-height: 1.6;
             margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
             padding: 20px;
         }
 
@@ -21,39 +37,50 @@
             color: var(--verde-neon);
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
         .card {
-            background-color: #222;
+            background-color: var(--gris-oscuro);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn {
-            background-color: transparent;
+            display: inline-block;
+            background-color: var(--gris-oscuro);
             color: var(--verde-neon);
             border: 1px solid var(--verde-neon);
             padding: 8px 16px;
-            margin: 5px;
+            margin-right: 10px;
             border-radius: 4px;
+            text-decoration: none;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: var(--verde-neon);
+            color: var(--negro);
         }
 
         .btn.active {
             background-color: var(--verde-neon);
-            color: #000;
+            color: var(--negro);
+            font-weight: bold;
         }
 
         pre {
-            background-color: #333;
+            background-color: var(--negro);
             padding: 10px;
             border-radius: 4px;
             overflow-x: auto;
+        }
+
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            background-color: rgba(0, 255, 135, 0.1);
         }
     </style>
 </head>
@@ -66,12 +93,38 @@
             <p>Esta es una página de prueba para verificar el funcionamiento del sistema de idiomas.</p>
 
             <div style="margin: 20px 0;">
-                <button id="btn-es" onclick="changeLanguage('es')" class="btn {{ app()->getLocale() == 'es' ? 'active' : '' }}">Español</button>
-                <button id="btn-ca" onclick="changeLanguage('ca')" class="btn {{ app()->getLocale() == 'ca' ? 'active' : '' }}">Català</button>
-                <button id="btn-en" onclick="changeLanguage('en')" class="btn {{ app()->getLocale() == 'en' ? 'active' : '' }}">English</button>
+                <a href="{{ route('language.change', ['locale' => 'es']) }}" class="btn {{ app()->getLocale() == 'es' ? 'active' : '' }}">Español</a>
+                <a href="{{ route('language.change', ['locale' => 'ca']) }}" class="btn {{ app()->getLocale() == 'ca' ? 'active' : '' }}">Català</a>
+                <a href="{{ route('language.change', ['locale' => 'en']) }}" class="btn {{ app()->getLocale() == 'en' ? 'active' : '' }}">English</a>
             </div>
+        </div>
 
-            <div id="status" style="margin-top: 10px;"></div>
+        <div class="card">
+            <h3>Textos traducidos</h3>
+            <div class="test-item">
+                <strong>Home/Inicio:</strong> {{ __('messages.home') }}
+            </div>
+            <div class="test-item">
+                <strong>Movies/Películas:</strong> {{ __('messages.movies') }}
+            </div>
+            <div class="test-item">
+                <strong>Series/Series:</strong> {{ __('messages.series') }}
+            </div>
+            <div class="test-item">
+                <strong>Critics/Críticos:</strong> {{ __('messages.critics') }}
+            </div>
+            <div class="test-item">
+                <strong>Trends/Tendencias:</strong> {{ __('messages.trends') }}
+            </div>
+            <div class="test-item">
+                <strong>Language/Idioma:</strong> {{ __('messages.language') }}
+            </div>
+            <div class="test-item">
+                <strong>Login/Iniciar sesión:</strong> {{ __('messages.login') }}
+            </div>
+            <div class="test-item">
+                <strong>Register/Registrarse:</strong> {{ __('messages.register') }}
+            </div>
         </div>
 
         <div class="card">
@@ -80,79 +133,13 @@
                 <li>Idioma de la aplicación: <strong>{{ app()->getLocale() }}</strong></li>
                 <li>Idioma en sesión: <strong>{{ session('locale', 'no hay') }}</strong></li>
                 <li>Idioma en cookie: <strong>{{ isset($_COOKIE['locale']) ? $_COOKIE['locale'] : 'no hay' }}</strong></li>
+                <li>URL Actual: <strong>{{ url()->current() }}</strong></li>
             </ul>
+        </div>
 
-            <h3>Cookies actuales:</h3>
-            <pre id="cookie-debug">{{ print_r($_COOKIE, true) }}</pre>
+        <div class="card">
+            <a href="{{ route('home') }}" class="btn">Volver al inicio</a>
         </div>
     </div>
-
-    <script>
-        function changeLanguage(locale) {
-            const status = document.getElementById('status');
-            status.textContent = `Cambiando idioma a ${locale}...`;
-
-            // Establece la cookie directamente
-            document.cookie = `locale=${locale}; max-age=31536000; path=/; SameSite=Lax`;
-
-            // Actualiza el debug de cookies
-            document.getElementById('cookie-debug').textContent = document.cookie;
-
-            // Hace la petición al servidor
-            fetch(`/change-language/${locale}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (response.ok) {
-                    status.textContent = 'Idioma cambiado correctamente. Recargando...';
-
-                    // Recarga la página con un parámetro para evitar caché
-                    setTimeout(() => {
-                        window.location.href = window.location.pathname + '?t=' + Date.now();
-                    }, 1000);
-                } else {
-                    throw new Error('Error al cambiar el idioma');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                status.textContent = 'Error al cambiar el idioma. Intentando método alternativo...';
-
-                // Método alternativo
-                fetch(`/language/${locale}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        status.textContent = 'Idioma cambiado correctamente (método alternativo). Recargando...';
-
-                        // Recarga la página con un parámetro para evitar caché
-                        setTimeout(() => {
-                            window.location.href = window.location.pathname + '?t=' + Date.now();
-                        }, 1000);
-                    } else {
-                        throw new Error('Error al cambiar el idioma (método alternativo)');
-                    }
-                })
-                .catch(err => {
-                    console.error('Error (método alternativo):', err);
-                    status.textContent = 'Error al cambiar el idioma. Por favor, recarga la página manualmente.';
-                });
-            });
-        }
-
-        // Muestra el estado de las cookies al cargar la página
-        window.addEventListener('load', function() {
-            document.getElementById('cookie-debug').textContent = document.cookie;
-        });
-    </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Críticos - CritiFlix')
+@section('title', __('messages.critics') . ' - CritFlix')
 
 
 @push('styles')
@@ -12,8 +12,8 @@
     <!-- HERO SECTION -->
     <section class="hero-section critic-hero">
         <div class="hero-content">
-            <h1>CRÍTICOS DESTACADOS</h1>
-            <p>Descubre las voces más influyentes en el mundo de la crítica cinematográfica</p>
+            <h1>{{ __('messages.featured_critics_caps') }}</h1>
+            <p>{{ __('messages.discover_influential_voices') }}</p>
         </div>
     </section>
 
@@ -22,27 +22,27 @@
         <div class="filter-container">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="criticSearch" placeholder="Buscar crítico por nombre o especialidad...">
+                <input type="text" id="criticSearch" placeholder="{{ __('messages.search_critic_placeholder') }}">
             </div>
             <div class="filter-controls">
                 <div class="filter-group">
-                    <label for="genreFilter">Especialidad</label>
+                    <label for="genreFilter">{{ __('messages.specialty') }}</label>
                     <select id="genreFilter">
-                        <option value="">Todos los géneros</option>
-                        <option value="accion">Acción</option>
-                        <option value="drama">Drama</option>
-                        <option value="comedia">Comedia</option>
-                        <option value="ciencia-ficcion">Ciencia Ficción</option>
-                        <option value="terror">Terror</option>
-                        <option value="documental">Documental</option>
+                        <option value="">{{ __('messages.all_genres') }}</option>
+                        <option value="accion">{{ __('messages.action') }}</option>
+                        <option value="drama">{{ __('messages.drama') }}</option>
+                        <option value="comedia">{{ __('messages.comedy') }}</option>
+                        <option value="ciencia-ficcion">{{ __('messages.sci_fi') }}</option>
+                        <option value="terror">{{ __('messages.horror') }}</option>
+                        <option value="documental">{{ __('messages.documentary') }}</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="sortBy">Ordenar por</label>
+                    <label for="sortBy">{{ __('messages.sort_by') }}</label>
                     <select id="sortBy">
-                        <option value="popular">Más populares</option>
-                        <option value="recent">Más recientes</option>
-                        <option value="rating">Mejor calificados</option>
+                        <option value="popular">{{ __('messages.most_popular') }}</option>
+                        <option value="recent">{{ __('messages.most_recent') }}</option>
+                        <option value="rating">{{ __('messages.highest_rated') }}</option>
                     </select>
                 </div>
             </div>
@@ -51,7 +51,7 @@
 
     <!-- CRÍTICOS DESTACADOS GRID -->
     <section class="critics-grid-section">
-        <h2 class="section-title">Los Más Influyentes</h2>
+        <h2 class="section-title">{{ __('messages.most_influential') }}</h2>
         <div class="critics-grid" id="criticsGrid">
             @foreach($topCritics as $critic)
                 <div class="critic-card" data-genre="{{ $critic->especialidad }}">
@@ -69,7 +69,7 @@
                                 <span class="reviews"><i class="fas fa-film"></i> {{ $critic->total_resenas }}</span>
                                 <span class="followers"><i class="fas fa-users"></i> {{ $critic->seguidores }}</span>
                             </div>
-                            <p class="critic-bio">{{ Str::limit($critic->biografia ?? 'Crítico de cine apasionado por compartir análisis profundos y perspectivas únicas sobre las películas.', 120) }}</p>
+                            <p class="critic-bio">{{ Str::limit($critic->biografia ?? __('messages.default_critic_bio'), 120) }}</p>
                             <div class="critic-specialties">
                                 @foreach(explode(',', $critic->especialidad) as $genre)
                                     <span class="specialty-tag">{{ trim($genre) }}</span>
@@ -78,9 +78,9 @@
                         </div>
                         <div class="critic-actions">
                             <button class="btn btn-secondary follow-btn" data-id="{{ $critic->id }}">
-                                <i class="fas fa-user-plus"></i> Seguir
+                                <i class="fas fa-user-plus"></i> {{ __('messages.follow') }}
                             </button>
-                            <a href="{{ route('criticos.perfil', $critic->id) }}" class="btn btn-primary">Ver Perfil</a>
+                            <a href="{{ route('criticos.perfil', $critic->id) }}" class="btn btn-primary">{{ __('messages.view_profile') }}</a>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
 
     <!-- RESEÑAS TRENDING -->
     <section class="trending-reviews-section">
-        <h2 class="section-title">Reseñas Trending</h2>
+        <h2 class="section-title">{{ __('messages.trending_reviews') }}</h2>
         <div class="trending-reviews-slider" id="trendingReviews">
             @foreach($trendingReviews as $review)
                 <div class="review-card">
@@ -119,7 +119,7 @@
                             <span><i class="fas fa-comment"></i> {{ $review->comentarios->count() }}</span>
                             <span><i class="fas fa-eye"></i> {{ $review->vistas }}</span>
                         </div>
-                        <a href="#" class="read-more-link">Leer más <i class="fas fa-chevron-right"></i></a>
+                        <a href="#" class="read-more-link">{{ __('messages.read_more') }} <i class="fas fa-chevron-right"></i></a>
                     </div>
                 </div>
             @endforeach
@@ -133,31 +133,31 @@
     <!-- CONVIÉRTETE EN CRÍTICO -->
     <section class="become-critic-section">
         <div class="become-critic-content">
-            <h2>¿Tienes una voz crítica?</h2>
-            <p>Comparte tus opiniones y análisis con nuestra comunidad. Conviértete en un crítico verificado y obtén acceso a estrenos exclusivos.</p>
+            <h2>{{ __('messages.have_critical_voice') }}</h2>
+            <p>{{ __('messages.share_opinions') }}</p>
             <div class="benefits-grid">
                 <div class="benefit-item">
                     <i class="fas fa-ticket-alt"></i>
-                    <h4>Preestrenos</h4>
-                    <p>Acceso a preestrenos exclusivos</p>
+                    <h4>{{ __('messages.previews') }}</h4>
+                    <p>{{ __('messages.exclusive_previews') }}</p>
                 </div>
                 <div class="benefit-item">
                     <i class="fas fa-trophy"></i>
-                    <h4>Reconocimiento</h4>
-                    <p>Destaca en la comunidad de críticos</p>
+                    <h4>{{ __('messages.recognition') }}</h4>
+                    <p>{{ __('messages.stand_out') }}</p>
                 </div>
                 <div class="benefit-item">
                     <i class="fas fa-video"></i>
-                    <h4>Contenido Exclusivo</h4>
-                    <p>Material detrás de cámaras</p>
+                    <h4>{{ __('messages.exclusive_content') }}</h4>
+                    <p>{{ __('messages.behind_scenes') }}</p>
                 </div>
                 <div class="benefit-item">
                     <i class="fas fa-comments"></i>
-                    <h4>Comunidad</h4>
-                    <p>Conecta con otros cinéfilos</p>
+                    <h4>{{ __('messages.community') }}</h4>
+                    <p>{{ __('messages.connect_cinephiles') }}</p>
                 </div>
             </div>
-          
+
         </div>
     </section>
 </main>

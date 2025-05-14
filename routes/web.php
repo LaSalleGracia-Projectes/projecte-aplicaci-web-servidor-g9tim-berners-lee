@@ -16,6 +16,7 @@ use App\Http\Controllers\EmailTestController;
 use App\Http\Controllers\ListasController;
 use App\Http\Controllers\PeliculasSeriesController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\DiagnosticController;
 
 
 // Rutas de perfil - protegidas por autenticación
@@ -174,3 +175,12 @@ Route::get('/language/{locale}', [App\Http\Controllers\LanguageController::class
 Route::get('/test-language', function () {
     return view('test-language');
 })->name('test.language');
+
+// Ruta para prueba directa de idioma
+Route::get('/test-direct', function () {
+    return view('test-direct');
+})->name('test.direct');
+
+// Diagnóstico de idioma
+Route::get('/diagnostico/idioma', [DiagnosticController::class, 'index'])->name('diagnostic.language');
+Route::get('/diagnostico/test-translation/{locale}', [DiagnosticController::class, 'testTranslation'])->name('diagnostic.test-translation');
