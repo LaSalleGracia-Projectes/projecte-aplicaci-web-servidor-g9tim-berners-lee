@@ -49,7 +49,7 @@ function createSpinner() {
   spinner.innerHTML = `
     <div class="spinner-container">
       <div class="spinner"></div>
-      <p>Cargando...</p>
+      <p>${window.translations?.loading || 'Cargando...'}</p>
     </div>
   `;
   document.body.appendChild(spinner);
@@ -149,7 +149,7 @@ async function loadFeaturedSeries() {
     renderFeaturedSlider();
   } catch (error) {
     console.error("Error cargando series destacadas:", error);
-    showNotification("Error al cargar series destacadas. Por favor, inténtalo de nuevo más tarde.", "error");
+    showNotification(window.translations?.error_loading_series || "Error al cargar series destacadas. Por favor, inténtalo de nuevo más tarde.", "error");
   } finally {
     hideSpinner();
   }
@@ -580,7 +580,7 @@ function setupModals() {
           trailerContainer.innerHTML = `
             <div class="trailer-loading">
               <div class="spinner"></div>
-              <span>Cargando trailer...</span>
+              <span>${window.translations?.loading_trailer || 'Cargando trailer...'}</span>
             </div>
           `;
         }
@@ -739,21 +739,21 @@ function renderSeries(series, container) {
         <img src="${posterUrl}" alt="${title}" loading="lazy">
         <div class="movie-overlay">
           <div class="movie-badges">
-            ${isNew ? '<span class="badge new-badge">Nueva</span>' : ''}
+            ${isNew ? `<span class="badge new-badge">${window.translations?.new_badge_female || 'Nueva'}</span>` : ''}
             ${isTopRated ? `<span class="badge top-badge"><i class="fas fa-trophy"></i> ${rating.toFixed(1)}</span>` : ''}
           </div>
           <div class="movie-actions">
-            <button class="action-btn btn-trailer" data-id="${tmdbId}" aria-label="Ver trailer">
+            <button class="action-btn btn-trailer" data-id="${tmdbId}" aria-label="${window.translations?.view_trailer || 'Ver trailer'}">
               <i class="fas fa-play"></i>
-              <span class="action-btn-tooltip">Ver trailer</span>
+              <span class="action-btn-tooltip">${window.translations?.view_trailer || 'Ver trailer'}</span>
             </button>
-            <button class="action-btn btn-favorite" data-id="${id}" aria-label="Añadir a favoritos">
+            <button class="action-btn btn-favorite" data-id="${id}" aria-label="${isFavorite ? (window.translations?.remove_from_favorites || 'Quitar de favoritos') : (window.translations?.add_to_favorites || 'Añadir a favoritos')}">
               <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
-              <span class="action-btn-tooltip">${isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}</span>
+              <span class="action-btn-tooltip">${isFavorite ? (window.translations?.remove_from_favorites || 'Quitar de favoritos') : (window.translations?.add_to_favorites || 'Añadir a favoritos')}</span>
             </button>
-            <button class="action-btn btn-details" data-id="${tmdbId}" aria-label="Ver detalles">
+            <button class="action-btn btn-details" data-id="${tmdbId}" aria-label="${window.translations?.view_details || 'Ver detalles'}">
               <i class="fas fa-info-circle"></i>
-              <span class="action-btn-tooltip">Ver detalles</span>
+              <span class="action-btn-tooltip">${window.translations?.view_details || 'Ver detalles'}</span>
             </button>
           </div>
         </div>
@@ -769,7 +769,7 @@ function renderSeries(series, container) {
         </div>
         <p class="genres">${genres}</p>
         <a href="/serie/${id}" class="btn-more">
-          Ver más <i class="fas fa-arrow-right"></i>
+          ${window.translations?.more_info || 'Ver más'} <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     `;
@@ -848,7 +848,7 @@ async function loadSerieDetails(serieId) {
       modalDetailContent.innerHTML = `
         <div class="error-message">
           <i class="fas fa-exclamation-circle"></i>
-          <p>Ha ocurrido un error al cargar los detalles. Por favor, inténtalo de nuevo.</p>
+          <p>${window.translations?.error_loading_details || 'Ha ocurrido un error al cargar los detalles. Por favor, inténtalo de nuevo.'}</p>
         </div>
       `;
     }
@@ -864,9 +864,9 @@ function renderSerieModalStatic(serie, credits, similarSeries) {
   if (!modal || !contentContainer) return;
 
   // Extraer datos relevantes
-  const title = serie.name || "Sin título";
-  const overview = serie.overview || "No hay descripción disponible.";
-  const releaseDate = serie.first_air_date ? formatDate(serie.first_air_date) : "Fecha desconocida";
+  const title = serie.name || (window.translations?.no_title || "Sin título");
+  const overview = serie.overview || (window.translations?.no_description || "No hay descripción disponible.");
+  const releaseDate = serie.first_air_date ? formatDate(serie.first_air_date) : (window.translations?.unknown_date || "Fecha desconocida");
   const backdropUrl = serie.backdrop_path ?
     `${BACKDROP_URL}${serie.backdrop_path}` :
     DEFAULT_BACKDROP;
@@ -883,7 +883,7 @@ function renderSerieModalStatic(serie, credits, similarSeries) {
   // Extraer creadores
   const creators = serie.created_by && serie.created_by.length > 0 ?
     serie.created_by.map(c => c.name).join(', ') :
-    "Datos no disponibles";
+    (window.translations?.data_not_available || "Datos no disponibles");
 
   // Obtener showrunner (puede ser creador o productor ejecutivo)
   const showrunner = credits.crew && credits.crew.length > 0 ?
@@ -914,11 +914,11 @@ function renderSerieModalStatic(serie, credits, similarSeries) {
   }
 
   // Estado de la serie
-  const status = serie.status === "Ended" ? "Finalizada" :
-                serie.status === "Returning Series" ? "En emisión" :
-                serie.status === "Canceled" ? "Cancelada" :
-                serie.status === "In Production" ? "En producción" :
-                serie.status || "Desconocido";
+  const status = serie.status === "Ended" ? (window.translations?.ended || "Finalizada") :
+                serie.status === "Returning Series" ? (window.translations?.returning_series || "En emisión") :
+                serie.status === "Canceled" ? (window.translations?.canceled || "Cancelada") :
+                serie.status === "In Production" ? (window.translations?.in_production || "En producción") :
+                serie.status || (window.translations?.unknown || "Desconocido");
 
   // Verificar si es favorita
   const favorites = JSON.parse(localStorage.getItem('critflix-favorites-series') || '[]');
@@ -1141,7 +1141,7 @@ async function loadSerieTrailer(serieId) {
   trailerContainer.innerHTML = `
     <div class="trailer-loading">
       <div class="spinner"></div>
-      <span>Cargando trailer...</span>
+      <span>${window.translations?.loading_trailer || 'Cargando trailer...'}</span>
     </div>
   `;
 
@@ -1180,7 +1180,7 @@ async function loadSerieTrailer(serieId) {
       trailerContainer.innerHTML = `
         <div class="trailer-error">
           <i class="fas fa-exclamation-circle"></i>
-          <p>No se encontró un trailer para esta serie.</p>
+          <p>${window.translations?.no_trailer_available || 'No se encontró un trailer para esta serie.'}</p>
         </div>
       `;
     }
@@ -1189,7 +1189,7 @@ async function loadSerieTrailer(serieId) {
     trailerContainer.innerHTML = `
       <div class="trailer-error">
         <i class="fas fa-exclamation-circle"></i>
-        <p>Ocurrió un error al cargar el trailer. Por favor, inténtalo de nuevo más tarde.</p>
+        <p>${window.translations?.error_loading_trailer || 'Ocurrió un error al cargar el trailer. Por favor, inténtalo de nuevo más tarde.'}</p>
       </div>
     `;
   }
@@ -1233,7 +1233,7 @@ async function loadSeries(reset = false) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
     loadMoreBtn.disabled = true;
-    loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (window.translations?.loading || 'Cargando...');
   }
 
   try {
@@ -1243,13 +1243,10 @@ async function loadSeries(reset = false) {
 
       const container = document.getElementById('seriesContainer');
       if (container) {
-        container.innerHTML = '';
-
-        // Mostrar spinner mientras carga
         container.innerHTML = `
           <div class="loading-placeholder">
             <div class="spinner"></div>
-            <p>Cargando series...</p>
+            <p>${window.translations?.loading || 'Cargando series...'}</p>
           </div>
         `;
       }
@@ -1284,7 +1281,7 @@ async function loadSeries(reset = false) {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error('Error al cargar series');
+      throw new Error(window.translations?.error_loading_series || 'Error al cargar series');
     }
 
     const data = await response.json();
@@ -1305,7 +1302,7 @@ async function loadSeries(reset = false) {
     if (loadMoreBtn) {
       if (allSeriesPage < data.total_pages) {
         loadMoreBtn.disabled = false;
-        loadMoreBtn.innerHTML = 'Cargar más series';
+        loadMoreBtn.innerHTML = window.translations?.load_more_series || 'Cargar más series';
         loadMoreBtn.style.display = 'block';
         allSeriesPage++;
       } else {
@@ -1339,7 +1336,7 @@ async function loadSeries(reset = false) {
 
     if (loadMoreBtn && loadMoreBtn.style.display !== 'none') {
       loadMoreBtn.disabled = false;
-      loadMoreBtn.innerHTML = 'Cargar más series';
+      loadMoreBtn.innerHTML = window.translations?.load_more_series || 'Cargar más series';
     }
   }
 }

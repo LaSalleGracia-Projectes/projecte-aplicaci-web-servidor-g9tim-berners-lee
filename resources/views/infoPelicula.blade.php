@@ -295,17 +295,24 @@
             </div>
 
             <!-- Botones de acción -->
-            <div class="action-buttons">
-                <button class="btn-favorite" data-id="{{ $pelicula['id'] ?? $pelicula->tmdb_id ?? '' }}" title="Añadir a favoritos">
-                    <i class="far fa-heart"></i> <span>Favorito</span>
-                </button>
-                <button class="btn-watchlist" title="Añadir a lista de visualización">
-                    <i class="far fa-bookmark"></i> <span>Ver más tarde</span>
-                </button>
-                <button class="btn-share" title="Compartir">
-                    <i class="fas fa-share-alt"></i> <span>Compartir</span>
-                </button>
+            @auth
+            <div class="movie-actions">
+                <div class="action-buttons">
+                    <button class="btn-favorite" data-id="{{ $pelicula['id'] ?? $pelicula->tmdb_id ?? '' }}" title="Añadir a favoritos">
+                        <i class="far fa-heart"></i> <span>Favorito</span>
+                    </button>
+                    <button class="btn-watchlist" title="Añadir a lista de visualización">
+                        <i class="far fa-bookmark"></i> <span>Ver más tarde</span>
+                    </button>
+                    <button class="btn-share" title="Compartir">
+                        <i class="fas fa-share-alt"></i> <span>Compartir</span>
+                    </button>
+                    <button class="btn-goto-reviews" id="btn-ver-criticas" title="Ver críticas">
+                        <i class="fas fa-comments"></i> Ver críticas
+                    </button>
+                </div>
             </div>
+            @endauth
 
             <!-- Dónde ver (servicios de streaming) -->
             @if(isset($watchProviders['flatrate']) || isset($watchProviders['rent']) || isset($watchProviders['buy']))
@@ -457,7 +464,6 @@
                     </div>
                     @endif
                 </div>
-            </section>
             </div>
 
             <!-- Reparto principal -->
@@ -631,6 +637,32 @@
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="{{ asset('movie-details.js') }}"></script>
+<script>
+    // Configurar botón para ir a los comentarios
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnVerCriticas = document.getElementById('btn-ver-criticas');
+        if (btnVerCriticas) {
+            btnVerCriticas.addEventListener('click', function() {
+                // Cambiar a la pestaña de críticas si no está activa
+                const reviewsTab = document.querySelector('.tab-button[data-tab="reviews"]');
+                if (reviewsTab && !reviewsTab.classList.contains('active')) {
+                    reviewsTab.click();
+                }
+
+                // Scroll suave hasta la sección de comentarios
+                const reviewsSection = document.getElementById('reviews');
+                if (reviewsSection) {
+                    reviewsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+
+                // Recargar comentarios con desplazamiento
+                if (typeof cargarComentarios === 'function') {
+                    cargarComentarios(true);
+                }
+            });
+        }
+    });
+</script>
 @endpush
 
 <!-- Modal para trailers -->

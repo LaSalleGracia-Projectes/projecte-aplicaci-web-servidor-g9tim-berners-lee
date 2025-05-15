@@ -616,14 +616,27 @@
 
             <!-- Botones de acción -->
             <div class="action-buttons">
-                <button class="btn-favorite" title="Añadir a favoritos">
+                @auth
+                <button class="btn-favorite" data-id="{{ $serie->id ?? $serie->api_id ?? '' }}" title="Añadir a favoritos">
                     <i class="far fa-heart"></i> <span>Favorito</span>
                 </button>
-                <button class="btn-watchlist" title="Añadir a lista de visualización">
-                    <i class="far fa-bookmark"></i> <span>Ver más tarde</span>
+                <button class="btn-watchlist" title="Añadir a ver más tarde">
+                    <i class="far fa-bookmark"></i> <span>Ver después</span>
                 </button>
-                <button class="btn-share" title="Compartir">
+                @endauth
+
+                @if(isset($serie->videos) && isset($serie->videos['results']) && count($serie->videos['results']) > 0)
+                <button class="btn-trailer" data-id="{{ $serie->id ?? $serie->api_id ?? '' }}">
+                    <i class="fas fa-play"></i> <span>Trailer</span>
+                </button>
+                @endif
+
+                <button class="btn-share">
                     <i class="fas fa-share-alt"></i> <span>Compartir</span>
+                </button>
+
+                <button class="btn-goto-reviews" id="btn-ver-criticas" title="Ver críticas">
+                    <i class="fas fa-comments"></i> <span>Ver críticas</span>
                 </button>
             </div>
 
@@ -1038,6 +1051,32 @@
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="{{ asset('serie-details.js') }}"></script>
+<script>
+    // Configurar botón para ir a los comentarios
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnVerCriticas = document.getElementById('btn-ver-criticas');
+        if (btnVerCriticas) {
+            btnVerCriticas.addEventListener('click', function() {
+                // Cambiar a la pestaña de críticas si no está activa
+                const reviewsTab = document.querySelector('.tab-button[data-tab="reviews"]');
+                if (reviewsTab && !reviewsTab.classList.contains('active')) {
+                    reviewsTab.click();
+                }
+
+                // Scroll suave hasta la sección de comentarios
+                const reviewsSection = document.getElementById('reviews');
+                if (reviewsSection) {
+                    reviewsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+
+                // Recargar comentarios con desplazamiento
+                if (typeof cargarComentarios === 'function') {
+                    cargarComentarios(true);
+                }
+            });
+        }
+    });
+</script>
 <style>
 /* Estilos adicionales para comentarios y respuestas */
 .respuestas-container {

@@ -39,10 +39,17 @@ class SetLocale
         $locale = $this->getLocale($request);
 
         // Aplicar el idioma a la aplicación
-        $this->applyLocale($locale);
+        $this->applyLocale($locale, $request);
 
         // Continuar con la petición
-        return $next($request);
+        $response = $next($request);
+
+        // Si es necesario, establecer o refrescar la cookie de idioma en la respuesta
+        if (!$request->hasCookie('locale') || $request->cookie('locale') !== $locale) {
+            $response->cookie('locale', $locale, 60 * 24 * 365, '/', null, false, false, false, 'lax');
+        }
+
+        return $response;
     }
 
     /**
@@ -53,31 +60,49 @@ class SetLocale
      */
     protected function getLocale(Request $request)
     {
-        // 1. Verificar si viene como parámetro en la URL (?lang=xx)
+        // Registrar debug info
+        $debugInfo = ['url' => $request->url()];
+
+        // 1. Verificar si viene como parámetro en la URL (?lang=xx) - Máxima prioridad
         $locale = $request->query('lang');
         if ($locale && in_array($locale, $this->supportedLanguages)) {
+            $debugInfo['source'] = 'URL parameter';
+            $debugInfo['locale'] = $locale;
+            Log::debug('Locale detected', $debugInfo);
             return $locale;
         }
 
         // 2. Verificar en la cookie
         $locale = $request->cookie('locale');
         if ($locale && in_array($locale, $this->supportedLanguages)) {
+            $debugInfo['source'] = 'Cookie';
+            $debugInfo['locale'] = $locale;
+            Log::debug('Locale detected', $debugInfo);
             return $locale;
         }
 
         // 3. Verificar en la sesión
-        $locale = session('locale');
+        $locale = Session::get('locale');
         if ($locale && in_array($locale, $this->supportedLanguages)) {
+            $debugInfo['source'] = 'Session';
+            $debugInfo['locale'] = $locale;
+            Log::debug('Locale detected', $debugInfo);
             return $locale;
         }
 
         // 4. Verificar en el navegador (cabecera Accept-Language)
         $browserLocale = substr($request->server('HTTP_ACCEPT_LANGUAGE') ?? '', 0, 2);
         if ($browserLocale && in_array($browserLocale, $this->supportedLanguages)) {
+            $debugInfo['source'] = 'Browser';
+            $debugInfo['locale'] = $browserLocale;
+            Log::debug('Locale detected', $debugInfo);
             return $browserLocale;
         }
 
         // 5. Si no se encuentra, usar el idioma por defecto
+        $debugInfo['source'] = 'Default';
+        $debugInfo['locale'] = $this->defaultLanguage;
+        Log::debug('Using default locale', $debugInfo);
         return $this->defaultLanguage;
     }
 
@@ -85,16 +110,23 @@ class SetLocale
      * Aplica el idioma a la aplicación
      *
      * @param  string  $locale
+     * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    protected function applyLocale($locale)
+    protected function applyLocale($locale, $request)
     {
         // Establecer el idioma en la aplicación
         App::setLocale($locale);
 
         // Mantener el idioma en la sesión para futuras peticiones
-        if (session('locale') !== $locale) {
-            session()->put('locale', $locale);
+        if (Session::get('locale') !== $locale) {
+            Session::put('locale', $locale);
+        }
+
+        // Si el idioma viene desde la URL, asegurarnos de que se mantenga en futuras peticiones
+        if ($request->query('lang') && $request->query('lang') === $locale) {
+            Session::put('locale', $locale);
+            Cookie::queue('locale', $locale, 60 * 24 * 365, '/', null, false, false, false, 'lax');
         }
     }
 }

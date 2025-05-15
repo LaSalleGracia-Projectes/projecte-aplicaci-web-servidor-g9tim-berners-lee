@@ -1130,3 +1130,45 @@
         height: 50%;
     }
 }
+
+/* Estilos para botones de acción */
+.btn-favorite, .btn-watchlist, .btn-share, .btn-trailer, .btn-goto-reviews {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: 1px solid #14ff14;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    margin-right: 10px;
+}
+
+.btn-favorite:hover, .btn-watchlist:hover, .btn-share:hover, .btn-trailer:hover, .btn-goto-reviews:hover {
+    background-color: #14ff14;
+    color: #000;
+    transform: translateY(-2px);
+}
+
+.btn-favorite.active {
+    background-color: #14ff14;
+    color: #000;
+}
+
+.btn-watchlist.active {
+    background-color: #14ff14;
+    color: #000;
+}
+
+.btn-goto-reviews i {
+    color: #14ff14;
+    transition: color 0.3s ease;
+}
+
+.btn-goto-reviews:hover i {
+    color: #000;
+}

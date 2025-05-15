@@ -31,10 +31,14 @@ class LanguageController extends Controller
         $domain = null;
         $secure = false;
         $httpOnly = false;
+        $sameSite = 'lax';
 
         // Guardar el idioma en la sesión y establecer el locale
-        session()->put('locale', $locale);
-        app()->setLocale($locale);
+        Session::put('locale', $locale);
+        App::setLocale($locale);
+
+        // Crear cookie
+        $cookie = cookie('locale', $locale, $minutes, $path, $domain, $secure, $httpOnly, false, $sameSite);
 
         // Preparar URL de redirección
         $referer = $request->headers->get('referer');
@@ -54,17 +58,31 @@ class LanguageController extends Controller
                 'message' => $messages[$locale],
                 'locale' => $locale,
                 'redirect' => $redirectUrl
-            ])->cookie('locale', $locale, $minutes, $path, $domain, $secure, $httpOnly);
+            ])->cookie($cookie);
         }
 
         // Agregar timestamp para forzar recarga completa
         $timestamp = time();
-        $separator = (parse_url($redirectUrl, PHP_URL_QUERY) ? '&' : '?');
-        $redirectUrl .= "{$separator}lang={$locale}&t={$timestamp}";
+        // Eliminar cualquier parámetro de idioma previo
+        $urlParts = parse_url($redirectUrl);
+        $path = $urlParts['path'] ?? '';
+        $query = isset($urlParts['query']) ? '?' . $urlParts['query'] : '';
+
+        // Reconstruir la URL limpiando parámetros de idioma antiguos
+        if (!empty($query)) {
+            parse_str(substr($query, 1), $queryParams);
+            unset($queryParams['lang']);
+            unset($queryParams['t']);
+            $query = !empty($queryParams) ? '?' . http_build_query($queryParams) : '';
+        }
+
+        // Añadir los nuevos parámetros
+        $separator = empty($query) ? '?' : '&';
+        $redirectUrl = $path . $query . "{$separator}lang={$locale}&t={$timestamp}";
 
         // Redirección normal con cookie y mensaje flash
         return Redirect::to($redirectUrl)
-            ->cookie('locale', $locale, $minutes, $path, $domain, $secure, $httpOnly)
+            ->cookie($cookie)
             ->with('success', $messages[$locale]);
     }
 }

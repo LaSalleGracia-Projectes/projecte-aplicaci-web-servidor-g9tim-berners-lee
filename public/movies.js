@@ -49,7 +49,7 @@ function createSpinner() {
   spinner.innerHTML = `
     <div class="spinner-container">
       <div class="spinner"></div>
-      <p>Cargando...</p>
+      <p>${window.translations?.loading || 'Cargando...'}</p>
     </div>
   `;
   document.body.appendChild(spinner);
@@ -758,17 +758,17 @@ function renderMovies(movies, container) {
         <img src="${posterUrl}" alt="${title}" loading="lazy">
         <div class="movie-overlay">
           <div class="movie-badges">
-            ${isNew ? '<span class="badge new-badge">Nuevo</span>' : ''}
+            ${isNew ? `<span class="badge new-badge">${window.translations?.new_badge || 'Nuevo'}</span>` : ''}
             ${isTopRated ? `<span class="badge top-badge"><i class="fas fa-trophy"></i> ${rating.toFixed(1)}</span>` : ''}
           </div>
           <div class="movie-actions">
-            <button class="action-btn btn-trailer" data-id="${tmdbId}" aria-label="Ver trailer de ${title}">
+            <button class="action-btn btn-trailer" data-id="${tmdbId}" aria-label="${window.translations?.view_trailer || 'Ver trailer'} ${title}">
               <i class="fas fa-play"></i>
             </button>
-            <button class="action-btn btn-favorite ${isFavorite ? 'active' : ''}" data-id="${id}" data-favorited="${isFavorite}" aria-label="${isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
+            <button class="action-btn btn-favorite ${isFavorite ? 'active' : ''}" data-id="${id}" data-favorited="${isFavorite}" aria-label="${isFavorite ? (window.translations?.remove_from_favorites || 'Quitar de favoritos') : (window.translations?.add_to_favorites || 'Añadir a favoritos')}">
               <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
             </button>
-            <button class="action-btn btn-details" data-id="${id}" aria-label="Ver detalles de ${title}">
+            <button class="action-btn btn-details" data-id="${id}" aria-label="${window.translations?.view_details || 'Ver detalles'} ${title}">
               <i class="fas fa-info-circle"></i>
             </button>
           </div>
@@ -785,7 +785,7 @@ function renderMovies(movies, container) {
         </div>
         <p class="genres">${genres}</p>
         <a href="javascript:void(0)" class="btn-more" data-id="${id}">
-          Ver más <i class="fas fa-arrow-right"></i>
+          ${window.translations?.more_info || 'Ver más'} <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     `;
@@ -879,7 +879,7 @@ async function loadMovieDetails(movieId) {
       modalDetailContent.innerHTML = `
         <div class="error-message">
           <i class="fas fa-exclamation-circle"></i>
-          <p>Ha ocurrido un error al cargar los detalles. Por favor, inténtalo de nuevo.</p>
+          <p>${window.translations?.error_loading_details || 'Ha ocurrido un error al cargar los detalles. Por favor, inténtalo de nuevo.'}</p>
         </div>
       `;
     }
@@ -931,11 +931,11 @@ function renderMovieModalStatic(movie, credits, similarMovies) {
   }
 
   // Estado de la película
-  const status = movie.status === "Released" ? "Estrenada" :
-                movie.status === "Post Production" ? "En post-producción" :
-                movie.status === "In Production" ? "En producción" :
-                movie.status === "Planned" ? "Planificada" :
-                movie.status || "Desconocido";
+  const status = movie.status === "Released" ? (window.translations?.released || "Estrenada") :
+                   movie.status === "Post Production" ? (window.translations?.post_production || "En post-producción") :
+                   movie.status === "In Production" ? (window.translations?.in_production || "En producción") :
+                   movie.status === "Planned" ? (window.translations?.planned || "Planificada") :
+                   movie.status || (window.translations?.unknown || "Desconocido");
 
   // Verificar si es favorita
   const favorites = JSON.parse(localStorage.getItem('critflix-favorites') || '[]');
@@ -1162,7 +1162,7 @@ async function loadMovieTrailer(movieId) {
     trailerContainerStatic.innerHTML = `
       <div class="trailer-loading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background-color: #000;">
         <div class="spinner" style="width: 40px; height: 40px; border: 3px solid rgba(255, 255, 255, 0.2); border-top: 3px solid #14ff14; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
-        <span style="font-size: 0.9rem; margin-top: 10px; color: rgba(255, 255, 255, 0.8);">Cargando trailer...</span>
+        <span style="font-size: 0.9rem; margin-top: 10px; color: rgba(255, 255, 255, 0.8);">${window.translations?.loading_trailer || 'Cargando trailer...'}</span>
       </div>
     `;
 
@@ -1245,7 +1245,7 @@ async function loadMovieTrailer(movieId) {
       trailerContainerStatic.innerHTML = `
         <div class="no-trailer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #121212; color: white; text-align: center; padding: 20px;">
           <i class="fas fa-film" style="font-size: 3rem; color: #14ff14; margin-bottom: 20px; opacity: 0.7;"></i>
-          <p style="max-width: 80%; line-height: 1.5;">No se encontró ningún trailer disponible para esta película.</p>
+          <p style="max-width: 80%; line-height: 1.5;">${window.translations?.no_trailer_available || 'No se encontró ningún trailer disponible para esta película.'}</p>
         </div>
       `;
     }
@@ -1258,7 +1258,7 @@ async function loadMovieTrailer(movieId) {
       trailerContainerStatic.innerHTML = `
         <div class="no-trailer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #121212; color: white; text-align: center; padding: 20px;">
           <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff4d4d; margin-bottom: 20px; opacity: 0.7;"></i>
-          <p style="max-width: 80%; line-height: 1.5;">Error al cargar el trailer. Por favor, inténtalo de nuevo más tarde.</p>
+          <p style="max-width: 80%; line-height: 1.5;">${window.translations?.error_loading_trailer || 'Error al cargar el trailer. Por favor, inténtalo de nuevo más tarde.'}</p>
         </div>
       `;
     }
@@ -1326,7 +1326,7 @@ async function loadMovies(reset = false) {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
     loadMoreBtn.disabled = true;
-    loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (window.translations?.loading || 'Cargando...');
   }
 
   try {
@@ -1342,7 +1342,7 @@ async function loadMovies(reset = false) {
         container.innerHTML = `
           <div class="loading-placeholder">
             <div class="spinner"></div>
-            <p>Cargando películas...</p>
+            <p>${window.translations?.loading || 'Cargando películas...'}</p>
           </div>
         `;
       }
@@ -1377,7 +1377,7 @@ async function loadMovies(reset = false) {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error('Error al cargar películas');
+      throw new Error(window.translations?.error_loading_movies || 'Error al cargar películas');
     }
 
     const data = await response.json();
@@ -1398,7 +1398,7 @@ async function loadMovies(reset = false) {
     if (loadMoreBtn) {
       if (allMoviesPage < data.total_pages) {
         loadMoreBtn.disabled = false;
-        loadMoreBtn.innerHTML = 'Cargar más películas';
+        loadMoreBtn.innerHTML = window.translations?.load_more_movies || 'Cargar más películas';
         loadMoreBtn.style.display = 'block';
         allMoviesPage++;
       } else {
@@ -1418,10 +1418,10 @@ async function loadMovies(reset = false) {
       container.innerHTML = `
         <div class="error-message">
           <i class="fas fa-exclamation-circle"></i>
-          <h3>No se pudieron cargar las películas</h3>
-          <p>Ha ocurrido un error. Por favor, intenta de nuevo más tarde.</p>
+          <h3>${window.translations?.error_loading_movies || 'No se pudieron cargar las películas'}</h3>
+          <p>${window.translations?.error_message || 'Ha ocurrido un error. Por favor, intenta de nuevo más tarde.'}</p>
           <button class="btn-link" onclick="loadMovies(true)">
-            <i class="fas fa-redo"></i> Reintentar
+            <i class="fas fa-redo"></i> ${window.translations?.retry || 'Reintentar'}
           </button>
         </div>
       `;
@@ -1432,7 +1432,7 @@ async function loadMovies(reset = false) {
 
     if (loadMoreBtn && loadMoreBtn.style.display !== 'none') {
       loadMoreBtn.disabled = false;
-      loadMoreBtn.innerHTML = 'Cargar más películas';
+      loadMoreBtn.innerHTML = window.translations?.load_more_movies || 'Cargar más películas';
     }
   }
 }

@@ -31,6 +31,22 @@ window.renderCriticos = () => criticsModule.renderCriticos();
 
 // Inicialización de módulos cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
+    // Comprobar si hay un idioma guardado en localStorage y aplicarlo
+    const savedLocale = localStorage.getItem('userLocale');
+    const currentLocale = window.APP_INFO?.currentLocale || 'es';
+
+    // Si hay un idioma guardado y es diferente al actual, recargar con ese idioma
+    if (savedLocale && savedLocale !== currentLocale && !window.location.search.includes('lang='+savedLocale)) {
+        // Solo redirigir si no tenemos ya un parámetro de idioma en la URL
+        if (!window.location.search.includes('lang=')) {
+            const urlObj = new URL(window.location.href);
+            urlObj.searchParams.set('lang', savedLocale);
+            urlObj.searchParams.set('t', Date.now());
+            window.location.href = urlObj.toString();
+            return; // Detener ejecución ya que vamos a recargar
+        }
+    }
+
     // Inicializar módulos según la página
     setupGlobalNavigation();
 
@@ -135,6 +151,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         */
+
+        // Mejora para mantener el idioma entre páginas - añadir eventos a los enlaces de idioma
+        const languageLinks = languageDropdown.querySelectorAll('.language-link');
+        languageLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Obtener el idioma del enlace (desde el atributo href)
+                const hrefParts = this.getAttribute('href').split('/');
+                const locale = hrefParts[hrefParts.length - 1];
+
+                // Guardar en localStorage para persistencia adicional
+                localStorage.setItem('userLocale', locale);
+
+                // Realizar la petición AJAX para cambiar el idioma
+                fetch(this.getAttribute('href'), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Forzar recarga completa con el nuevo idioma
+                        const currentUrl = window.location.href;
+                        const urlObj = new URL(currentUrl);
+
+                        // Limpiar parámetros de idioma antiguos
+                        urlObj.searchParams.delete('lang');
+                        urlObj.searchParams.delete('t');
+
+                        // Añadir nuevos parámetros
+                        urlObj.searchParams.set('lang', locale);
+                        urlObj.searchParams.set('t', Date.now());
+
+                        // Recargar con la nueva URL
+                        window.location.href = urlObj.toString();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cambiando idioma:', error);
+                    // Fallback: navegar al enlace normalmente
+                    window.location.href = this.getAttribute('href');
+                });
+            });
+        });
     }
 
     // Dropdown de perfil de usuario
